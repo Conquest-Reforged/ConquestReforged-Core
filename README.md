@@ -1,0 +1,1 @@
+Limit Changelog to 1000 characters! Otherwise it fails to be posted on Discord.

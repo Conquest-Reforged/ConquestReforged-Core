@@ -1,0 +1,48 @@
+package com.conquestrefabricated.core.block.base;
+
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import org.jetbrains.annotations.NotNull;
+
+
+public abstract class DirectionalShape extends Shape {
+
+    public static final EnumProperty<Direction> DIRECTION = BlockStateProperties.FACING;
+
+    public DirectionalShape(Properties builder) {
+        super(builder);
+    }
+
+    @Override
+    public BlockState rotate(BlockState state, Rotation rot) {
+        return state.setValue(DIRECTION, rot.rotate(state.getValue(DIRECTION)));
+    }
+
+    @Override
+    public BlockState mirror(BlockState state, Mirror mirrorIn) {
+        return state.rotate(mirrorIn.getRotation(state.getValue(DIRECTION)));
+    }
+
+    @NotNull
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return this.defaultBlockState().setValue(DIRECTION, context.getNearestLookingDirection().getOpposite());
+    }
+
+    @Override
+    protected final void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(DIRECTION);
+        addProperties(builder);
+    }
+
+    protected void addProperties(StateDefinition.Builder<Block, BlockState> builder) {
+
+    }
+}

@@ -1,0 +1,19 @@
+accessWidener v2 official
+accessible class net/minecraft/block/entity/BlockEntityType$BlockEntityFactory
+accessible class net/minecraft/client/particle/ParticleManager$SpriteAwareFactory
+accessible method net/minecraft/client/particle/ParticleManager registerFactory (Lnet/minecraft/particle/ParticleType;Lnet/minecraft/client/particle/ParticleManager$SpriteAwareFactory;)V
+accessible field net/minecraft/client/gui/screen/ingame/HandledScreen backgroundWidth I
+accessible field net/minecraft/client/gui/screen/ingame/HandledScreen backgroundHeight I
+mutable field net/minecraft/client/gui/screen/ingame/HandledScreen y I
+accessible field net/minecraft/client/gui/screen/ingame/HandledScreen y I
+mutable field net/minecraft/client/gui/screen/ingame/HandledScreen x I
+accessible field net/minecraft/client/gui/screen/ingame/HandledScreen x I
+accessible field net/minecraft/client/gui/screen/ingame/HandledScreen focusedSlot Lnet/minecraft/screen/slot/Slot;
+accessible class net/minecraft/client/gui/widget/ButtonWidget
+accessible method net/minecraft/client/render/VertexConsumerProvider$Immediate <init> (Lnet/minecraft/client/render/BufferBuilder;Ljava/util/Map;)V
+accessible field net/minecraft/client/gui/screen/Screen drawables Ljava/util/List;
+accessible field net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen selectedTab Lnet/minecraft/item/ItemGroup;
+accessible method net/minecraft/data/client/BlockStateVariantMap getProperties ()Ljava/util/List;
+accessible field net/minecraft/entity/LivingEntity jumping Z
+accessible method net/minecraft/block/AbstractBlock$Settings <init> ()V
+accessible field net/minecraft/block/AbstractBlock$Settings offsetter Ljava/util/Optional;

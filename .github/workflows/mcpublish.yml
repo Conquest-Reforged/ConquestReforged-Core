@@ -1,0 +1,200 @@
+name: Publish On Github, CurseForge, & Modrinth
+
+on: [pull_request, workflow_dispatch]
+
+env:
+  MINECRAFT_VERSION: 1.20.1
+  JAVA_VERSION: 17
+  VERSION: 1.6.0
+  GITHUB_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
+  MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+  CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Environment Variables
+        run: env
+
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Make Gradle Wrapper Executable
+        if: ${{ runner.os != 'Windows' }}
+        run: chmod +x ./gradlew
+
+      - name: Build
+        run: ./gradlew build
+
+      - name: Publishing the Fabric mod
+        id: mc-publish
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          curseforge-id: 250077
+          curseforge-token: "${{env.CURSEFORGE_TOKEN}}"
+
+          modrinth-id: s93iojuG
+          modrinth-token: "${{env.MODRINTH_TOKEN}}"
+          modrinth-featured: false
+
+          github-tag: "v${{env.VERSION}}"
+          github-token: "${{env.GITHUB_TOKEN}}"
+
+          files: |
+            fabric/build/libs/ConquestReforged-fabric-${{env.MINECRAFT_VERSION}}-${{env.VERSION}}.jar
+          name: "ConquestReforged-fabric-${{env.MINECRAFT_VERSION}}-${{env.VERSION}}"
+          version: "${{env.VERSION}}"
+          version-type: release
+          changelog-file: CHANGELOG.md
+
+          loaders: fabric
+          game-versions: "${{env.MINECRAFT_VERSION}}"
+          java: "${{env.JAVA_VERSION}}"
+
+      - name: Publishing the Forge mod
+        id: mc-publish-forge
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          curseforge-id: 250077
+          curseforge-token: "${{env.CURSEFORGE_TOKEN}}"
+
+          modrinth-id: s93iojuG
+          modrinth-token: "${{env.MODRINTH_TOKEN}}"
+          modrinth-featured: false
+
+          github-tag: "v${{env.VERSION}}"
+          github-token: "${{env.GITHUB_TOKEN}}"
+
+          files: |
+            forge/build/libs/ConquestReforged-forge-${{env.MINECRAFT_VERSION}}-${{env.VERSION}}.jar
+          name: "ConquestReforged-forge-${{env.MINECRAFT_VERSION}}-${{env.VERSION}}"
+          version: "${{env.VERSION}}"
+          version-type: release
+          changelog-file: CHANGELOG.md
+
+          loaders: forge
+          game-versions: "${{env.MINECRAFT_VERSION}}"
+          java: "${{env.JAVA_VERSION}}"
+
+
+      - name: Create Modrinth Mod-pack Fabric
+        run: ./gradlew replaceJsonAndZipModrinth -PmrFiles='${{steps.mc-publish.outputs.modrinth-files}}'
+
+      - name: Create Curse Mod-pack Fabric
+        run: ./gradlew replaceJsonAndZipCurse -PcurseFileID=${{steps.mc-publish.outputs.curseforge-version}}
+
+      - name: Create Modrinth Mod-pack Forge
+        run: ./gradlew replaceJsonAndZipModrinthForge -PmrFiles='${{steps.mc-publish-forge.outputs.modrinth-files}}'
+
+      - name: Create Curse Mod-pack Forge
+        run: ./gradlew replaceJsonAndZipCurseForge -PcurseFileID=${{steps.mc-publish-forge.outputs.curseforge-version}}
+
+      - name: Publishing the Fabric Mod-pack on Modrinth
+        id: mc-publish-fabric-modpack-modrinth
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: kTa7HfI5
+          modrinth-token: "${{env.MODRINTH_TOKEN}}"
+          modrinth-featured: false
+
+          github-tag: "v${{env.VERSION}}"
+          github-token: "${{env.GITHUB_TOKEN}}"
+
+          files: |
+            build/json-zips/ConquestReforged-fabric-${{env.MINECRAFT_VERSION}}-${{env.VERSION}}.mrpack
+          name: "CR-Modpack-fabric-${{env.MINECRAFT_VERSION}}-${{env.VERSION}}"
+          version: "${{env.VERSION}}"
+          version-type: release
+          changelog-file: CHANGELOG.md
+
+          loaders: fabric
+          game-versions: "${{env.MINECRAFT_VERSION}}"
+          java: "${{env.JAVA_VERSION}}"
+
+      - name: Sleep for 900 seconds
+        run: sleep 900s
+        shell: bash
+
+      - name: Publishing the Fabric Mod-pack on Curseforge
+        id: mc-publish-fabric-modpack-curse
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          curseforge-id: 256916
+          curseforge-token: "${{env.CURSEFORGE_TOKEN}}"
+
+          github-tag: "v${{env.VERSION}}"
+          github-token: "${{env.GITHUB_TOKEN}}"
+
+          files: |
+            build/json-zips/ConquestReforged-fabric-${{env.MINECRAFT_VERSION}}-${{env.VERSION}}.zip
+          name: "CR-Modpack-fabric-${{env.MINECRAFT_VERSION}}-${{env.VERSION}}"
+          version: "${{env.VERSION}}"
+          version-type: release
+          changelog-file: CHANGELOG.md
+
+          loaders: fabric
+          game-versions: "${{env.MINECRAFT_VERSION}}"
+          java: "${{env.JAVA_VERSION}}"
+
+      - name: Publishing the Forge Mod-pack on Modrinth
+        id: mc-publish-forge-modpack-modrinth
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: OyiBBwGD
+          modrinth-token: "${{env.MODRINTH_TOKEN}}"
+          modrinth-featured: false
+
+          github-tag: "v${{env.VERSION}}"
+          github-token: "${{env.GITHUB_TOKEN}}"
+
+          files: |
+            build/json-zips/ConquestReforged-forge-${{env.MINECRAFT_VERSION}}-${{env.VERSION}}.mrpack
+          name: "CR-Modpack-forge-${{env.MINECRAFT_VERSION}}-${{env.VERSION}}"
+          version: "${{env.VERSION}}"
+          version-type: release
+          changelog-file: CHANGELOG.md
+
+          loaders: forge
+          game-versions: "${{env.MINECRAFT_VERSION}}"
+          java: "${{env.JAVA_VERSION}}"
+
+      - name: Publishing the Forge Mod-pack on Curseforge
+        id: mc-publish-forge-modpack-curse
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          curseforge-id: 1196246
+          curseforge-token: "${{env.CURSEFORGE_TOKEN}}"
+
+          github-tag: "v${{env.VERSION}}"
+          github-token: "${{env.GITHUB_TOKEN}}"
+
+          files: |
+            build/json-zips/ConquestReforged-forge-${{env.MINECRAFT_VERSION}}-${{env.VERSION}}.zip
+          name: "CR-Modpack-forge-${{env.MINECRAFT_VERSION}}-${{env.VERSION}}"
+          version: "${{env.VERSION}}"
+          version-type: release
+          changelog-file: CHANGELOG.md
+
+          loaders: forge
+          game-versions: "${{env.MINECRAFT_VERSION}}"
+          java: "${{env.JAVA_VERSION}}"
+
+      - name: Discord announcement
+        env:
+          CURSE_LINK: ${{steps.mc-publish-fabric-modpack-curse.outputs.curseforge-url}}
+          MODRINTH_LINK: ${{steps.mc-publish-fabric-modpack-modrinth.outputs.modrinth-url}}
+          CURSE_LINK_FORGE: ${{steps.mc-publish-forge-modpack-curse.outputs.curseforge-url}}
+          MODRINTH_LINK_FORGE: ${{steps.mc-publish-forge-modpack-modrinth.outputs.modrinth-url}}
+        run: ./gradlew discordupload -PcurseLink="$CURSE_LINK" -PmodrinthLink="$MODRINTH_LINK" -PcurseLinkForge="$CURSE_LINK_FORGE" -PmodrinthLinkForge="$MODRINTH_LINK_FORGE"

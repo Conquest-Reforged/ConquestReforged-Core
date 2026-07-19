@@ -1,0 +1,46 @@
+architectury {
+    common(rootProject.enabled_platforms.split(","))
+}
+
+repositories {
+    maven { url = "https://jitpack.io/" }
+    maven { url = "https://mvn.devos.one/snapshots/" }
+    maven { url = "https://mvn.devos.one/releases/" }
+    maven { url = "https://cursemaven.com" }
+    maven { url = "https://maven.jamieswhiteshirt.com/libs-release"}
+    maven {
+        url = "https://api.modrinth.com/maven"
+    }
+
+}
+
+dependencies {
+    // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
+    // Do NOT use other classes from fabric loader
+    //compileOnly("com.electronwill.night-config:core:3.6.3")
+    //compileOnly("com.electronwill.night-config:toml:3.6.3")
+    //compileOnly("curse.maven:forge-config-api-port-fabric-547434:4583000")
+
+    implementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    api "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+    // Remove the next line if you don't want to depend on the API
+    api "dev.architectury:architectury:${rootProject.architectury_version}"
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/ConquestReforgedCommon.accesswidener")
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs += [
+                    'src/main/generated'
+            ]
+        }
+    }
+}
+
+processResources {
+    setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+}

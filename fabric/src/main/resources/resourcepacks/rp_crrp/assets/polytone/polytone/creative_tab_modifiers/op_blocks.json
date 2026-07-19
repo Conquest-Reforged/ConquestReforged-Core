@@ -1,0 +1,54 @@
+{
+    "targets": [
+        "minecraft:op_blocks"
+    ],
+    "removals": [
+        {
+            "type": "id_match",
+            "path": ".*"
+        }
+    ],
+    "additions": [
+        {
+            "items": [
+                "minecraft:command_block",
+                "minecraft:chain_command_block",
+                "minecraft:repeating_command_block",
+                "minecraft:jigsaw",
+                "minecraft:structure_block",
+                "minecraft:barrier",
+                "conquest:invisible_block_pane",
+                "conquest:invisible_block_slab",
+                "conquest:invisible_block_vertical_slab",
+                "conquest:invisible_block_stairs",
+                "minecraft:debug_stick",
+                "conquest:mallet_item",
+                "minecraft:wooden_axe",
+                "minecraft:light",
+                "conquest:invisible_light",
+                "conquest:invisible_light_low",
+                "conquest:invisible_light_medium",
+                "conquest:upper_class_planning_sign",
+                "conquest:middle_class_planning_sign",
+                "conquest:lower_class_planning_sign",
+                "conquest:waiting_approval_planning_sign",
+                "conquest:approved_planning_sign",
+                "conquest:not_approved_planning_sign",
+                "conquest:planning_sign",
+                "conquest:name_planning_sign",
+                "conquest:update_planning_sign",
+                "conquest:comment_planning_sign",
+                "conquest:special_planning_sign",
+                "conquest:other_planning_sign",
+                "conquest:green_screen",
+                "conquest:red_screen",
+                "conquest:blue_screen",
+                "conquest:white_screen",
+                "conquest:light_gray_screen"
+            ]
+        }
+    ],
+    "icon": {
+        "id": "debug_stick"
+    }
+}

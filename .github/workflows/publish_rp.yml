@@ -1,0 +1,56 @@
+name: Publish CRRP
+
+on: [pull_request, workflow_dispatch]
+
+env:
+  MINECRAFT_VERSION: 1.20.1
+  JAVA_VERSION: 17
+  VERSION: 2.0.3+1.20.1
+  RELEASE_NAME: CRRP-2.0.3+1.20.1
+  GITHUB_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
+  MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+  CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Environment Variables
+        run: env
+
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: Zipping
+        uses: vimtor/action-zip@v1
+        with:
+          files: RP_CRRP/assets/ RP_CRRP/pack.mcmeta RP_CRRP/pack.png
+          dest: "${{env.RELEASE_NAME}}.zip"
+          recursive: false
+
+      - name: Publish (CurseForge/Modrinth/GitHub)
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+          curseforge-id: 250080
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+          modrinth-id: td2vmZqO
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+          files: |
+            *.zip
+
+          name: "${{env.RELEASE_NAME}}"
+          version: "${{env.VERSION}}"
+          version-type: release
+          changelog-file: CHANGELOG.md
+
+          loaders: Minecraft
+          game-versions: "${{env.MINECRAFT_VERSION}}"

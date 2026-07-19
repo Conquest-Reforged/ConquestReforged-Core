@@ -1,0 +1,38 @@
+[
+  {
+    "type": "MOD",
+    "id": "polytone",
+    "name": "Polytone",
+    "url": "https://modrinth.com/mod/polytone"
+  },
+  {
+    "type": "MOD",
+    "id": "continuity",
+    "name": "Continuity",
+    "url": "https://modrinth.com/mod/continuity"
+  },
+  {
+    "type": "RESOURCEPACK",
+    "id": "rp_crrp",
+    "name": "CR Resourcepack",
+    "url": "https://www.curseforge.com/minecraft/texture-packs/conquest-reforged-resource-pack/files"
+  },
+  {
+    "type": "MOD",
+    "id": "nuit",
+    "name": "Nuit",
+    "url": "https://modrinth.com/mod/nuit"
+  },
+  {
+    "type": "MOD",
+    "id": "entity_model_features",
+    "name": "EntityModelFeatures",
+    "url": "https://modrinth.com/mod/entity-model-features"
+  },
+  {
+    "type": "MOD",
+    "id": "entity_texture_features",
+    "name": "EntityTextureFeatures",
+    "url": "https://modrinth.com/mod/entitytexturefeatures/"
+  }
+]

@@ -1,0 +1,12 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+/compiler.xml
+/gradle.xml
+/misc.xml
+/modules.xml
+/vcs.xml
+/.name
+/runConfigurations/
+/modules/
+/ConquestReforged-1.20.1-forge-fabric.iml

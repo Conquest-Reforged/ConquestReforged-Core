@@ -1,0 +1,14 @@
+{
+	"required": true,
+	"package": "com.conquestrefabricated.mixin/client",
+	"compatibilityLevel": "JAVA_25",
+	"client": [
+		"CuboidModelMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

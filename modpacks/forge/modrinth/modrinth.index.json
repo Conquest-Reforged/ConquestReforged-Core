@@ -1,0 +1,298 @@
+{
+  "game": "minecraft",
+  "formatVersion": 1,
+  "versionId": "@REPLACE-VERSION@",
+  "name": "Conquest Reforged Modpack - Forge",
+  "summary": "Forge version of the Conquest Reforged Modpack",
+  "files": [
+    {
+      "path": "mods/puzzle-fabric-2.3.0+1.20.1.jar",
+      "hashes": {
+        "sha512": "cb46e6a985206c9f5fb5a0fbd4044642390bb8ab8765790cb23a0ef71252cc529ed911c48ed72c74ed88408c2dc9922e1a92436032d0cea1ad6b9a593d7885f0",
+        "sha1": "161652a04e173d06fbcfcdbce3f1a318875a87b7"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/3IuO68q1/versions/iDnrnpRl/puzzle-fabric-2.3.0%2B1.20.1.jar"
+      ],
+      "fileSize": 144445
+    },
+    {
+      "path": "mods/architectury-9.2.14-forge.jar",
+      "hashes": {
+        "sha1": "a52918a500ff421180a1cbd1a0cabee712134ec4",
+        "sha512": "cf67f2050cafa00f0bee42e6d7bef77fdb808ac4f71742f7b4d6d5c1e6ffb49561a5a252f332d2b78a9767bdb5faa284611790dba303fbdc736ae36d794f61c7"
+      },
+      "env": {
+        "server": "required",
+        "client": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/lhGA9TYQ/versions/1MKTLiiG/architectury-9.2.14-forge.jar"
+      ],
+      "fileSize": 580602
+    },
+    {
+      "path": "mods/CullLessLeaves-Reforged-1.20.1-1.0.5.jar",
+      "hashes": {
+        "sha512": "1d037fd49a9b80eecf2ed8e3b64178d1fbae7cc2a511813ab8b627479713e79a98af0896366e1ad2a3fa3f9849eab086166c1a27227f6d9370c2738132d859e6",
+        "sha1": "71b1603071461e036a3ba2aaeeb52cc10fa3d348"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/qthuEuVy/versions/wPOb8yEG/CullLessLeaves-Reforged-1.20.1-1.0.5.jar"
+      ],
+      "fileSize": 22474
+    },
+    {
+      "path": "mods/radium-mc1.20.1-0.12.4+git.26c9d8e.jar",
+      "hashes": {
+        "sha512": "7b59c491d72801257c740626faab8c14ed580db28493c474147341531bca3de5ea822d4042d3786ae619449b6f6ffc1001a1cdc1b9276ec900e57ab17dd8989a",
+        "sha1": "f5f5f792473bb7b85ec221f75c5afb3740afb13a"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/2gvRmQXx/versions/n947JjJH/radium-mc1.20.1-0.12.4%2Bgit.26c9d8e.jar"
+      ],
+      "fileSize": 713454
+    },
+    {
+      "path": "mods/yet_another_config_lib_v3-3.6.6+1.20.1-forge.jar",
+      "hashes": {
+        "sha512": "7fdd923ae94c1ada9bf0524f21cdfbb4f870ea93b26d02f369829585892fc5a2f61e60f43a6686ee611ff11bde8f123f178279e2de453c8fb320264153a0e8d9",
+        "sha1": "644731e321c53a35a0b3177a3cc6347fe38002f4"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/1eAoo2KR/versions/sCWgXDYQ/yet_another_config_lib_v3-3.6.6%2B1.20.1-forge.jar"
+      ],
+      "fileSize": 1105891
+    },
+    {
+      "path": "mods/entity_texture_features_1.20.1-forge-7.0.1.jar",
+      "hashes": {
+        "sha512": "dbf9b1800bc9bc541511e81995494ff55be62c332c40273f4c3b8fab938a1e213cc9afa3eeb82b4381900772864fd31685edd77efd0e2956eacd5db25e780423",
+        "sha1": "15859163cc62136ba5a6bcb084bf4232057a3ffc"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/BVzZfTc1/versions/RZynAozZ/entity_texture_features_1.20.1-forge-7.0.1.jar"
+      ],
+      "fileSize": 897448
+    },
+    {
+      "path": "mods/rubidium-extra-0.5.4.4+mc1.20.1-build.131.jar",
+      "hashes": {
+        "sha512": "4067ef8d94fd4022a5f4feb02250d86c96ab10867f526c64e7e02a409ac6d46fbc32e87ffd735b1203f328d147c291e4a8dda1288c1deb3e232a1e5cb13701fb",
+        "sha1": "bb422d5626bf69841e444a3e545c8e71b6928cf8"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/oY2B1pjg/versions/F06DXCMX/rubidium-extra-0.5.4.4%2Bmc1.20.1-build.131.jar"
+      ],
+      "fileSize": 568608
+    },
+    {
+      "path": "mods/fabric-api-0.92.2+1.11.8+1.20.1.jar",
+      "hashes": {
+        "sha512": "1222d70e0a403d98a6431806c4357b191fda4bb928eaf7e70b7374cffd0ceae8716812a4d2a0e09ddfeee7adfcb8a6ee8e046c4663ca272c6eb1badab83696c5",
+        "sha1": "d5680a4d2e2dde45115e41a5e22f6b32f9c80f50"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/Aqlf1Shp/versions/D3EZO1Kr/fabric-api-0.92.2%2B1.11.8%2B1.20.1.jar"
+      ],
+      "fileSize": 3041071
+    },
+    {
+      "path": "mods/RoughlyEnoughItems-12.1.785-forge.jar",
+      "hashes": {
+        "sha512": "c229232ce96368e16631ac0557caa2b14f3ee2c5d587241da7889b142aecb61eb68dd400f60f368951ffc741f2d375732daf2bf5a46ced239a6e4bb692066110",
+        "sha1": "9289cb01c920c1e539034f53ba3736095a2d4410"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/nfn13YXA/versions/IoS2AjPk/RoughlyEnoughItems-12.1.785-forge.jar"
+      ],
+      "fileSize": 2384003
+    },
+    {
+      "path": "mods/Connector-1.0.0-beta.46+1.20.1.jar",
+      "hashes": {
+        "sha512": "7d98bd11e72dc95fb30e84d2be9175f2687201451d0e21421074bd225fcbcac8b4bcc1cd1b2dbd5f03e798569cac2f3bcc87c1baba1b1ad002268c578b20a533",
+        "sha1": "a4ad6605706bebca9470a5affe6f44abaef5d507"
+      },
+      "env": {
+        "server": "required",
+        "client": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/u58R1TMW/versions/e8hSZ4vp/Connector-1.0.0-beta.46%2B1.20.1.jar"
+      ],
+      "fileSize": 5043375
+    },
+    {
+      "path": "mods/cloth-config-11.1.136-forge.jar",
+      "hashes": {
+        "sha512": "137c4af99c53d77317cbfb1cc8c49fc2761708b49d1992f51fd846960df41dde3a83519c987e081508d4ed90c603566f3d5a6cb620ad9d85b8f4de59aa9115ef",
+        "sha1": "c65d07748acc57ceb45d53b3964368b84f34d54f"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/9s6osm5g/versions/t8TXrZvZ/cloth-config-11.1.136-forge.jar"
+      ],
+      "fileSize": 1181413
+    },
+    {
+      "path": "mods/oculus-mc1.20.1-1.8.0.jar",
+      "hashes": {
+        "sha512": "1bb4ac77400d6684347988ed298a692c2cb15cf7923693607eb8739b171a20fef7412259e9e157111d9ce21779badab386029956f7d2283a9e611722a373e9d5",
+        "sha1": "984f774e71790deaec674c7587bd24e0711871b2"
+      },
+      "env": {
+        "server": "required",
+        "client": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/GchcoXML/versions/iQ1SwGc3/oculus-mc1.20.1-1.8.0.jar"
+      ],
+      "fileSize": 2851119
+    },
+    {
+      "path": "mods/polytone-1.20-3.5.5.jar",
+      "hashes": {
+        "sha1": "a86d3e40797525b86e5e0e8ecd77ac3924ce0f50",
+        "sha512": "383adfe5d8f4abe1754246dba406389a7cd7cf41881fd5343600e668edb4014a9c969a32447106699c477feffbea1e2eda2813f44bedc55aaf0212d67510df0b"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/3qAYkBMB/versions/WmxIq5K7/polytone-1.20-3.5.5.jar"
+      ],
+      "fileSize": 1125792
+    },
+    {
+      "path": "mods/forgeskyboxes-0.0.2-1.20.2-new.jar",
+      "hashes": {
+        "sha512": "49c356f4fdf555fc21801418d328dc1360b23821c200ed2fb7e6f40b306ebb7e891cf9a38039cf7cb0f6d952b56b6f98a4937c61f28e67a3dec0335c2df5facd",
+        "sha1": "db9a4c85219382655a713e8d6db8a8c27a8d1b3d"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/QEF20av3/versions/no0b9KGe/forgeskyboxes-0.0.2-1.20.2-new.jar"
+      ],
+      "fileSize": 234691
+    },
+    {
+      "path": "mods/entityculling-forge-1.8.2-mc1.20.1.jar",
+      "hashes": {
+        "sha512": "45c54f5f69cc75d0c9c79a716c182d3d9ee59d9883d2333030f191176ee70922ad281ea1b60d2f10bbaf8be96a3454c6d14ef484d1db49c153c97859dbc4ffb5",
+        "sha1": "0a465a4dbbc4b21b3465bb15796635b5c1024cf4"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/NNAgCjsB/versions/zinofwiX/entityculling-forge-1.8.2-mc1.20.1.jar"
+      ],
+      "fileSize": 478568
+    },
+    {
+      "path": "mods/embeddium-0.3.31+mc1.20.1 (1).jar",
+      "hashes": {
+        "sha512": "ffbf2da4685260a4d5c14c621708bd20722563f084f042d3dfb0a7b87f048e39299648c854a93939129da0d23a15a91ec628560d601e76074b08e275f6e132e9",
+        "sha1": "bb2fa8f3e493af16af9160d049f96c614a1faf2f"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/sk9rgfiA/versions/UTbfe5d1/embeddium-0.3.31%2Bmc1.20.1.jar"
+      ],
+      "fileSize": 1320675
+    },
+    {
+      "path": "mods/entity_model_features_1.20.1-forge-3.0.1.jar",
+      "hashes": {
+        "sha1": "7d1b1b7e07bafce1f6e79e4f3bcc8737dc765fe4",
+        "sha512": "7c862cd0cb86d83083a5dc8d1e66c813b30f7c4ae95d4c90f522d1562d48915ae9aa2ff7f3be4ce4165dae0855b10b53c3345d2edb079d26a1f668100bd54beb"
+      },
+      "env": {
+        "server": "required",
+        "client": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/4I1XuqiY/versions/BnU4PnqR/entity_model_features_1.20.1-forge-3.0.1.jar"
+      ],
+      "fileSize": 657484
+    },
+    {
+      "path": "mods/potacore-1.20.1-0.4.2.jar",
+      "hashes": {
+        "sha1": "d90d32d0d87d3e1235db1944563b5fc7954cf36f",
+        "sha512": "dc62b6c0548fe77b117fb84a53b6a78a7c1f95b3e8c41cc1b2cdf8483685ce5def94ead304fe9fd8a926c39eba331caaa53a6fdae434abc963f18aca3d7e370f"
+      },
+      "env": {
+        "server": "required",
+        "client": "required"
+      },
+      "downloads": [
+        "https://cdn.modrinth.com/data/55ByH6In/versions/1i1fLZws/potacore-1.20.1-0.4.2.jar"
+      ],
+      "fileSize": 236031
+    },
+    {
+      "path": "mods/@REPLACE-FILE-NAME@",
+      "hashes": {
+        "sha1": @REPLACE-SHA1@,
+        "sha512": @REPLACE-SHA512@
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "downloads": [
+        @REPLACE-DOWNLOAD-LINK@
+      ],
+      "fileSize": @REPLACE_JAR_SIZE@
+    }
+  ],
+  "dependencies": {
+    "forge": "47.3.11",
+    "minecraft": "1.20.1"
+  }
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "type": "MOD",
+    "id": "polytone",
+    "name": "Polytone",
+    "url": "https://modrinth.com/mod/polytone"
+  },
+  {
+    "type": "MOD",
+    "id": "continuity",
+    "name": "Continuity",
+    "url": "https://modrinth.com/mod/continuity"
+  },
+  {
+    "type": "RESOURCEPACK",
+    "id": "rp_crrp",
+    "name": "CR Resourcepack",
+    "url": "https://www.curseforge.com/minecraft/texture-packs/conquest-reforged-resource-pack/files"
+  },
+  {
+    "type": "MOD",
+    "id": "ardagrass",
+    "name": "ArdaGrass",
+    "url": "https://modrinth.com/mod/ardagrass"
+  },
+  {
+    "type": "MOD",
+    "id": "nuit",
+    "name": "Nuit",
+    "url": "https://modrinth.com/mod/nuit"
+  }
+]

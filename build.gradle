@@ -1,0 +1,687 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import org.apache.commons.io.FileUtils
+import org.apache.http.HttpEntity
+import org.apache.http.client.methods.CloseableHttpResponse
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.entity.mime.MultipartEntityBuilder
+import org.apache.http.impl.client.CloseableHttpClient
+import org.apache.http.impl.client.HttpClients
+import com.google.common.hash.Hashing
+import com.google.common.io.Files
+
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
+
+buildscript {
+    repositories {
+        maven { url = "https://repo.spongepowered.org/maven" }
+        //maven { url = 'https://sizableshrimp.me/maven' }
+        maven { url = "https://plugins.gradle.org/m2/" }
+        maven { url = "https://maven.parchmentmc.org" }
+        maven { url = 'https://maven.terraformersmc.com' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.spongepowered:mixingradle:0.7+"
+        classpath "org.apache.httpcomponents:httpmime:4.5.14"
+        classpath "org.parchmentmc:librarian:1.+"
+    }
+}
+
+plugins {
+    id "architectury-plugin" version "3.5-SNAPSHOT"
+    id "dev.architectury.loom" version "1.14-SNAPSHOT" apply false
+    id 'com.gradleup.shadow' version '9.3.0' apply false
+}
+
+architectury {
+    minecraft = rootProject.minecraft_version
+}
+
+subprojects {
+    apply plugin: "dev.architectury.loom-no-remap"
+
+    //loom {
+     //   silentMojangMappingsLicense()
+    //}
+
+    dependencies {
+        minecraft "net.minecraft:minecraft:${rootProject.minecraft_version}"
+        //mappings loom.officialMojangMappings()
+    }
+
+    //afterEvaluate {
+    //    tasks.matching { it.name in ["sourcesJar", "remapSourcesJar"] }.configureEach {
+    //        enabled = false
+    //    }
+    //}
+
+    //afterEvaluate {
+    //   tasks.matching { it.name in ["sourcesJar", "remapSourcesJar"] }.configureEach {
+    //        enabled = false
+    //    }
+    //}
+}
+
+allprojects {
+    apply plugin: "java"
+    apply plugin: "architectury-plugin"
+    apply plugin: "maven-publish"
+
+
+    base {
+        archivesName = "$rootProject.archives_base_name-$project.name-$rootProject.minecraft_version"
+    }
+
+    version = rootProject.mod_version
+    group = rootProject.maven_group
+
+    repositories {
+        // Add repositories to retrieve artifacts from in here.
+        // You should only use this when depending on other mods because
+        // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+        // See https://docs.gradle.org/current/userguide/declaring_repositories.html
+        // for more information about repositories.
+        maven {
+            url = "https://api.modrinth.com/maven"
+        }
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+        options.release = 25
+    }
+
+    java {
+        withSourcesJar()
+    }
+
+    jar {
+        zip64(true)
+        from "LICENSE"
+        from fileTree("$projectDir/common/src/main/generated/resources") { exclude "**/.cache/**" }
+    }
+
+    sourcesJar {
+        setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+        zip64(true)
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs += [
+                    'src/main/generated'
+            ]
+        }
+    }
+}
+
+def readMarkdownFile(String filePath) {
+    def file = file(filePath)
+    if (file.exists()) {
+        return file.text
+    } else {
+        throw new FileNotFoundException("File not found: ${filePath}")
+    }
+}
+
+task discordupload {
+    def curseLink = project.hasProperty('curseLink') ? project.property('curseLink') : 'https://www.curseforge.com/minecraft/mc-mods/conquest-reforged'
+    println "Curseforge (Fabric) download is: $curseLink"
+
+    def modrinthLink = project.hasProperty('modrinthLink') ? project.property('modrinthLink') : 'https://modrinth.com/mod/conquest-reforged'
+    println "Modrinth (Fabric) download is: $modrinthLink"
+
+    def curseLinkForge = project.hasProperty('curseLinkForge') ? project.property('curseLinkForge') : 'https://www.curseforge.com/minecraft/mc-mods/conquest-reforged'
+    println "Curseforge (Forge) download is: $curseLinkForge"
+
+    def modrinthLinkForge = project.hasProperty('modrinthLinkForge') ? project.property('modrinthLinkForge') : 'https://modrinth.com/mod/conquest-reforged'
+    println "Modrinth (Forge) download is: $modrinthLinkForge"
+
+
+    dependsOn(jar)
+    doLast {
+        String discordWebhook = "https://discord.com/api/webhooks/1315712233052831775/kaSUy5vAFBjRpcFrNRiuHhjCjsukRbd1_d1G8ddhHZP4LdIftDvMEATdCQQ_js-5jmEG"
+
+        if(discordWebhook != null) {
+
+            CloseableHttpClient httpClient = HttpClients.createDefault()
+            HttpPost uploadFile = new HttpPost(discordWebhook)
+
+            def changelogContent = readMarkdownFile("./CHANGELOG.md")
+
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create()
+            builder.addTextBody("content", "<@&1140282053871554661>" +
+                    "\n**New Conquest Reforged (Java) version** ``${{rootProject.mod_version}}`` **for Minecraft** ``${{rootProject.minecraft_version}}`` **is now available!**" +
+                    "\n\n**Downloads:**" +
+                    "\n[Modrinth (Fabric)](<${modrinthLink}>)" +
+                    "\n[CurseForge (Fabric)](<${curseLink}>)" +
+                    "\n[Modrinth (Forge)](<${modrinthLinkForge}>)" +
+                    "\n[CurseForge (Forge)](<${curseLinkForge}>)")
+
+            //builder.addTextBody("content", changelogContent)
+            HttpEntity multipart = builder.build()
+
+            uploadFile.setEntity(multipart)
+            CloseableHttpResponse response = httpClient.execute(uploadFile)
+            response.getEntity()
+
+            println("Posted links to Modpack")
+
+            MultipartEntityBuilder builder_changelog = MultipartEntityBuilder.create()
+            builder_changelog.addTextBody("content", "**Changelog:**```markdown\n${changelogContent}```")
+            HttpEntity multipart_changelog = builder_changelog.build()
+
+            uploadFile.setEntity(multipart_changelog)
+            CloseableHttpResponse response_changelog = httpClient.execute(uploadFile)
+            response_changelog.getEntity()
+
+        } else {
+            println("Discord webhook unspecified")
+        }
+    }
+}
+
+def calculateJarSha512(filepath) {
+    //def jarFile = file("fabric/build/libs/${rootProject.archives_base_name}-fabric-${rootProject.minecraft_version}-${{rootProject.mod_version}}.jar")
+    //def jarFile = file("fabric/build/libs/ConquestRefabricated-1.1.7.jar")
+    if (!filepath || filepath.trim().isEmpty()) {
+        //println "Error: Filepath is null or empty"
+        return ""
+    }
+    def jarFile = file(filepath)
+
+    if (jarFile.exists()) {
+        def sha512Hash = Files.asByteSource(jarFile)
+                .hash(Hashing.sha512())
+                .toString()
+        println "SHA-512 Hash of ${jarFile.name}: ${sha512Hash}"
+        return sha512Hash
+    } else {
+        println "JAR file not found: ${jarFile.path}"
+        return ""
+    }
+}
+
+def calculateJarSha1(filepath) {
+    if (!filepath || filepath.trim().isEmpty()) {
+        //println "Error: Filepath is null or empty"
+        return ""
+    }
+    def jarFile = file(filepath)
+
+    if (jarFile.exists()) {
+        def sha1Hash = Files.asByteSource(jarFile)
+                .hash(Hashing.sha1())
+                .toString()
+        println "SHA-1 Hash of ${jarFile.name}: ${sha1Hash}"
+        return sha1Hash
+    } else {
+        println "JAR file not found: ${jarFile.path}"
+        return ""
+    }
+}
+
+def calculateJarSize(filepath) {
+    if (!filepath || filepath.trim().isEmpty()) {
+        //println "Error: Filepath is null or empty"
+        return ""
+    }
+    def jarFile = file(filepath)
+
+    if (jarFile.exists()) {
+        def fileSize = jarFile.length()
+        println "File Size (${fileSize} bytes)"
+        return fileSize
+    } else {
+        println "JAR file not found: ${jarFile.path}"
+        return ""
+    }
+}
+
+def getModrinthURL(json) {
+    if (!json || json.trim().isEmpty()) {
+        return ""
+    }
+
+    println(json)
+    def jsonSlurper = new JsonSlurper()
+
+    def cleanJsonText = json.toString().trim().replaceAll(/\s+/, ' ')
+
+    // Option 2: Use JsonOutput to normalize
+    def normalizedJson = JsonOutput.toJson(jsonSlurper.parseText(cleanJsonText))
+
+    // Option 3: Most robust parsing
+    try {
+        def jsonData = new JsonSlurper().parseText(cleanJsonText)
+        def url = jsonData[0].url
+        println "Parsed URL: $url"
+        return url
+    } catch (Exception e) {
+        println "Parsing error: ${e.message}"
+        println "Original JSON: $cleanJsonText"
+    }
+
+    return json[0].url
+}
+
+task replaceJsonAndZipModrinth {
+    description 'Replace text in a JSON file and create a zip of its folder'
+
+    def uploadedFiles = project.hasProperty('mrFiles') ? project.property('mrFiles') : '[{"url":"Couldnt find Modrinth Files output"}]'
+    // Configure the task with these properties
+
+    def jsonFilePath = './modpacks/fabric/modrinth/modrinth.index.json'
+    def jarFilePath = "./fabric/build/libs/${rootProject.archives_base_name}-fabric-${rootProject.minecraft_version}-${{rootProject.mod_version}}.jar"
+    def replaceSHA512 = calculateJarSha512(jarFilePath)
+    def replaceSHA1 = calculateJarSha1(jarFilePath)
+    def replaceSize = calculateJarSize(jarFilePath)
+    def replaceURL = getModrinthURL(uploadedFiles)
+
+    calculateJarSha512()
+
+    doLast {
+        // Validate inputs
+        if (!jsonFilePath) {
+            throw new GradleException("jsonFilePath must be specified")
+        }
+        if (replaceSHA512 == null) {
+            throw new GradleException("replaceSHA512 must be specified")
+        }
+        if (replaceSHA1 == null) {
+            throw new GradleException("replaceSHA1 must be specified")
+        }
+        if (replaceSize == null) {
+            throw new GradleException("replaceSize must be specified")
+        }
+
+        // Resolve the file path
+        def jsonFile = file(jsonFilePath)
+        if (!jsonFile.exists()) {
+            throw new GradleException("JSON file not found: ${jsonFilePath}")
+        }
+
+        if (!jsonFile.canRead()) {
+            throw new GradleException("Cannot read JSON file. Check file permissions: ${jsonFilePath}")
+        }
+
+        // Get the parent directory, handling potential permission issues
+        def parentDir = jsonFile.parentFile
+        if (!parentDir.exists()) {
+            throw new GradleException("Parent directory does not exist: ${parentDir.absolutePath}")
+        }
+
+        if (!parentDir.canRead()) {
+            throw new GradleException("Cannot read parent directory. Check directory permissions: ${parentDir.absolutePath}")
+        }
+
+        // Read the original file content
+        def originalContent = jsonFile.text
+
+        // Create a temporary file for modified content
+        def tempFile = File.createTempFile("modified-", ".json")
+        tempFile.deleteOnExit()
+
+        // Replace the placeholder text
+        def modifiedContent = originalContent.replace("@REPLACE-SHA512@", "\"${replaceSHA512.toString()}\"").replace("@REPLACE-SHA1@", "\"${replaceSHA1.toString()}\"").replace("@REPLACE_JAR_SIZE@", replaceSize.toString()).replace("@REPLACE-DOWNLOAD-LINK@", "\"${ replaceURL }\"").replace("@REPLACE-FILE-NAME@", "${rootProject.archives_base_name}-fabric-${rootProject.minecraft_version}-${{rootProject.mod_version}}.jar").replace("@REPLACE-VERSION@", "${{rootProject.mod_version}}")
+        tempFile.write(modifiedContent)
+
+        // Ensure build directory exists
+        def buildDir = file("${project.buildDir}/json-zips")
+        buildDir.mkdirs()
+
+        // Create zip file
+        def zipFileName = "${rootProject.archives_base_name}-fabric-${rootProject.minecraft_version}-${{rootProject.mod_version}}.mrpack"
+        def zipFile = new File(buildDir, zipFileName)
+
+        // Create ZIP output stream
+        // Create ZIP output stream with error handling
+        try {
+            zipFile.withOutputStream { os ->
+                def zipOut = new ZipOutputStream(os)
+
+                // Collect all files from the parent directory
+                def filesToZip = FileUtils.listFiles(parentDir, null, true)
+
+                // Add each file to the zip
+                filesToZip.each { file ->
+                    // Determine the relative path within the zip
+                    def relativePath = parentDir.toPath().relativize(file.toPath()).toString()
+
+                    // Create a zip entry
+                    def zipEntry = new ZipEntry(relativePath)
+                    zipOut.putNextEntry(zipEntry)
+
+                    // Determine which file content to use
+                    def contentToWrite = (file.absolutePath == jsonFile.absolutePath) ?
+                            tempFile.bytes :
+                            file.bytes
+
+                    // Write the file contents
+                    zipOut.write(contentToWrite)
+                    zipOut.closeEntry()
+                }
+
+                // Close the zip output stream
+                zipOut.close()
+            }
+
+            // Print out the location of the created zip
+            println "Created zip file: ${zipFile.absolutePath}"
+        } catch (Exception e) {
+            throw new GradleException("Failed to create zip file: ${e.message}", e)
+        }
+    }
+}
+
+task replaceJsonAndZipModrinthForge {
+    description 'Replace text in a JSON file and create a zip of its folder'
+
+    def uploadedFiles = project.hasProperty('mrFiles') ? project.property('mrFiles') : '[{"url":"Couldnt find Modrinth Files output"}]'
+    // Configure the task with these properties
+
+    def jsonFilePath = './modpacks/forge/modrinth/modrinth.index.json'
+    def jarFilePath = "./forge/build/libs/${rootProject.archives_base_name}-forge-${rootProject.minecraft_version}-${{rootProject.mod_version}}.jar"
+    def replaceSHA512 = calculateJarSha512(jarFilePath)
+    def replaceSHA1 = calculateJarSha1(jarFilePath)
+    def replaceSize = calculateJarSize(jarFilePath)
+    def replaceURL = getModrinthURL(uploadedFiles)
+
+    calculateJarSha512()
+
+    doLast {
+        // Validate inputs
+        if (!jsonFilePath) {
+            throw new GradleException("jsonFilePath must be specified")
+        }
+        if (replaceSHA512 == null) {
+            throw new GradleException("replaceSHA512 must be specified")
+        }
+        if (replaceSHA1 == null) {
+            throw new GradleException("replaceSHA1 must be specified")
+        }
+        if (replaceSize == null) {
+            throw new GradleException("replaceSize must be specified")
+        }
+
+        // Resolve the file path
+        def jsonFile = file(jsonFilePath)
+        if (!jsonFile.exists()) {
+            throw new GradleException("JSON file not found: ${jsonFilePath}")
+        }
+
+        if (!jsonFile.canRead()) {
+            throw new GradleException("Cannot read JSON file. Check file permissions: ${jsonFilePath}")
+        }
+
+        // Get the parent directory, handling potential permission issues
+        def parentDir = jsonFile.parentFile
+        if (!parentDir.exists()) {
+            throw new GradleException("Parent directory does not exist: ${parentDir.absolutePath}")
+        }
+
+        if (!parentDir.canRead()) {
+            throw new GradleException("Cannot read parent directory. Check directory permissions: ${parentDir.absolutePath}")
+        }
+
+        // Read the original file content
+        def originalContent = jsonFile.text
+
+        // Create a temporary file for modified content
+        def tempFile = File.createTempFile("modified-", ".json")
+        tempFile.deleteOnExit()
+
+        // Replace the placeholder text
+        def modifiedContent = originalContent.replace("@REPLACE-SHA512@", "\"${replaceSHA512.toString()}\"").replace("@REPLACE-SHA1@", "\"${replaceSHA1.toString()}\"").replace("@REPLACE_JAR_SIZE@", replaceSize.toString()).replace("@REPLACE-DOWNLOAD-LINK@", "\"${ replaceURL }\"").replace("@REPLACE-FILE-NAME@", "${rootProject.archives_base_name}-forge-${rootProject.minecraft_version}-${{rootProject.mod_version}}.jar").replace("@REPLACE-VERSION@", "${{rootProject.mod_version}}")
+        tempFile.write(modifiedContent)
+
+        // Ensure build directory exists
+        def buildDir = file("${project.buildDir}/json-zips")
+        buildDir.mkdirs()
+
+        // Create zip file
+        def zipFileName = "${rootProject.archives_base_name}-forge-${rootProject.minecraft_version}-${{rootProject.mod_version}}.mrpack"
+        def zipFile = new File(buildDir, zipFileName)
+
+        // Create ZIP output stream
+        // Create ZIP output stream with error handling
+        try {
+            zipFile.withOutputStream { os ->
+                def zipOut = new ZipOutputStream(os)
+
+                // Collect all files from the parent directory
+                def filesToZip = FileUtils.listFiles(parentDir, null, true)
+
+                // Add each file to the zip
+                filesToZip.each { file ->
+                    // Determine the relative path within the zip
+                    def relativePath = parentDir.toPath().relativize(file.toPath()).toString()
+
+                    // Create a zip entry
+                    def zipEntry = new ZipEntry(relativePath)
+                    zipOut.putNextEntry(zipEntry)
+
+                    // Determine which file content to use
+                    def contentToWrite = (file.absolutePath == jsonFile.absolutePath) ?
+                            tempFile.bytes :
+                            file.bytes
+
+                    // Write the file contents
+                    zipOut.write(contentToWrite)
+                    zipOut.closeEntry()
+                }
+
+                // Close the zip output stream
+                zipOut.close()
+            }
+
+            // Print out the location of the created zip
+            println "Created zip file: ${zipFile.absolutePath}"
+        } catch (Exception e) {
+            throw new GradleException("Failed to create zip file: ${e.message}", e)
+        }
+    }
+}
+
+
+task replaceJsonAndZipCurse {
+    description 'Replace text in a JSON file and create a zip of its folder'
+
+    def fileID = project.hasProperty('curseFileID') ? project.property('curseFileID') : "Couldn't find Curse file ID output"
+
+    // Configure the task with these properties
+    def jsonFilePath = './modpacks/fabric/curseforge/manifest.json'
+    def replaceValue = fileID.toString()
+
+    calculateJarSha512()
+
+    doLast {
+        // Validate inputs
+        if (!jsonFilePath) {
+            throw new GradleException("jsonFilePath must be specified")
+        }
+        if (replaceValue == null) {
+            throw new GradleException("replaceValue must be specified")
+        }
+
+        // Resolve the file path
+        def jsonFile = file(jsonFilePath)
+        if (!jsonFile.exists()) {
+            throw new GradleException("JSON file not found: ${jsonFilePath}")
+        }
+
+        if (!jsonFile.canRead()) {
+            throw new GradleException("Cannot read JSON file. Check file permissions: ${jsonFilePath}")
+        }
+
+        // Get the parent directory, handling potential permission issues
+        def parentDir = jsonFile.parentFile
+        if (!parentDir.exists()) {
+            throw new GradleException("Parent directory does not exist: ${parentDir.absolutePath}")
+        }
+
+        if (!parentDir.canRead()) {
+            throw new GradleException("Cannot read parent directory. Check directory permissions: ${parentDir.absolutePath}")
+        }
+
+        // Read the original file content
+        def originalContent = jsonFile.text
+
+        // Create a temporary file for modified content
+        def tempFile = File.createTempFile("modified-", ".json")
+        tempFile.deleteOnExit()
+
+        // Replace the placeholder text
+        def modifiedContent = originalContent.replace("@REPLACE-ME@", replaceValue.toString()).replace("@REPLACE-VERSION@", "${{rootProject.mod_version}}")
+        tempFile.write(modifiedContent)
+
+        // Ensure build directory exists
+        def buildDir = file("${project.buildDir}/json-zips")
+        buildDir.mkdirs()
+
+        // Create zip file
+        def zipFileName = "${rootProject.archives_base_name}-fabric-${rootProject.minecraft_version}-${{rootProject.mod_version}}.zip"
+        def zipFile = new File(buildDir, zipFileName)
+
+        // Create ZIP output stream
+        // Create ZIP output stream with error handling
+        try {
+            zipFile.withOutputStream { os ->
+                def zipOut = new ZipOutputStream(os)
+
+                // Collect all files from the parent directory
+                def filesToZip = FileUtils.listFiles(parentDir, null, true)
+
+                // Add each file to the zip
+                filesToZip.each { file ->
+                    // Determine the relative path within the zip
+                    def relativePath = parentDir.toPath().relativize(file.toPath()).toString()
+
+                    // Create a zip entry
+                    def zipEntry = new ZipEntry(relativePath)
+                    zipOut.putNextEntry(zipEntry)
+
+                    // Determine which file content to use
+                    def contentToWrite = (file.absolutePath == jsonFile.absolutePath) ?
+                            tempFile.bytes :
+                            file.bytes
+
+                    // Write the file contents
+                    zipOut.write(contentToWrite)
+                    zipOut.closeEntry()
+                }
+
+                // Close the zip output stream
+                zipOut.close()
+            }
+
+            // Print out the location of the created zip
+            println "Created zip file: ${zipFile.absolutePath}"
+        } catch (Exception e) {
+            throw new GradleException("Failed to create zip file: ${e.message}", e)
+        }
+    }
+}
+
+task replaceJsonAndZipCurseForge {
+    description 'Replace text in a JSON file and create a zip of its folder'
+
+    def fileID = project.hasProperty('curseFileID') ? project.property('curseFileID') : "Couldn't find Curse file ID output"
+
+    // Configure the task with these properties
+    def jsonFilePath = './modpacks/forge/curseforge/manifest.json'
+    def replaceValue = fileID.toString()
+
+    calculateJarSha512()
+
+    doLast {
+        // Validate inputs
+        if (!jsonFilePath) {
+            throw new GradleException("jsonFilePath must be specified")
+        }
+        if (replaceValue == null) {
+            throw new GradleException("replaceValue must be specified")
+        }
+
+        // Resolve the file path
+        def jsonFile = file(jsonFilePath)
+        if (!jsonFile.exists()) {
+            throw new GradleException("JSON file not found: ${jsonFilePath}")
+        }
+
+        if (!jsonFile.canRead()) {
+            throw new GradleException("Cannot read JSON file. Check file permissions: ${jsonFilePath}")
+        }
+
+        // Get the parent directory, handling potential permission issues
+        def parentDir = jsonFile.parentFile
+        if (!parentDir.exists()) {
+            throw new GradleException("Parent directory does not exist: ${parentDir.absolutePath}")
+        }
+
+        if (!parentDir.canRead()) {
+            throw new GradleException("Cannot read parent directory. Check directory permissions: ${parentDir.absolutePath}")
+        }
+
+        // Read the original file content
+        def originalContent = jsonFile.text
+
+        // Create a temporary file for modified content
+        def tempFile = File.createTempFile("modified-", ".json")
+        tempFile.deleteOnExit()
+
+        // Replace the placeholder text
+        def modifiedContent = originalContent.replace("@REPLACE-ME@", replaceValue.toString()).replace("@REPLACE-VERSION@", "${{rootProject.mod_version}}")
+        tempFile.write(modifiedContent)
+
+        // Ensure build directory exists
+        def buildDir = file("${project.buildDir}/json-zips")
+        buildDir.mkdirs()
+
+        // Create zip file
+        def zipFileName = "${rootProject.archives_base_name}-forge-${rootProject.minecraft_version}-${{rootProject.mod_version}}.zip"
+        def zipFile = new File(buildDir, zipFileName)
+
+        // Create ZIP output stream
+        // Create ZIP output stream with error handling
+        try {
+            zipFile.withOutputStream { os ->
+                def zipOut = new ZipOutputStream(os)
+
+                // Collect all files from the parent directory
+                def filesToZip = FileUtils.listFiles(parentDir, null, true)
+
+                // Add each file to the zip
+                filesToZip.each { file ->
+                    // Determine the relative path within the zip
+                    def relativePath = parentDir.toPath().relativize(file.toPath()).toString()
+
+                    // Create a zip entry
+                    def zipEntry = new ZipEntry(relativePath)
+                    zipOut.putNextEntry(zipEntry)
+
+                    // Determine which file content to use
+                    def contentToWrite = (file.absolutePath == jsonFile.absolutePath) ?
+                            tempFile.bytes :
+                            file.bytes
+
+                    // Write the file contents
+                    zipOut.write(contentToWrite)
+                    zipOut.closeEntry()
+                }
+
+                // Close the zip output stream
+                zipOut.close()
+            }
+
+            // Print out the location of the created zip
+            println "Created zip file: ${zipFile.absolutePath}"
+        } catch (Exception e) {
+            throw new GradleException("Failed to create zip file: ${e.message}", e)
+        }
+    }
+}

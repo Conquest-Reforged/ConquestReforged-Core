@@ -1,0 +1,27 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.conquestrefabricated.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "PathNodeTypeMixin",
+    "LeavesBlockMixin",
+    "EntityRenderersMixin",
+    "AbstractClientPlayerEntityMixin",
+    "TallFlowerBlockMixin",
+    "TallPlantBlockMixin",
+    "FernBlockMixin",
+    "BlockSettingsOffsetMixin",
+    "EntityRenderersMixin",
+    "LayerBlockPathNodeMixin",
+    "AbstractBlockStateMixin",
+    "ModelLoaderMixin"
+  ],
+  "client": [
+    "CreativeModeTabAccessor",
+    "CreativeModeTabsAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

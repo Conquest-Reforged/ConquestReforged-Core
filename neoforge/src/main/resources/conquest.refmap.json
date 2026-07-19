@@ -1,0 +1,21 @@
+{
+  "mappings": {
+    "com/conquestrefabricated/mixin/TranslatedModelLoaderMixin": {
+      "putModel": "m_119352_"
+    },
+    "com/conquestrefabricated/mixin/AbstractClientPlayerEntityMixin": {
+      "getFovMultiplier": "method_3118"
+    },
+    "com/conquestrefabricated/mixin/BlockSettingsOffsetMixin": {
+      "offset": "method_49229"
+    },
+    "com/conquestrefabricated/mixin/LayerBlockPathNodeMixin": {
+      "getNodeType(Lnet/minecraft/world/BlockView;IIILnet/minecraft/entity/mob/MobEntity;)Lnet/minecraft/entity/ai/pathing/PathNodeType;": "method_25"
+    },
+    "com/conquestrefabricated/mixin/AbstractBlockStateMixin": {
+      "getCollisionShape(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/ShapeContext;)Lnet/minecraft/util/shape/VoxelShape;": "method_26194",
+      "getCollisionShape(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/util/shape/VoxelShape;": "method_26220",
+      "shouldBlockVision": "method_26230"
+    }
+  }
+}

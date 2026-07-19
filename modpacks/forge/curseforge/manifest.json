@@ -1,0 +1,109 @@
+{
+  "minecraft": {
+    "version": "1.20.1",
+    "modLoaders": [
+      {
+        "id": "forge-47.3.11",
+        "primary": true
+      }
+    ]
+  },
+  "manifestType": "minecraftModpack",
+  "manifestVersion": 1,
+  "name": "Conquest Reforged Modpack - Forge",
+  "version": "@REPLACE-VERSION@",
+  "author": "Conquest Studios",
+  "files": [
+    {
+      "projectID": 563977,
+      "fileID": 7394086,
+      "required": true
+    },
+    {
+      "projectID": 419699,
+      "fileID": 5137938,
+      "required": true
+    },
+    {
+      "projectID": 840788,
+      "fileID": 4917082,
+      "required": true
+    },
+    {
+      "projectID": 570017,
+      "fileID": 5706069,
+      "required": true
+    },
+    {
+      "projectID": 667299,
+      "fileID": 6336646,
+      "required": true
+    },
+    {
+      "projectID": 568563,
+      "fileID": 6925372,
+      "required": true
+    },
+    {
+      "projectID": 654373,
+      "fileID": 6101745,
+      "required": true
+    },
+    {
+      "projectID": 889079,
+      "fileID": 5387432,
+      "required": true
+    },
+    {
+      "projectID": 310111,
+      "fileID": 5846923,
+      "required": true
+    },
+    {
+      "projectID": 348521,
+      "fileID": 5729105,
+      "required": true
+    },
+    {
+      "projectID": 581495,
+      "fileID": 6020952,
+      "required": true
+    },
+    {
+      "projectID": 958094,
+      "fileID": 6933816,
+      "required": true
+    },
+    {
+      "projectID": 918052,
+      "fileID": 4775791,
+      "required": true
+    },
+    {
+      "projectID": 448233,
+      "fileID": 6780226,
+      "required": true
+    },
+    {
+      "projectID": 908741,
+      "fileID": 5681725,
+      "required": true
+    },
+    {
+      "projectID": 844662,
+      "fileID": 6922712,
+      "required": true
+    },
+    {
+      "projectID": 951521,
+      "fileID": 6820160,
+      "required": true
+    },
+    {
+      "projectID": 250077,
+      "fileID": @REPLACE-ME@,
+      "required": true
+    }
+  ],
+  "overrides": "overrides"
+}

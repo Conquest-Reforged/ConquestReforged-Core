@@ -1,0 +1,17 @@
+package com.conquestrefabricated.core.block.properties;
+
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+
+public interface Waterloggable extends net.minecraft.world.level.block.SimpleWaterloggedBlock {
+
+    BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+
+    static FluidState getFluidState(BlockState state) {
+        //todo check #getSource
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : Fluids.EMPTY.defaultFluidState();
+    }
+}
