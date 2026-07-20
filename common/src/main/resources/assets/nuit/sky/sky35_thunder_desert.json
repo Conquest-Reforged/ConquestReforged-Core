@@ -1,0 +1,55 @@
+{
+	"schemaVersion": 1,
+	"type": "square-textured",
+	"texture": "nuit/sky/rain/rain_atlas.png",
+	"blend": {
+		"type": "multiply"
+	},
+	"conditions": {
+		"weather": {
+			"entries": [
+				"thunder"
+			]
+		},
+		"skyboxes": {
+			"entries": [
+				"minecraft:overworld"
+			]
+		},
+		"biomes": {
+			"entries": [
+				"badlands",
+				"wooded_badlands",
+				"eroded_badlands",
+				"desert",
+				"savanna",
+				"savanna_plateau",
+				"windswept_savanna"
+			]
+		}
+	},
+	"properties": {
+		"layer": 34,
+		"fade": {
+			"duration": 24000,
+			"keyFrames": {}
+		},
+		"rotation": {
+			"mapping": {
+				"0": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"axis": {
+				"0": [
+					0.0,
+					-90.0,
+					0.0
+				]
+			},
+			"speed": 1.0
+		}
+	}
+}

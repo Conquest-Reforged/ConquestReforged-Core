@@ -1,0 +1,26 @@
+{
+	"ambientocclusion": false,
+	"textures": {
+		"0": "block/leaf_litter",
+		"particle": "block/leaf_litter"
+	},
+	"elements": [
+		{
+			"from": [0, 0.5, 0],
+			"to": [16, 0.5, 16],
+			"rotation": {"x": 0, "y": -180, "z": 0, "origin": [8, 0.5, 8]},
+			"faces": {
+				"up": {"uv": [0, 0, 16, 16], "texture": "#0", "tintindex": 0},
+				"down": {"uv": [0, 16, 16, 0], "texture": "#0", "tintindex": 0}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "1",
+			"origin": [0, 0, 0],
+			"color": 0,
+			"children": [0]
+		}
+	]
+}

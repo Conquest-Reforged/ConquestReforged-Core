@@ -1,0 +1,58 @@
+{
+	"schemaVersion": 1,
+	"type": "square-textured",
+	"texture": "nuit/sky/skybox/sky_box_atlas.png",
+	"blend": {
+		"type": "add"
+	},
+	"conditions": {
+		"weather": {
+			"entries": [
+				"rain",
+				"thunder"
+			]
+		},
+		"skyboxes": {
+			"entries": [
+				"minecraft:overworld"
+			]
+		},
+		"biomes": {
+			"entries": [
+				"badlands",
+				"wooded_badlands",
+				"eroded_badlands",
+				"desert",
+				"savanna",
+				"savanna_plateau",
+				"windswept_savanna"
+			]
+		}
+	},
+	"properties": {
+		"layer": 32,
+		"fade": {
+			"duration": 24000,
+			"keyFrames": {}
+		},
+		"rotation": {
+			"mapping": {
+				"0": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"axis": {
+				"0": [
+					0.0,
+					90.0,
+					0.0
+				]
+			},
+			"speed": 0.5
+		},
+		"transitionInDuration": 1000,
+		"transitionOutDuration": 1000
+	}
+}

@@ -1,0 +1,32 @@
+{
+	"schemaVersion": 1,
+	"type": "square-textured",
+	"texture": "nuit/sky/snow_shift/snow_shift_atlas.png",
+	"blend": {
+		"type": "add"
+	},
+	"conditions": {
+		"weather": {
+			"entries": [
+				"snow"
+			]
+		},
+		"skyboxes": {
+			"entries": [
+				"minecraft:overworld"
+			]
+		}
+	},
+	"properties": {
+		"layer": 36,
+		"fade": {
+			"duration": 24000,
+			"keyFrames": {
+				"11750": 1.0,
+				"13750": 0.0,
+				"23533": 0.0,
+				"23833": 1.0
+			}
+		}
+	}
+}

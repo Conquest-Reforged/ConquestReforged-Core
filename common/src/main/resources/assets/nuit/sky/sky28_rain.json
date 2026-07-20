@@ -1,0 +1,46 @@
+{
+	"schemaVersion": 1,
+	"type": "square-textured",
+	"texture": "nuit/sky/rain/rain_atlas.png",
+	"blend": {
+		"type": "multiply"
+	},
+	"conditions": {
+		"weather": {
+			"entries": [
+				"rain_biome"
+			]
+		},
+		"skyboxes": {
+			"entries": [
+				"minecraft:overworld"
+			]
+		}
+	},
+	"properties": {
+		"layer": 27,
+		"fade": {
+			"duration": 24000,
+			"keyFrames": {}
+		},
+		"rotation": {
+			"mapping": {
+				"0": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"axis": {
+				"0": [
+					0.0,
+					90.0,
+					0.0
+				]
+			},
+			"speed": 1.0
+		},
+		"transitionInDuration": 100,
+		"transitionOutDuration": 100
+	}
+}

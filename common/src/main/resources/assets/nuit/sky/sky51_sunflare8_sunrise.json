@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "type": "decorations",
+  "showSun": true,
+  "showMoon": false,
+  "showStars": false,
+  "sun": "nuit/sky/sunflare/sky_sunflare3_top.png",
+  "blend": {
+    "type": "decorations"
+  },
+  "conditions": {
+    "weather": {
+      "entries": [
+        "clear"
+      ]
+    },
+    "skyboxes": {
+      "entries": [
+        "minecraft:overworld"
+      ]
+    }
+  },
+  "properties": {
+	  "layer": 107,
+	  "fade": {
+		  "alwaysOn": false,
+		  "duration": 24000,
+		  "keyFrames": {
+			  "0": 0.5,
+			  "83": 1.0,
+			  "417": 1.0,
+			  "583": 0.0,
+			  "23917": 0.0,
+			  "23999": 0.5
+			}
+	  },
+	  "rotation": {
+		  "speed": 1.0,
+		  "mapping": {"0": [0.0, 0.0, -90.0]},
+		  "axis": {"0": [90.0, 0.0, 0.0]},
+		  "skyboxRotation": true
+	  }
+  }
+}

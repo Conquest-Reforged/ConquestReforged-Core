@@ -1,0 +1,37 @@
+{
+	"schemaVersion": 1,
+	"type": "square-textured",
+	"texture": "nuit/sky/rain_shift/rain_shift_atlas.png",
+	"blend": {
+		"type": "add"
+	},
+	"conditions": {
+		"weather": {
+			"entries": [
+				"clear"
+			]
+		},
+		"skyboxes": {
+			"entries": [
+				"minecraft:overworld"
+			]
+		},
+		"biomes": {
+			"entries": [
+				"the_void"
+			]
+		}
+	},
+	"properties": {
+		"layer": 43,
+		"fade": {
+			"duration": 24000,
+			"keyFrames": {
+				"11750": 1.0,
+				"12000": 0.0,
+				"23533": 0.0,
+				"23833": 1.0
+			}
+		}
+	}
+}

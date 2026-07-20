@@ -1,0 +1,7 @@
+{
+	"parent": "minecraft:block/parent_leaves_no_shade",
+	"textures": {
+		"leaves_1": "minecraft:block/birch_leaves_1",
+		"leaves_2": "minecraft:block/birch_leaves_2"
+	}
+}

@@ -1,0 +1,37 @@
+{
+	"schemaVersion": 1,
+	"type": "square-textured",
+	"texture": "nuit/sky/darken/darken_atlas.png",
+	"blend": {
+		"type": "multiply"
+	},
+	"conditions": {
+		"weather": {
+			"entries": ["clear"]
+		},
+		"skyboxes": {
+			"entries": ["minecraft:overworld"]
+		}
+	},
+	"properties": {
+		"layer": 0,
+		"fade": {
+			"duration": 24000,
+			"keyFrames": {
+				"0": 1.0,
+				"11750": 1.0,
+				"13750": 0.0,
+				"22000": 0.0
+			}
+		},
+		"rotation": {
+			"mapping": {
+				"0": [0.0, 0.0, 0.0]
+			},
+			"axis": {
+				"0": [0.0, 90.0, 0.0]
+			},
+			"speed": 0.5
+		}
+	}
+}

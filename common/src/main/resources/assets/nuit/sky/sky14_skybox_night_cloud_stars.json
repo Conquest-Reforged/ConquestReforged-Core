@@ -1,0 +1,49 @@
+{
+	"schemaVersion": 1,
+	"type": "square-textured",
+	"texture": "nuit/sky/skybox_night_cloud_stars/sky_cloud_star_atlas.png",
+	"blend": {
+		"type": "multiply"
+	},
+	"conditions": {
+		"weather": {
+			"entries": [
+				"clear"
+			]
+		},
+		"skyboxes": {
+			"entries": [
+				"minecraft:overworld"
+			]
+		}
+	},
+	"properties": {
+		"layer": 13,
+		"fade": {
+			"duration": 24000,
+			"keyFrames": {
+				"12500": 0.0,
+				"12833": 1.0,
+				"22334": 1.0,
+				"22667": 0.0
+			}
+		},
+		"rotation": {
+			"mapping": {
+				"0": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"axis": {
+				"0": [
+					0.0,
+					90.0,
+					0.0
+				]
+			},
+			"speed": 0.5
+		}
+	}
+}

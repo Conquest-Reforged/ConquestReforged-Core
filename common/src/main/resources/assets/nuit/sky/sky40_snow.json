@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"type": "square-textured",
+	"texture": "nuit/sky/snow/snow_atlas.png",
+	"blend": {
+		"type": "multiply"
+	},
+	"conditions": {
+		"weather": {
+			"entries": [
+				"snow"
+			]
+		},
+		"skyboxes": {
+			"entries": [
+				"minecraft:overworld"
+			]
+		},
+		"yRanges": {
+			"entries": [
+				{
+					"min": 100.0,
+					"max": 9999.0
+				}
+			]
+		}
+	},
+	"properties": {
+		"layer": 39,
+		"fade": {
+			"duration": 24000,
+			"keyFrames": {
+				"23533": 0.0,
+				"23833": 1.0
+			}
+		}
+	}
+}

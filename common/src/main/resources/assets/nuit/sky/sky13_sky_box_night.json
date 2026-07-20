@@ -1,0 +1,49 @@
+{
+	"schemaVersion": 1,
+	"type": "square-textured",
+	"texture": "nuit/sky/skybox_night/sky_cloud_night_dark_atlas.png",
+	"blend": {
+		"type": "add"
+	},
+	"conditions": {
+		"weather": {
+			"entries": [
+				"clear"
+			]
+		},
+		"skyboxes": {
+			"entries": [
+				"minecraft:overworld"
+			]
+		}
+	},
+	"properties": {
+		"layer": 12,
+		"fade": {
+			"duration": 24000,
+			"keyFrames": {
+				"12500": 0.0,
+				"12750": 1.0,
+				"23167": 1.0,
+				"23417": 0.0
+			}
+		},
+		"rotation": {
+			"mapping": {
+				"0": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"axis": {
+				"0": [
+					0.0,
+					90.0,
+					0.0
+				]
+			},
+			"speed": 0.5
+		}
+	}
+}

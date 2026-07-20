@@ -1,0 +1,49 @@
+{
+	"schemaVersion": 1,
+	"type": "square-textured",
+	"texture": "nuit/sky/skybox_sunrise/sky_sunrise_box_atlas.png",
+	"blend": {
+		"type": "add"
+	},
+	"conditions": {
+		"weather": {
+			"entries": [
+				"clear"
+			]
+		},
+		"skyboxes": {
+			"entries": [
+				"minecraft:overworld"
+			]
+		}
+	},
+	"properties": {
+		"layer": 16,
+		"fade": {
+			"duration": 24000,
+			"keyFrames": {
+				"250": 0.0,
+				"22917": 0.0,
+				"23333": 1.0,
+				"23500": 1.0
+			}
+		},
+		"rotation": {
+			"mapping": {
+				"0": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			"axis": {
+				"0": [
+					0.0,
+					90.0,
+					0.0
+				]
+			},
+			"speed": 0.5
+		}
+	}
+}

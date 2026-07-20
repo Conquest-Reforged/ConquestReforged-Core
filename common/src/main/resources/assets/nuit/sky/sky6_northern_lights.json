@@ -1,0 +1,32 @@
+{
+	"schemaVersion": 1,
+	"type": "square-textured",
+	"texture": "nuit/sky/northern_lights/northlight2_atlas.png",
+	"blend": {
+		"type": "add"
+	},
+	"conditions": {
+		"weather": {
+			"entries": [
+				"clear"
+			]
+		},
+		"skyboxes": {
+			"entries": [
+				"minecraft:overworld"
+			]
+		}
+	},
+	"properties": {
+		"layer": 5,
+		"fade": {
+			"duration": 24000,
+			"keyFrames": {
+				"18333": 0.0,
+				"18583": 1.0,
+				"18750": 1.0,
+				"19000": 0.0
+			}
+		}
+	}
+}
