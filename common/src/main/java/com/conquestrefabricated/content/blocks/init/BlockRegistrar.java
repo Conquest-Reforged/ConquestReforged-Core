@@ -32,113 +32,16 @@ public class BlockRegistrar {
 
     //@SubscribeEvent
     public static void blocks() {
-        com.conquestrefabricated.core.util.log.Log.info("Registering blocks");
+        //com.conquestrefabricated.core.util.log.Log.info("Registering blocks");
         init();
     }
 
     //@SubscribeEvent
     public static void items() {
-        com.conquestrefabricated.core.util.log.Log.info("Registering block items");
+        //com.conquestrefabricated.core.util.log.Log.info("Registering block items");
     }
 
     private static void init() {
-        TypeList refinedStoneCobbleBrickShapes = TypeList.of(Cube.class,
-                ArchSmall.class, ArchSmallHalf.class, ArchTwoMeter.class, ArchTwoMeterHalf.class,
-                ArrowSlit.class, WindowSmall.class, WindowSmallHalf.class,
-                Balustrade.class, Capital.class, Sphere.class,
-                Slab.class, SlabQuarter.class, SlabCorner.class, SlabEighth.class,
-                VerticalSlabCorner.class, VerticalSlabExtendable.class, VerticalCornerExtendable.class, VerticalQuarterExtendable.class,
-                Stairs.class, WallNew.class, Pillar.class);
-        TypeList refinedStoneCobbleBrickShapesVanilla = refinedStoneCobbleBrickShapes.removeAll(Cube.class, Stairs.class);
-        TypeList refinedStoneCobbleBrickShapesVanillaNoWall = refinedStoneCobbleBrickShapesVanilla.remove(WallNew.class);
-        TypeList refinedStoneCobbleBrickShapesTopOverlay = TypeList.of(TopOverlayInvertedCube.class, ArchSmall.class, ArchSmallHalf.class, ArchTwoMeter.class, ArchTwoMeterHalf.class, TopOverlayInvertedArrowSlit.class, TopOverlayInvertedWindowSmall.class, TopOverlayInvertedWindowSmallHalf.class, TopOverlayInvertedBalustrade.class, TopOverlayInvertedCapital.class, Sphere.class, TopOverlayInvertedSlab.class, TopOverlayInvertedSlabQuarter.class, TopOverlayInvertedSlabCorner.class, TopOverlayInvertedSlabEighth.class, TopOverlayInvertedVerticalSlabCorner.class, TopOverlayInvertedVerticalSlab.class, TopOverlayInvertedVerticalCorner.class, TopOverlayInvertedVerticalQuarter.class, TopOverlayInvertedStairs.class, WallNew.class, TopOverlayInvertedPillar.class);
-
-        TypeList roadShapes = TypeList.of(Cube.class,
-                Slab.class, SlabQuarter.class, SlabCorner.class, SlabEighth.class,
-                VerticalSlabCorner.class, VerticalSlabExtendable.class, VerticalCornerExtendable.class, VerticalQuarterExtendable.class,
-                Stairs.class);
-
-        TypeList largeStoneSlabShapes = TypeList.of(Cube.class,
-                ArchSmall.class, ArchSmallHalf.class, ArchTwoMeter.class, ArchTwoMeterHalf.class,
-                ArrowSlit.class, WindowSmall.class, WindowSmallHalf.class,
-                Balustrade.class, Capital.class,
-                Slab.class, SlabQuarter.class, SlabCorner.class, SlabEighth.class,
-                VerticalSlabCorner.class, VerticalSlabExtendable.class, VerticalCornerExtendable.class, VerticalQuarterExtendable.class,
-                Stairs.class, WallNew.class, Pillar.class);
-        TypeList largeStoneSlabShapesVanilla = largeStoneSlabShapes.remove(Cube.class);
-        TypeList largeStoneSlabShapesVanillaNoStairs = largeStoneSlabShapesVanilla.remove(Stairs.class);
-
-        TypeList wallCarvingsDesignsShapes = TypeList.of(Cube.class, VerticalSlab.class, VerticalCorner.class, VerticalQuarter.class, WallNew.class, Pillar.class);
-        TypeList wallCarvingsDesignsNoWallShapes = wallCarvingsDesignsShapes.removeAll(WallNew.class, Pillar.class);
-        TypeList wallCarvingsDesignsNoWallOverlayShapes = TypeList.of(OverlayCube.class, OverlayVerticalSlab.class, OverlayVerticalCorner.class, OverlayVerticalQuarter.class);
-        TypeList wallCarvingsDesignsPillarOverlayShapes = wallCarvingsDesignsNoWallOverlayShapes.add(OverlayPillar.class);
-
-        TypeList tudorShapes = TypeList.of(Cube.class, VerticalSlab.class, VerticalCorner.class, VerticalQuarter.class);
-        TypeList tudorSlashShapes = TypeList.of(Cube.class, TudorVerticalSlab.class, TudorVerticalCorner.class, TudorVerticalQuarter.class);
-
-        TypeList columnShapes = TypeList.of(Cube.class, VerticalSlabExtendable.class, VerticalCornerExtendable.class, VerticalQuarterExtendable.class, WallNew.class, Pillar.class);
-        TypeList columnShapesVanilla = columnShapes.remove(Cube.class);
-        TypeList columnShapes2 = columnShapes.replace(WallNew.class, WallColumn.class);
-        TypeList columnShapesLog = columnShapes2.replace(Cube.class, Log.class);
-        TypeList columnDoricCapitalShapes = TypeList.of(CubeCapital.class, VerticalSlabCapital.class, VerticalCornerCapital.class, VerticalQuarterCapital.class, PillarCapital.class, WallCapital.class);
-        TypeList columnDoricBaseShapes = TypeList.of(CubeBase.class, VerticalSlabBase.class, VerticalCornerBase.class, VerticalQuarterBase.class, PillarBase.class, WallBase.class);
-
-        TypeList plasterShapes = TypeList.of(Cube.class,
-                ArchSmall.class, ArchSmallHalf.class, ArchTwoMeter.class, ArchTwoMeterHalf.class,
-                ArrowSlit.class, WindowSmall.class, WindowSmallHalf.class,
-                Balustrade.class, Capital.class, Sphere.class,
-                SlabLessLayers.class, SlabQuarter.class, SlabCorner.class, SlabEighth.class,
-                VerticalSlabCorner.class, VerticalSlabExtendable.class, VerticalCornerExtendable.class, VerticalQuarterExtendable.class,
-                Stairs.class, WallNew.class, Pillar.class);
-        TypeList plasterShapesVanilla = plasterShapes.remove(Cube.class);
-
-        TypeList floorCeilingPatternShapes = TypeList.of(Cube.class,
-                Slab.class, SlabQuarter.class, SlabCorner.class, SlabEighth.class,
-                VerticalSlabCorner.class, VerticalSlab.class, VerticalCorner.class, VerticalQuarter.class,
-                Stairs.class);
-        TypeList floorCeilingPatternShapesVanilla = floorCeilingPatternShapes.remove(Cube.class);
-
-        TypeList strippedLogShapes = TypeList.of(Log.class, Bark.class, WallUniqueTexture.class, BeamPillar.class, BeamSlabLessLayers.class, BeamSlabQuarter.class, BeamSlabCorner.class, BeamSlabEighth.class, VerticalSlabCorner.class, VerticalSlabExtendable.class, VerticalCornerExtendable.class, VerticalQuarterExtendable.class, Stairs.class, BeamHorizontal.class, BeamVertical.class, DoorFrameLintels.class, DoorFramePost.class, Lintels.class, Posts.class, BeamBoards.class);
-        TypeList strippedLogVanillaShapes = strippedLogShapes.removeAll(Log.class, Bark.class);
-
-        TypeList logShapes = TypeList.of(Log.class, Bark.class, BranchLarge.class, LogPillar.class, Branch.class, BranchSmall.class, Stump.class, SlabLessLayers.class, SlabQuarter.class, SlabCorner.class, SlabEighth.class, VerticalSlabCorner.class, VerticalSlabExtendable.class, VerticalCornerExtendable.class, LogVerticalQuarter.class, LogVerticalQuarterStump.class, Stairs.class);
-        TypeList logShapesVanilla = logShapes.removeAll(Log.class, Bark.class);
-
-        TypeList planksShapes = TypeList.of(Cube.class,
-                WindowSmall.class, WindowSmallHalf.class,
-                Balustrade.class, Capital.class, Sphere.class,
-                SlabLessLayers.class, SlabQuarter.class, SlabCorner.class, SlabEighth.class,
-                VerticalSlabCorner.class, VerticalSlabExtendable.class, VerticalCornerExtendable.class, VerticalQuarterExtendable.class,
-                Stairs.class, WallNew.class, Pillar.class);
-        TypeList planksVerticalShapes = planksShapes.add(BoardsVertical.class);
-        TypeList planksVerticalCrossFenceShapes = planksVerticalShapes.add(FenceCross.class);
-        TypeList planksHorizontalShapes = planksShapes.add(BoardsHorizontal.class);
-
-        TypeList thatchShapes = TypeList.of(Cube.class, Slab.class, SlabQuarter.class, SlabCorner.class, SlabEighth.class, WallNew.class, Pillar.class, VerticalSlabCorner.class, VerticalSlabExtendable.class, VerticalCornerExtendable.class, VerticalQuarterExtendable.class, Stairs.class, Capital.class, Bit.class);
-        TypeList clothShapes = TypeList.of(Cube.class, Slab.class, SlabQuarter.class, SlabCorner.class, SlabEighth.class, VerticalSlabCorner.class, VerticalSlab.class, VerticalCorner.class, VerticalQuarter.class, Stairs.class);
-        TypeList clothShapesVanilla = clothShapes.remove(Cube.class);
-
-        TypeList roughNaturalRockShapes = TypeList.of(Cube.class, Slab.class, SlabQuarter.class, SlabCorner.class, SlabEighth.class, VerticalSlabCorner.class, VerticalSlabExtendable.class, VerticalCornerExtendable.class, VerticalQuarterExtendable.class, Stairs.class);
-        TypeList roughNaturalRockShapesVanilla = roughNaturalRockShapes.remove(Cube.class);
-        TypeList roughNaturalRockShapesRocks = roughNaturalRockShapes.add(Rocks.class);
-        TypeList roughNaturalRockShapesRocksVanilla = roughNaturalRockShapesVanilla.add(Rocks.class);
-
-        TypeList smoothNaturalRockShapes = TypeList.of(Cube.class, ArrowSlit.class, WindowSmall.class, WindowSmallHalf.class, Balustrade.class, Capital.class, Sphere.class, Slab.class, SlabQuarter.class, SlabCorner.class, SlabEighth.class, VerticalSlabCorner.class, VerticalSlabExtendable.class, VerticalCornerExtendable.class, VerticalQuarterExtendable.class, Stairs.class, WallNew.class, Pillar.class);
-        TypeList smoothNaturalRockShapesRocks = smoothNaturalRockShapes.add(Rocks.class);
-        TypeList smoothNaturalRockShapesVanilla = smoothNaturalRockShapesRocks.removeAll(Cube.class, Stairs.class);
-        TypeList smoothNaturalRockShapesVanillaNoWall = smoothNaturalRockShapesVanilla.remove(WallNew.class);
-
-        TypeList sandGravelShapes = TypeList.of(Cube.class, Layer.class, SlabQuarter.class, SlabCorner.class, SlabEighth.class, VerticalSlabCorner.class, VerticalSlab.class, VerticalCorner.class, VerticalQuarter.class, Stairs.class);
-        TypeList sandGravelShapesVanilla = sandGravelShapes.remove(Cube.class);
-        TypeList sandGravelShapesOverlay = TypeList.of(TintedOverlayLayer.class, TintedOverlayStairs.class);
-
-        TypeList grassGroundShapes = TypeList.of(Cube.class, Layer.class, Stairs.class, VerticalSlab.class, VerticalCorner.class, VerticalQuarter.class);
-
-        TypeList dirtShapes = TypeList.of(Cube.class, Slab.class, SlabQuarter.class, SlabCorner.class, SlabEighth.class, VerticalSlabCorner.class, VerticalSlab.class, VerticalCorner.class, VerticalQuarter.class, Stairs.class);
-        TypeList dirtShapesVanilla = dirtShapes.remove(Cube.class);
-
-        TypeList roofTileShapes = TypeList.of(Cube.class, SlabLessLayers.class, SlabQuarter.class, SlabCorner.class, SlabEighth.class, VerticalSlabCorner.class, VerticalSlab.class, VerticalCorner.class, VerticalQuarter.class, WallNew.class, Pillar.class, Capital.class, Stairs.class);
-        TypeList roofTileShapesVanilla = roofTileShapes.remove(Cube.class);
 
         //================================================================================================================================================================
         // Registering blocks
