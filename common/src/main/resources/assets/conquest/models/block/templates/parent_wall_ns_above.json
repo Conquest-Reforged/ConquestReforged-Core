@@ -1,0 +1,10 @@
+{
+	"parent": "block/wall_ns_above_topbottom",
+	"textures": {
+		"side": "block/cobblestone",
+		"particle": "#side",
+		"wall": "#side",
+		"top": "#side",
+		"bottom": "#side"
+	}
+}

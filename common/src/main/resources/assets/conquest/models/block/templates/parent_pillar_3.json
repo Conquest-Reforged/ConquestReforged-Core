@@ -1,0 +1,26 @@
+{
+	"credit": "Hippokleides",
+	"parent": "block/block",
+	"textures": {
+		"side": "block/acacia_planks",
+		"top": "#side",
+		"bottom": "#side",
+		"particle": "#side"
+	},
+	"elements": [
+		{
+			"name": "Center post",
+			"from": [5, 0, 5],
+			"to": [11, 16, 11],
+			"rotation": {"angle": 0, "axis": "y", "origin": [10, 8, 10]},
+			"faces": {
+				"north": {"uv": [5, 0, 11, 16], "texture": "#side"},
+				"east": {"uv": [5, 0, 11, 16], "texture": "#side"},
+				"south": {"uv": [5, 0, 11, 16], "texture": "#side"},
+				"west": {"uv": [5, 0, 11, 16], "texture": "#side"},
+				"up": {"uv": [5, 5, 11, 11], "texture": "#top", "cullface": "up"},
+				"down": {"uv": [5, 5, 11, 11], "texture": "#bottom", "cullface": "down"}
+			}
+		}
+	]
+}

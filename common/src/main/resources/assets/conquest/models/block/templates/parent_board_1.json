@@ -1,0 +1,29 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "block/block",
+	"textures": {
+		"particle": "conquest:block/1_basic_refined/3_wood/aspen_wood_beam",
+		"side": "conquest:block/1_basic_refined/3_wood/aspen_wood_beam"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 13.495],
+			"to": [16, 6, 16],
+			"faces": {
+				"north": {"uv": [10, 0, 16, 16], "rotation": 90, "texture": "#side"},
+				"east": {"uv": [6, 13.5, 0, 16], "rotation": 90, "texture": "#side"},
+				"south": {"uv": [6, 0, 0, 16], "rotation": 90, "texture": "#side"},
+				"west": {"uv": [0, 0, 6, 2.5], "rotation": 270, "texture": "#side"},
+				"up": {"uv": [8, 0, 10.5, 16], "rotation": 270, "texture": "#side"},
+				"down": {"uv": [1, 0, 3.5, 16], "rotation": 270, "texture": "#side"}
+			}
+		}
+	],
+	"display": {
+		"gui": {
+			"rotation": [30, 135, 0],
+			"translation": [-2.25, 0, 0],
+			"scale": [0.625, 0.625, 0.625]
+		}
+	}
+}

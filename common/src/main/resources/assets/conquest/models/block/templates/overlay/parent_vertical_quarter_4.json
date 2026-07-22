@@ -1,0 +1,43 @@
+{
+	"parent": "block/block",
+	"textures": {
+		"top": "#side",
+		"bottom": "#side",
+		"top_overlay": "#overlay",
+		"bottom_overlay": "#overlay",
+		"particle": "#side"
+	},
+	"elements": [
+		{
+			"from": [8, 0, 8],
+			"to": [16, 16, 16],
+			"faces": {
+				"north": {"uv": [0, 0, 8, 16], "texture": "#side"},
+				"east": {"uv": [0, 0, 8, 16], "texture": "#side", "cullface": "east"},
+				"south": {"uv": [8, 0, 16, 16], "texture": "#side", "cullface": "south"},
+				"west": {"uv": [8, 0, 16, 16], "texture": "#side"},
+				"up": {"uv": [8, 8, 0, 0], "texture": "#top", "cullface": "up"},
+				"down": {"uv": [8, 16, 0, 8], "texture": "#bottom", "cullface": "down"}
+			}
+		},
+			{
+			"from": [8, 0, 8],
+			"to": [16, 16, 16],
+			"faces": {
+				"north": {"uv": [0, 0, 8, 16], "texture": "#overlay", "tintindex": 0},
+				"east": {"uv": [0, 0, 8, 16], "texture": "#overlay", "cullface": "east", "tintindex": 0},
+				"south": {"uv": [8, 0, 16, 16], "texture": "#overlay", "cullface": "south", "tintindex": 0},
+				"west": {"uv": [8, 0, 16, 16], "texture": "#overlay", "tintindex": 0},
+				"up": {"uv": [8, 8, 0, 0], "texture": "#top_overlay", "cullface": "up", "tintindex": 0},
+				"down": {"uv": [8, 16, 0, 8], "texture": "#bottom_overlay", "cullface": "down", "tintindex": 0}
+			}
+		}
+	],
+	"display": {
+		"gui": {
+			"rotation": [30, 45, 0],
+			"translation": [-2.25, 0, 0],
+			"scale": [0.625, 0.625, 0.625]
+		}
+	}
+}

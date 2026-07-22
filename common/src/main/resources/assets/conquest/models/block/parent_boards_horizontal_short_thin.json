@@ -1,0 +1,6 @@
+{
+	"parent": "conquest:block/templates/parent_boards_horizontal_short_thin",
+	"textures": {
+		"top": "conquest:block/1_basic_refined/3_wood/pine_wood_planks"
+	}
+}

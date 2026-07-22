@@ -1,0 +1,65 @@
+{
+	"parent": "block/block",
+	"textures": {
+		"top": "#side",
+		"bottom": "#side",
+		"top_overlay": "#overlay",
+		"bottom_overlay": "#overlay",
+		"particle": "#side"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 14],
+			"to": [16, 16, 16],
+			"faces": {
+				"north": {"uv": [0, 0, 16, 16], "texture": "#side"},
+				"east": {"uv": [0, 0, 2, 16], "texture": "#side"},
+				"south": {"uv": [0, 0, 16, 16], "texture": "#side"},
+				"west": {"uv": [14, 0, 16, 16], "texture": "#side"},
+				"up": {"uv": [0, 14, 16, 16], "texture": "#top"},
+				"down": {"uv": [0, 0, 16, 2], "texture": "#bottom"}
+			}
+		},
+		{
+			"from": [14, 0, 0],
+			"to": [16, 16, 14],
+			"faces": {
+				"north": {"uv": [0, 0, 2, 16], "texture": "#side"},
+				"east": {"uv": [2, 0, 16, 16], "texture": "#side"},
+				"west": {"uv": [0, 0, 14, 16], "texture": "#side"},
+				"up": {"uv": [14, 0, 16, 14], "texture": "#top"},
+				"down": {"uv": [14, 2, 16, 16], "texture": "#bottom"}
+			}
+		},
+				{
+			"from": [0, 0, 14],
+			"to": [16, 16, 16],
+			"faces": {
+				"north": {"uv": [0, 0, 16, 16], "texture": "#overlay", "tintindex": 0},
+				"east": {"uv": [0, 0, 2, 16], "texture": "#overlay", "tintindex": 0},
+				"south": {"uv": [0, 0, 16, 16], "texture": "#overlay", "tintindex": 0},
+				"west": {"uv": [14, 0, 16, 16], "texture": "#overlay", "tintindex": 0},
+				"up": {"uv": [0, 14, 16, 16], "texture": "#top_overlay", "tintindex": 0},
+				"down": {"uv": [0, 0, 16, 2], "texture": "#bottom_overlay", "tintindex": 0}
+			}
+		},
+		{
+			"from": [14, 0, 0],
+			"to": [16, 16, 14],
+			"faces": {
+				"north": {"uv": [0, 0, 2, 16], "texture": "#overlay", "tintindex": 0},
+				"east": {"uv": [2, 0, 16, 16], "texture": "#overlay", "tintindex": 0},
+				"west": {"uv": [0, 0, 14, 16], "texture": "#overlay", "tintindex": 0},
+				"up": {"uv": [14, 0, 16, 14], "texture": "#top_overlay", "tintindex": 0},
+				"down": {"uv": [14, 2, 16, 16], "texture": "#bottom_overlay", "tintindex": 0}
+			}
+		}
+	],
+	"display": {
+		"gui": {
+			"rotation": [30, 135, 0],
+			"translation": [0, -0.5, 0],
+			"scale": [0.625, 0.625, 0.625]
+		}
+	}
+}
