@@ -67,6 +67,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.function.Supplier;
 
 
 public class RefabricatedModClient implements ClientModInitializer {
@@ -242,11 +243,11 @@ public class RefabricatedModClient implements ClientModInitializer {
 
         CreativeModeTab tab = BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(CreativeModeTabs.BUILDING_BLOCKS);
         CreativeModeTabAccessor accessor = (CreativeModeTabAccessor) tab;
-        accessor.conquest$setIcon(() -> Provider.block("conquest:lime_mortar_masonry").toStack().get());
+        accessor.conquest$setIcon(ModGroups.iconWithFallback("conquest:lime_mortar_masonry", "minecraft:bricks"));
 
         CreativeModeTab tab1 = BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(CreativeModeTabs.COLORED_BLOCKS);
         CreativeModeTabAccessor accessor1 = (CreativeModeTabAccessor) tab1;
-        accessor1.conquest$setIcon(() -> Provider.block("conquest:schist_dragon_head").toStack().get());
+        accessor1.conquest$setIcon(ModGroups.iconWithFallback("conquest:schist_dragon_head", "minecraft:chiseled_quartz_block"));
 
         CreativeModeTab tab2 = BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(CreativeModeTabs.NATURAL_BLOCKS);
         CreativeModeTabAccessor accessor2 = (CreativeModeTabAccessor) tab2;
@@ -254,19 +255,19 @@ public class RefabricatedModClient implements ClientModInitializer {
 
         CreativeModeTab tab4 = BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(CreativeModeTabs.FUNCTIONAL_BLOCKS);
         CreativeModeTabAccessor accessor4 = (CreativeModeTabAccessor) tab4;
-        accessor4.conquest$setIcon(() -> Provider.block("conquest:andalusian_mosaic").toStack().get());
+        accessor4.conquest$setIcon(ModGroups.iconWithFallback("conquest:andalusian_mosaic", "minecraft:red_glazed_terracotta"));
 
         CreativeModeTab tab5 = BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(CreativeModeTabs.REDSTONE_BLOCKS);
         CreativeModeTabAccessor accessor5 = (CreativeModeTabAccessor) tab5;
-        accessor5.conquest$setIcon(() -> Provider.block("conquest:etruscan_wall_design_1").toStack().get());
+        accessor5.conquest$setIcon(ModGroups.iconWithFallback("conquest:etruscan_wall_design_1", "minecraft:pink_glazed_terracotta"));
 
         CreativeModeTab tab6 = BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(CreativeModeTabs.TOOLS_AND_UTILITIES);
         CreativeModeTabAccessor accessor6 = (CreativeModeTabAccessor) tab6;
-        accessor6.conquest$setIcon(() -> Provider.block("conquest:tudor_cross_frame").toStack().get());
+        accessor6.conquest$setIcon(ModGroups.iconWithFallback("conquest:tudor_cross_frame", "minecraft:barrier"));
 
         CreativeModeTab tab7 = BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(CreativeModeTabs.COMBAT);
         CreativeModeTabAccessor accessor7 = (CreativeModeTabAccessor) tab7;
-        accessor7.conquest$setIcon(() -> Provider.block("conquest:terracotta_imbrices_and_tegulae").toStack().get());
+        accessor7.conquest$setIcon(ModGroups.iconWithFallback("conquest:terracotta_imbrices_and_tegulae", "minecraft:pink_terracotta"));
 
         CreativeModeTab tab8 = BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(CreativeModeTabs.FOOD_AND_DRINKS);
         CreativeModeTabAccessor accessor8 = (CreativeModeTabAccessor) tab8;
@@ -274,7 +275,7 @@ public class RefabricatedModClient implements ClientModInitializer {
 
         CreativeModeTab tab9 = BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(CreativeModeTabs.INGREDIENTS);
         CreativeModeTabAccessor accessor9 = (CreativeModeTabAccessor) tab9;
-        accessor9.conquest$setIcon(() -> Provider.block("conquest:carved_oak_wood").toStack().get());
+        accessor9.conquest$setIcon(ModGroups.iconWithFallback("conquest:carved_oak_wood", "minecraft:oak_door"));
 
         CreativeModeTab tab10 = BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(CreativeModeTabs.SPAWN_EGGS);
         CreativeModeTabAccessor accessor10 = (CreativeModeTabAccessor) tab10;

@@ -5,7 +5,9 @@ import com.conquestrefabricated.core.util.Provider;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import java.util.function.Supplier;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class ModGroups {
     //Page 1 (10 tabs)
@@ -23,13 +25,13 @@ public class ModGroups {
     //Page 2 (10 tabs)
     public static final CreativeModeTab WINDOWS_AND_GLASS = createFamilyGroup(10, "ff_windows_and_glass", block("minecraft:glass"));
     public static final CreativeModeTab CLOTH_AND_FIBERS = createFamilyGroup(11, "g_cloth_and_fibers", block("conquest:magenta_carpet"));
-    public static final CreativeModeTab FURNITURE = createFamilyGroup(12, "gg_furniture", block("conquest:old_rustic_bed"));
+    public static final CreativeModeTab FURNITURE = createFamilyGroup(12, "gg_furniture", iconWithFallback("conquest:old_rustic_bed", "minecraft:red_bed"));
     public static final CreativeModeTab APPLIANCES = createFamilyGroup(13, "h_appliances", block("minecraft:loom"));
-    public static final CreativeModeTab STORAGE = createFamilyGroup(14, "hh_storage", block("conquest:rounded_chest"));
-    public static final CreativeModeTab DECORATIONS = createFamilyGroup(15, "i_decor", block("conquest:towel_rack"));
-    public static final CreativeModeTab POTTERY = createFamilyGroup(15, "ia_pottery", block("conquest:terracotta_urn"));
-    public static final CreativeModeTab LIGHTING = createFamilyGroup(16, "ii_lighting", block("conquest:small_lantern"));
-    public static final CreativeModeTab TOOL_BLOCKS = createFamilyGroup(17, "j_tool_blocks", block("conquest:rack_of_pitchforks_scythes_and_flails"));
+    public static final CreativeModeTab STORAGE = createFamilyGroup(14, "hh_storage", iconWithFallback("conquest:rounded_chest", "minecraft:chest"));
+    public static final CreativeModeTab DECORATIONS = createFamilyGroup(15, "i_decor", iconWithFallback("conquest:towel_rack", "minecraft:diamond_block"));
+    public static final CreativeModeTab POTTERY = createFamilyGroup(15, "ia_pottery", iconWithFallback("conquest:terracotta_urn", "minecraft:barrier"));
+    public static final CreativeModeTab LIGHTING = createFamilyGroup(16, "ii_lighting", iconWithFallback("conquest:small_lantern", "minecraft:campfire"));
+    public static final CreativeModeTab TOOL_BLOCKS = createFamilyGroup(17, "j_tool_blocks", iconWithFallback("conquest:rack_of_pitchforks_scythes_and_flails", "minecraft:target"));
     public static final CreativeModeTab FOOD_BLOCKS = createFamilyGroup(18, "jj_food_blocks", block("conquest:big_bread"));
 
     //Page 3 (10 tabs)
@@ -83,6 +85,16 @@ public class ModGroups {
         //FamilyGroup.stream().forEach(familyGroup -> {
         //    ItemGroupManager.getInstance().register(familyGroup);
         //});
+    }
+
+    public static Supplier<ItemStack> iconWithFallback(String primaryBlockId, String fallbackBlockId) {
+        return () -> {
+            Item item = Provider.block(primaryBlockId).get().asItem();
+            if (item == Items.AIR) {
+                item = Provider.block(fallbackBlockId).get().asItem();
+            }
+            return new ItemStack(item);
+        };
     }
 
     public static Supplier<ItemStack> block(String name) {

@@ -1,10 +1,11 @@
 {
+	"format_version": "1.21.11",
 	"credit": "Made with Blockbench",
 	"ambientocclusion": false,
 	"textures": {
-		"1": "block/flowerbase_poppy",
-		"cross": "block/poppy",
-		"particle": "block/poppy"
+		"1": "block/flower_base",
+		"particle": "block/poppy",
+		"cross": "block/poppy"
 	},
 	"elements": [
 		{

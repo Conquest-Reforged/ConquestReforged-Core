@@ -1,0 +1,14 @@
+{
+  "parent": "block/block",
+  "loader": "neoforge:obj",
+  "model": "conquest:models/obj/parent_arrowslit_overlay_top_inverted_back.obj",
+  "emissive_ambient": true,
+  "flip_v": true,
+  "textures": {
+    "particle": "#side",
+    "side": "#side",
+	"overlay": "#overlay",
+    "top": "#side",
+    "bottom": "#side"
+  }
+}
