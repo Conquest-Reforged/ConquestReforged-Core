@@ -11,16 +11,16 @@ public class RefabricatedModServer implements DedicatedServerModInitializer {
     @Override
     public void onInitializeServer() {
         BlockFamilyInit.init();
-        FamilyGroup.setAddRootItems();
-        FamilyGroup.FAMILY_GROUPS.forEach(familyGroup -> {
-            if (familyGroup.cached.isEmpty()) {
-                NonNullList<ItemStack> list = NonNullList.create();
-                familyGroup.populate(list);
-                familyGroup.sorter.apply(list);
-                familyGroup.sorter.sort(list);
-                familyGroup.cached = new ArrayList<>(list);
-            }
-        });
+//        FamilyGroup.setAddRootItems();
+//        FamilyGroup.FAMILY_GROUPS.forEach(familyGroup -> {
+//            if (familyGroup.cached.isEmpty()) {
+//                NonNullList<ItemStack> list = NonNullList.create();
+//                familyGroup.populate(list);
+//                familyGroup.sorter.apply(list);
+//                familyGroup.sorter.sort(list);
+//                familyGroup.cached = new ArrayList<>(list);
+//            }
+//        });
 
     }
 }

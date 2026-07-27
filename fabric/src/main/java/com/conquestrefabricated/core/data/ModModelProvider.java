@@ -355,7 +355,7 @@ public class ModModelProvider extends FabricModelProvider {
                         .select(Half.BOTTOM, 1, 2, BlockModelGenerators.plainVariant(identifierLongMid).with(OffsetVariantSetting.yOffset(-8)))
                         .select(Half.BOTTOM, 1, 3, BlockModelGenerators.plainVariant(identifierLongWide).with(OffsetVariantSetting.yOffset(-8)))
                 )
-                .with(BoardsHorizontal.createEastDefaultSymmetricalRotationStates()));
+                .with(createEastDefaultSymmetricalRotationStates()));
     }
 
     private void registerBoardsHorizontal(BlockModelGenerators blockStateModelGenerator, Block block, BlockData blockData) {
@@ -389,7 +389,16 @@ public class ModModelProvider extends FabricModelProvider {
                         .select(Half.BOTTOM, 1, 2, BlockModelGenerators.plainVariant(identifierLongMid).with(OffsetVariantSetting.yOffset(-8)))
                         .select(Half.BOTTOM, 1, 3, BlockModelGenerators.plainVariant(identifierLongWide).with(OffsetVariantSetting.yOffset(-8)))
                 )
-                .with(BoardsHorizontal.createEastDefaultSymmetricalRotationStates()));
+                .with(createEastDefaultSymmetricalRotationStates()));
+    }
+
+
+    public static PropertyDispatch<VariantMutator> createEastDefaultSymmetricalRotationStates() {
+        return PropertyDispatch.modify(BlockStateProperties.HORIZONTAL_FACING)
+                .select(Direction.EAST, BlockModelGenerators.NOP)
+                .select(Direction.SOUTH, BlockModelGenerators.Y_ROT_90)
+                .select(Direction.WEST, BlockModelGenerators.NOP)
+                .select(Direction.NORTH, BlockModelGenerators.Y_ROT_90);
     }
 
     private void registerPost(BlockModelGenerators blockStateModelGenerator, Block block, BlockData blockData) {

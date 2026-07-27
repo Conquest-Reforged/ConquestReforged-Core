@@ -6,21 +6,21 @@
   "mixins": [
     "PathNodeTypeMixin",
     "LeavesBlockMixin",
-    "EntityRenderersMixin",
-    "AbstractClientPlayerEntityMixin",
+    "BlockSettingsOffsetMixin",
     "TallFlowerBlockMixin",
     "TallPlantBlockMixin",
     "FernBlockMixin",
-    "BlockSettingsOffsetMixin",
-    "EntityRenderersMixin",
     "LayerBlockPathNodeMixin",
     "AbstractBlockStateMixin",
     "LayerBlockPathNodeMixin",
-    "ClientPlayerInteractionManagerMixin",
     "CreativeModeTabAccessor"
   ],
   "client": [
-    "TranslatedModelLoaderMixin"
+    "EntityRenderersMixin",
+    "TranslatedModelLoaderMixin",
+    "EntityRenderersMixin",
+    "AbstractClientPlayerEntityMixin",
+    "ClientPlayerInteractionManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

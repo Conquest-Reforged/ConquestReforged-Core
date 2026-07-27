@@ -4,7 +4,9 @@ import com.conquestrefabricated.content.blocks.BlockSettingsAccessor;
 import com.conquestrefabricated.content.blocks.CustomOffsetType;
 import com.conquestrefabricated.content.blocks.block.*;
 import com.conquestrefabricated.core.block.properties.ModBlockProperties;
-import net.minecraft.client.Minecraft;
+import com.conquestrefabricated.core.client.ClientOffsetHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -214,7 +216,10 @@ public abstract class BlockSettingsOffsetMixin implements BlockSettingsAccessor 
                     if (state.getValue(ModBlockProperties.OFFSET_TOGGLE)) {
                         double layerY = 0.0;
 
-                        Level world = Minecraft.getInstance().level;
+                        Level world = null;
+                        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+                            world = ClientOffsetHelper.getLevel(pos);
+                        }
                         if (world == null) return Vec3.ZERO;
 
                         BlockPos belowPos = pos.below();
@@ -236,7 +241,10 @@ public abstract class BlockSettingsOffsetMixin implements BlockSettingsAccessor 
                         float translationAmountZ = 0f;
                         float translationAmountY = 0f;
 
-                        Level world = Minecraft.getInstance().level;
+                        Level world = null;
+                        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+                            world = ClientOffsetHelper.getLevel(pos);
+                        }
                         if (world == null) return Vec3.ZERO;
 
                         BlockState blockStateDown = world.getBlockState(pos.below());
@@ -273,7 +281,10 @@ public abstract class BlockSettingsOffsetMixin implements BlockSettingsAccessor 
                         float translationAmountZ = 0f;
 
                         if (state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
-                            Level world = Minecraft.getInstance().level;
+                            Level world = null;
+                            if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+                                world = ClientOffsetHelper.getLevel(pos);
+                            }
                             if (world == null) return Vec3.ZERO;
 
                             Direction direction = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
@@ -301,7 +312,10 @@ public abstract class BlockSettingsOffsetMixin implements BlockSettingsAccessor 
                         float translationAmountZ = 0f;
                         float translationAmountY = 0f;
 
-                        Level world = Minecraft.getInstance().level;
+                        Level world = null;
+                        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+                            world = ClientOffsetHelper.getLevel(pos);
+                        }
                         if (world == null) return Vec3.ZERO;
 
                         BlockState blockStateDown = world.getBlockState(pos.below());
@@ -341,7 +355,10 @@ public abstract class BlockSettingsOffsetMixin implements BlockSettingsAccessor 
                         float translationAmountZ = 0f;
                         float translationAmountY = 0f;
 
-                        Level world = Minecraft.getInstance().level;
+                        Level world = null;
+                        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+                            world = ClientOffsetHelper.getLevel(pos);
+                        }
                         if (world == null) return Vec3.ZERO;
 
                         // Determine the connection direction (order: NORTH, EAST, SOUTH, WEST; default NORTH)

@@ -4,9 +4,6 @@ import com.conquestrefabricated.content.blocks.block.directional.Half;
 import com.conquestrefabricated.core.asset.annotation.*;
 import com.conquestrefabricated.core.block.builder.Props;
 import com.conquestrefabricated.core.util.RenderLayer;
-import net.minecraft.client.data.models.BlockModelGenerators;
-import net.minecraft.client.data.models.blockstates.PropertyDispatch;
-import net.minecraft.client.renderer.block.dispatch.VariantMutator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
@@ -17,7 +14,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -164,11 +160,4 @@ public class BoardsHorizontal extends Half.DirectionalWaterlogged {
         return state.getValue(TYPE_UPDOWN) == net.minecraft.world.level.block.state.properties.Half.BOTTOM ? BOTTOM_SHAPE : TOP_SHAPE;
     }
 
-    public static PropertyDispatch<VariantMutator> createEastDefaultSymmetricalRotationStates() {
-        return PropertyDispatch.modify(BlockStateProperties.HORIZONTAL_FACING)
-                .select(Direction.EAST, BlockModelGenerators.NOP)
-                .select(Direction.SOUTH, BlockModelGenerators.Y_ROT_90)
-                .select(Direction.WEST, BlockModelGenerators.NOP)
-                .select(Direction.NORTH, BlockModelGenerators.Y_ROT_90);
-    }
 }
