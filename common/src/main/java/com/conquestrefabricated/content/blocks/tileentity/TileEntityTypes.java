@@ -61,4 +61,9 @@ public class TileEntityTypes {
     public static void addVanilla(BlockEntityType vanillaBlockEntity, String... blockNames) {
         throw new AssertionError("This method should be replaced by platform implementations!");
     }
+
+    @ExpectPlatform
+    public static void add(BlockEntityType blockEntity, String... blockNames) {
+        throw new AssertionError("This method should be replaced by platform implementations!");
+    }
 }

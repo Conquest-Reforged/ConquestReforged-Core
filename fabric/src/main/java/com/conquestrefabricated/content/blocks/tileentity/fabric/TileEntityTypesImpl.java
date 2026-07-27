@@ -41,4 +41,14 @@ public class TileEntityTypesImpl {
             BlockEntityType.BED.addValidBlock(block);
         }
     }
+
+    public static void add(BlockEntityType blockEntity, String... blockNames) {
+        for (String blockName : blockNames) {
+            Block block = BuiltInRegistries.BLOCK.get(Identifier.parse(blockName)).get().value();
+            if (block == null || block == Blocks.AIR) {
+                throw new IllegalArgumentException("Block passed into tile entity registration is not registered correctly");
+            }
+            blockEntity.addValidBlock(block);
+        }
+    }
 }
