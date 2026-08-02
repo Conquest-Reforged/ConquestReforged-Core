@@ -1748,9 +1748,10 @@ public class ModModelProvider extends FabricModelProvider {
         Identifier nseUp      = createPaneModel(generator, block, "_nse_up",      "conquest:block/templates/parent_flatpane_nse_up", textureKeys, textureMap);
         Identifier nsewUp     = createPaneModel(generator, block, "_nsew_up",     "conquest:block/templates/parent_flatpane_nsew_up", textureKeys, textureMap);
 
-        ModelTemplates.FLAT_ITEM.create(ModelLocationUtils.getModelLocation(block), TextureMapping.layer0(new Material(Identifier.parse(blockData.getProps().textures().getTextures().get("*")))), generator.modelOutput);
+        Identifier item = ModelTemplates.FLAT_ITEM.create(ModelLocationUtils.getModelLocation(block), TextureMapping.layer0(new Material(Identifier.parse(blockData.getProps().textures().getTextures().get("*")))), generator.modelOutput);
         //ModelTemplates.FLAT_ITEM.create(ModelLocationUtils.getModelLocation(block), TextureMapping.layer0(TextureMapping.getBlockTexture(block, blockData.getProps().textures().getTextures().get("*"))), generator.modelOutput);
         //generator.registerSimpleFlatItemModel(block, blockData.getProps().textures().getTextures().get("*"));
+        registerTintedOrPlain(generator, block, item, blockData);
 
         generator.blockStateOutput.accept(
                 MultiVariantGenerator.dispatch(block)
