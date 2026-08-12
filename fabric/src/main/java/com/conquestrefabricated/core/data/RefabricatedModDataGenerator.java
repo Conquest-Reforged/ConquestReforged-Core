@@ -10,7 +10,7 @@ public class RefabricatedModDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(ModBlockTagProvider::new);
         pack.addProvider(ModRecipeProvider::new);
         pack.addProvider(ModLootTableProvider::new);
-        pack.addProvider(ModLangProvider::new);
+        pack.addProvider(ModLangManualProvider::new);
         pack.addProvider(ModModelProvider::new);
     }
 }
