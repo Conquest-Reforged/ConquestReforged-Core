@@ -45,12 +45,13 @@ public class DoubleHorizontalDirectional extends HorizontalDirectional {
     public BlockState updateShape(BlockState stateIn, LevelReader level, ScheduledTickAccess ticks, BlockPos currentPos, Direction directionToNeighbour, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
         DoubleBlockHalf doubleblockhalf = stateIn.getValue(HALF);
         if (directionToNeighbour.getAxis() == Direction.Axis.Y && doubleblockhalf == DoubleBlockHalf.LOWER == (directionToNeighbour == Direction.UP)) {
-            return stateIn.is(this) && stateIn.getValue(HALF) != doubleblockhalf ? stateIn.setValue(DIRECTION, stateIn.getValue(DIRECTION)) : Blocks.AIR.defaultBlockState();
+            return neighbourState.is(this) && neighbourState.getValue(HALF) != doubleblockhalf
+                    ? stateIn.setValue(DIRECTION, neighbourState.getValue(DIRECTION))
+                    : Blocks.AIR.defaultBlockState();
         } else {
             return doubleblockhalf == DoubleBlockHalf.LOWER && directionToNeighbour == Direction.DOWN && !stateIn.canSurvive(level, currentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(stateIn, level, ticks, currentPos, directionToNeighbour, neighbourPos, neighbourState, random);
         }
     }
-
     protected static void preventCreativeDropFromBottomPart(Level level, BlockPos pos, BlockState state, Player player) {
         DoubleBlockHalf doubleblockhalf = state.getValue(HALF);
         if (doubleblockhalf == DoubleBlockHalf.UPPER) {

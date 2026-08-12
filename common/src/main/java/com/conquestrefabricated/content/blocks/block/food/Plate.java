@@ -19,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CakeBlock;
@@ -26,6 +27,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -66,42 +68,51 @@ public class Plate extends CakeBlock implements PropertyVariant {
     }
 
     @Override
-    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        ItemStack itemstack = player.getItemInHand(hand);
-        if (!world.isClientSide()) {
-            if (this.eatActionResult(world, pos, state, itemstack, player) == InteractionResult.SUCCESS) {
+    protected InteractionResult useWithoutItem(final BlockState state, final Level level, final BlockPos pos, final Player player, final BlockHitResult hitResult) {
+        if (level.isClientSide()) {
+            if (eat(level, pos, state, player).consumesAction()) {
                 return InteractionResult.SUCCESS;
             }
-            if (itemstack.isEmpty()) {
+
+            if (player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty()) {
                 return InteractionResult.CONSUME;
+            }
+        }
+
+        return eat(level, pos, state, player);
+    }
+
+    @Override
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        ItemStack itemstack = player.getItemInHand(hand);
+        if (itemstack.getItem().components().has(DataComponents.FOOD)) {
+            if (state.getValue(BITES) != 0) {
+                if (!player.getAbilities().instabuild) {
+                    itemstack.shrink(1);
+                }
+                world.setBlock(pos, state.setValue(BITES, Integer.valueOf(state.getValue(BITES) - 1)), 3);
+                return InteractionResult.SUCCESS;
             }
         }
         return InteractionResult.TRY_WITH_EMPTY_HAND;
 
     }
 
-    private InteractionResult eatActionResult(Level world, BlockPos pos, BlockState state, ItemStack itemStack, Player playerEntity) {
-        if (!playerEntity.canEat(false)) {
+    protected static InteractionResult eat(final LevelAccessor level, final BlockPos pos, final BlockState state, final Player player) {
+        if (!player.canEat(false)) {
             return InteractionResult.PASS;
         } else {
-            playerEntity.awardStat(Stats.EAT_CAKE_SLICE);
-            playerEntity.getFoodData().eat(2, 0.1F);
-            int i = state.getValue(BITES);
-            if (itemStack.getItem().components().has(DataComponents.FOOD) && state.getValue(BITES) != 0) {
-                if (!playerEntity.getAbilities().instabuild) {
-                    itemStack.shrink(1);
-                }
-                world.setBlock(pos, state.setValue(BITES, Integer.valueOf(state.getValue(BITES) - 1)), 3);
-                return InteractionResult.SUCCESS;
-            } else if (i < 6) {
-                world.setBlock(pos, state.setValue(BITES, Integer.valueOf(i + 1)), 3);
-                return InteractionResult.SUCCESS;
+            int bites = state.getValue(BITES);
+            if (bites >= 6) {
+                return InteractionResult.PASS;
             }
-
-            return InteractionResult.PASS;
+            player.awardStat(Stats.EAT_CAKE_SLICE);
+            player.getFoodData().eat(2, 0.1F);
+            level.gameEvent(player, GameEvent.EAT, pos);
+            level.setBlock(pos, state.setValue(BITES, bites + 1), 3);
+            return InteractionResult.SUCCESS;
         }
     }
-
 
     @Override
     @NotNull
