@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "minecraft:block/bush"
+      },
+      {
+        "model": "minecraft:block/bush",
+        "y": 90
+      },
+      {
+        "model": "minecraft:block/bush",
+        "y": 180
+      },
+      {
+        "model": "minecraft:block/bush",
+        "y": 270
+      }
+    ]
+  }
+}

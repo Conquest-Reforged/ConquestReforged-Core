@@ -190,4 +190,25 @@ conquest:viking_chestplate
 conquest:viking_leggings
 conquest:viking_boots
 
+conquest:bearded_phrygian_helmet
+conquest:corinthian_helmet
+conquest:crested_corinthian_helmet
+conquest:bronze_crested_corinthian_helmet
+conquest:legionary_galea
+conquest:murmillo_helmet
+conquest:praetorian_helmet
+conquest:lamellar_helmet
+conquest:savaran_cataphract_boots
+conquest:savaran_cataphract_trousers
+conquest:savaran_cataphract_helmet
+conquest:savaran_cataphract_mail
+conquest:cicak_helmet
+conquest:arabian_helmet
+conquest:fatimid_breaches
+conquest:fatimid_cap
+conquest:fatimid_leather_shoes
+conquest:fatimid_scale_brigandine
+conquest:feathered_lamellar_helmet
+conquest:lamellar_brigandine
+
 minecraft_turtle_helmet

@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "": 
+        [
+            { "model": "block/moss_carpet" },
+            { "model": "block/moss_carpet_1" },
+            { "model": "block/moss_carpet_2" }
+        ]
+    }
+}

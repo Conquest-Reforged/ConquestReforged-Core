@@ -11,6 +11,15 @@ repositories {
     maven {
         url = "https://api.modrinth.com/maven"
     }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'GeckoLib'
+                url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+            }
+        }
+        filter { includeGroupAndSubgroups('com.geckolib') }
+    }
 
 }
 
@@ -25,6 +34,7 @@ dependencies {
     api "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
     // Remove the next line if you don't want to depend on the API
     api "dev.architectury:architectury:${rootProject.architectury_version}"
+    compileOnly "com.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}"
 }
 
 loom {

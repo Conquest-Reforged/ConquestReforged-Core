@@ -1,0 +1,9 @@
+{
+  "variants": {
+    "": [
+      { "model": "block/short_dry_grass_plant_dense_model_a" },
+      { "model": "block/short_dry_grass_plant_dense_model_b" },
+      { "model": "block/short_dry_grass_plant_dense_model_c" }
+    ]
+  }
+}

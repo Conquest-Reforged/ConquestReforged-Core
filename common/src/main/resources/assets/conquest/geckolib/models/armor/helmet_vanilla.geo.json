@@ -1,0 +1,35 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.helmet_vanilla",
+				"texture_width": 64,
+				"texture_height": 16,
+				"visible_bounds_width": 4,
+				"visible_bounds_height": 4.5,
+				"visible_bounds_offset": [0, 1.75, 0]
+			},
+			"bones": [
+				{
+					"name": "bipedHead",
+					"pivot": [0, 23.5, 0]
+				},
+				{
+					"name": "armorHead",
+					"parent": "bipedHead",
+					"pivot": [0, 23.5, 0]
+				},
+				{
+					"name": "bone",
+					"parent": "armorHead",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{"origin": [-3.98828, 24.22266, -4], "size": [8, 8, 8], "inflate": 0.75, "uv": [32, 0]},
+						{"origin": [-4, 24.0625, -4], "size": [8, 8, 8], "inflate": 0.55, "uv": [0, 0]}
+					]
+				}
+			]
+		}
+	]
+}

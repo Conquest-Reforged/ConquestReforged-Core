@@ -5,6 +5,7 @@ import com.conquestrefabricated.content.entities.painting.PaintingFactory;
 import com.conquestrefabricated.content.entities.painting.PaintingItem;
 import com.conquestrefabricated.content.entities.painting.art.ModArt;
 import com.conquestrefabricated.content.items.init.ModItems;
+import com.conquestrefabricated.content.items.item.ArmorItem;
 import com.conquestrefabricated.core.util.log.Log;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -16,13 +17,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.item.equipment.ArmorMaterials;
+import net.minecraft.world.item.equipment.ArmorType;
 
 import java.util.function.Consumer;
 
 
 public class ItemCommonInit {
 
-    ///@SubscribeEvent
     public static void init() {
         Log.info("Registering items");
 
