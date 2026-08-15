@@ -60,4 +60,6 @@ minecraft:dark_oak_boat
 minecraft:tipped_arrow
 minecraft:spectral_arrow
 
-conquest_armory:flanged_mace
+conquest:xiphos
+conquest:gladius
+conquest:sarissa

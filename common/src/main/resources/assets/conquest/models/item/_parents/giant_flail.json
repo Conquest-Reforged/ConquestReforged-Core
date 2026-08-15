@@ -1,0 +1,39 @@
+{
+	"format_version": "1.21.11",
+	"credit": "Made with Blockbench",
+	"parent": "item/handheld",
+	"textures": {
+		"layer0": "conquest:item/melee/giant_flail"
+	},
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [148.83, 64.58, -63.97],
+			"translation": [-1.25, 7, -6.2],
+			"scale": [1.7, 1.7, 0.7]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [-10.81, -62.97, -89.92],
+			"translation": [-3.25, 5.75, -6.7],
+			"scale": [1.7, 1.7, 0.7]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 90, 15],
+			"translation": [3.25, 0.5, -6],
+			"scale": [1.36, 1.36, 0.5]
+		},
+		"firstperson_lefthand": {
+			"rotation": [-150.5, -84.5, -165],
+			"translation": [3.25, 0.5, -6],
+			"scale": [1.36, 1.36, 0.5]
+		},
+		"head": {
+			"rotation": [0, -90, 0],
+			"translation": [-3.5, -4.75, 10.75],
+			"scale": [2, 2, 2]
+		},
+		"fixed": {
+			"translation": [4, -9.75, -0.95],
+			"scale": [2, 2, 1]
+		}
+	}
+}

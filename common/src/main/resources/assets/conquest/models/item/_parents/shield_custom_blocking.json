@@ -1,0 +1,34 @@
+{
+	"format_version": "1.21.11",
+	"credit": "Hippokleides",
+	"parent": "item/generated",
+	"textures": {
+		"layer0": "item/empty_armor_slot_shield"
+	},
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [45, 135, 0],
+			"translation": [3, -2, -1],
+			"scale": [2, 2, 1]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [45, 135, 0],
+			"translation": [3, -2, -1],
+			"scale": [2, 2, 1]
+		},
+		"firstperson_righthand": {
+			"rotation": [-15, 79, 90],
+			"translation": [-3.5, 2.75, -7.5],
+			"scale": [1.94, 1.94, 1.1]
+		},
+		"firstperson_lefthand": {
+			"rotation": [-14, -101, -90],
+			"translation": [-3.25, 2.75, -7.5],
+			"scale": [2.2, 2.2, 1.1]
+		},
+		"gui": {
+			"translation": [0, 0, -10],
+			"scale": [1.1, 1.1, 1]
+		}
+	}
+}
