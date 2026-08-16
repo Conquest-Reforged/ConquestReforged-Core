@@ -71,6 +71,8 @@ conquest:wooden_two_pronged_pitchfork
 conquest:wooden_three_pronged_pitchfork
 conquest:iron_two_pronged_pitchfork
 conquest:iron_three_pronged_pitchfork
+conquest:bread_peel
+conquest:ember_rake
 conquest:fire_rake
 conquest:fire_shovel
 conquest:light_iron_pala_spade
@@ -132,6 +134,7 @@ conquest:fish_trap
 conquest:fishing_net
 conquest:hanging_net
 conquest:net_on_the_ground
+conquest:coracle
 
 minecraft:observer
 minecraft:target

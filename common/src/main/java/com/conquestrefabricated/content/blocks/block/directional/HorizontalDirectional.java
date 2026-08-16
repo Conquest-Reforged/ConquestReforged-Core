@@ -267,6 +267,43 @@ public class HorizontalDirectional extends HorizontalDirectionalShape {
             protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos blockPos, Player player, BlockHitResult hitResult) {
                 return Interactions.onUseToggleItem(player, level, blockPos, state, TOGGLE);
             }
+
+            @ItemDescription(description = "toggle_2")
+            public static class Positions3 extends HorizontalDirectional.OffsetXYZ.Toggle2 {
+                public static final IntegerProperty POSITION = IntegerProperty.create("position", 1, 3);
+
+                public Positions3(Props props) {super(props);}
+
+                @Override
+                protected void addProperties(StateDefinition.Builder<Block, BlockState> builder) {
+                    super.addProperties(builder);
+                    builder.add(POSITION);
+                }
+
+                @SuppressWarnings("deprecation")
+                @Override
+                protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos blockPos, Player player, BlockHitResult hitResult) {
+                    if (player.getAbilities().instabuild) {
+                        if (player.isShiftKeyDown()) {
+                            level.setBlock(blockPos, state.cycle(POSITION), 3);
+                            return InteractionResult.SUCCESS;
+                        }
+                        level.setBlock(blockPos, state.cycle(TOGGLE), 3);
+                        return InteractionResult.SUCCESS;
+                    }
+
+                    if (player.getMainHandItem().is(CYCLING_TOOLS)) {
+                        if (player.isShiftKeyDown()) {
+                            level.setBlock(blockPos, state.cycle(POSITION), 3);
+                            return InteractionResult.SUCCESS;
+                        }
+                        level.setBlock(blockPos, state.cycle(TOGGLE), 3);
+                        return InteractionResult.SUCCESS;
+                    }
+
+                    return InteractionResult.FAIL;
+                }
+            }
         }
 
         @ItemDescription(description = "toggle_3")
@@ -288,6 +325,43 @@ public class HorizontalDirectional extends HorizontalDirectionalShape {
             protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos blockPos, Player player, BlockHitResult hitResult) {
                 return Interactions.onUseToggleItem(player, level, blockPos, state, TOGGLE);
             }
+
+            @ItemDescription(description = "toggle_3")
+            public static class Positions4 extends HorizontalDirectional.OffsetXYZ.Toggle3 {
+                public static final IntegerProperty POSITION = IntegerProperty.create("position", 1, 4);
+
+                public Positions4(Props props) {super(props);}
+
+                @Override
+                protected void addProperties(StateDefinition.Builder<Block, BlockState> builder) {
+                    super.addProperties(builder);
+                    builder.add(POSITION);
+                }
+
+                @SuppressWarnings("deprecation")
+                @Override
+                protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos blockPos, Player player, BlockHitResult hitResult) {
+                    if (player.getAbilities().instabuild) {
+                        if (player.isShiftKeyDown()) {
+                            level.setBlock(blockPos, state.cycle(POSITION), 3);
+                            return InteractionResult.SUCCESS;
+                        }
+                        level.setBlock(blockPos, state.cycle(TOGGLE), 3);
+                        return InteractionResult.SUCCESS;
+                    }
+
+                    if (player.getMainHandItem().is(CYCLING_TOOLS)) {
+                        if (player.isShiftKeyDown()) {
+                            level.setBlock(blockPos, state.cycle(POSITION), 3);
+                            return InteractionResult.SUCCESS;
+                        }
+                        level.setBlock(blockPos, state.cycle(TOGGLE), 3);
+                        return InteractionResult.SUCCESS;
+                    }
+
+                    return InteractionResult.FAIL;
+                }
+            }
         }
 
         @ItemDescription(description = "toggle_4")
@@ -308,6 +382,43 @@ public class HorizontalDirectional extends HorizontalDirectionalShape {
             @Override
             protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos blockPos, Player player, BlockHitResult hitResult) {
                 return Interactions.onUseToggleItem(player, level, blockPos, state, TOGGLE);
+            }
+
+            @ItemDescription(description = "toggle_4")
+            public static class Positions5 extends HorizontalDirectional.OffsetXYZ.Toggle4 {
+                public static final IntegerProperty POSITION = IntegerProperty.create("position", 1, 5);
+
+                public Positions5(Props props) {super(props);}
+
+                @Override
+                protected void addProperties(StateDefinition.Builder<Block, BlockState> builder) {
+                    super.addProperties(builder);
+                    builder.add(POSITION);
+                }
+
+                @SuppressWarnings("deprecation")
+                @Override
+                protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos blockPos, Player player, BlockHitResult hitResult) {
+                    if (player.getAbilities().instabuild) {
+                        if (player.isShiftKeyDown()) {
+                            level.setBlock(blockPos, state.cycle(POSITION), 3);
+                            return InteractionResult.SUCCESS;
+                        }
+                        level.setBlock(blockPos, state.cycle(TOGGLE), 3);
+                        return InteractionResult.SUCCESS;
+                    }
+
+                    if (player.getMainHandItem().is(CYCLING_TOOLS)) {
+                        if (player.isShiftKeyDown()) {
+                            level.setBlock(blockPos, state.cycle(POSITION), 3);
+                            return InteractionResult.SUCCESS;
+                        }
+                        level.setBlock(blockPos, state.cycle(TOGGLE), 3);
+                        return InteractionResult.SUCCESS;
+                    }
+
+                    return InteractionResult.FAIL;
+                }
             }
         }
 

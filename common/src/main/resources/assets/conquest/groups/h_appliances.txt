@@ -1,5 +1,4 @@
 minecraft:crafting_table
-minecraft:crafter
 
 minecraft:furnace
 conquest:sandstone_oven
@@ -11,6 +10,7 @@ minecraft:smoker
 conquest:cobblestone_roman_oven
 conquest:red_plastered_roman_oven
 conquest:white_plastered_roman_oven
+conquest:brown_small_clay_oven
 conquest:incomplete_kiln
 conquest:broken_kiln
 conquest:small_kiln
@@ -26,6 +26,8 @@ conquest:pottery_wheel
 minecraft:grindstone
 conquest:grindstone
 conquest:quern
+conquest:kneading_machine
+conquest:kneading_trough
 
 minecraft:cauldron
 conquest:cauldron_with_grille

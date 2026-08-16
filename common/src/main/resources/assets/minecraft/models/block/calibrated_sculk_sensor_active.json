@@ -1,0 +1,6 @@
+{
+    "parent": "block/calibrated_sculk_sensor",
+    "textures": {
+        "5": "block/sculk_sensor_tendril_active"
+    }
+}
