@@ -131,7 +131,6 @@ public class Bush extends AbstractBush implements Waterloggable {
     @Override
     public BlockState updateShape(BlockState stateIn, LevelReader level, ScheduledTickAccess ticks, BlockPos currentPos, Direction directionToNeighbour, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
         if (directionToNeighbour == Direction.DOWN) {
-            // Check if the neighbor block is air (meaning it was broken)
             if (neighbourState.isAir()) {
                 if (ConquestConfig.INSTANCE.plantBreaking.get()) {
                     return Blocks.AIR.defaultBlockState();
@@ -142,10 +141,18 @@ public class Bush extends AbstractBush implements Waterloggable {
         BlockPos down = currentPos.below();
         BlockState blockStateDown = level.getBlockState(down);
 
+        BlockState result = super.updateShape(stateIn, level, ticks, currentPos, directionToNeighbour, neighbourPos, neighbourState, random);
+
+        // Guard: if the parent already turned this into a different block (e.g. AIR because
+        // support was lost), don't try to set LAYERS on it — it won't have that property.
+        if (!result.hasProperty(LAYERS)) {
+            return result;
+        }
+
         if (blockStateDown.hasProperty(Layer.LAYERS) || (blockStateDown.hasProperty(Slab.LAYERS) && blockStateDown.getValue(TYPE_UPDOWN) == Half.BOTTOM)) {
-            return super.updateShape(stateIn, level, ticks, currentPos, directionToNeighbour, neighbourPos, neighbourState, random).setValue(LAYERS, blockStateDown.getValue(LAYERS));
+            return result.setValue(LAYERS, blockStateDown.getValue(LAYERS));
         } else {
-            return super.updateShape(stateIn, level, ticks, currentPos, directionToNeighbour, neighbourPos, neighbourState, random).setValue(LAYERS, 8);
+            return result.setValue(LAYERS, 8);
         }
     }
 
