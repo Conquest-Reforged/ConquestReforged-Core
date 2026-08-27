@@ -1,11 +1,14 @@
 package com.conquestrefabricated.core.item.group.sort;
 
 import com.conquestrefabricated.core.util.Provider;
+import com.conquestrefabricated.core.util.log.Log;
 import java.io.BufferedReader;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -16,9 +19,12 @@ import net.minecraft.world.item.Items;
 public class ItemList implements Sorter<ItemStack>, Comparator<ItemStack> {
 
     private final Map<String, Entry> index;
+    private final String source;
+    private final Set<String> warned = new HashSet<>();
 
-    private ItemList(Map<String, Entry> index) {
+    private ItemList(Map<String, Entry> index, String source) {
         this.index = index;
+        this.source = source;
     }
 
     @Override
@@ -47,7 +53,11 @@ public class ItemList implements Sorter<ItemStack>, Comparator<ItemStack> {
 
                 Item item = e.getValue().stack.get();
                 if (item == Items.AIR) {
-                    continue; // item not present (submod not installed, or renamed/removed) — skip silently
+                    // item not present (submod not installed, or renamed/removed) — warn once, then skip
+                    //if (warned.add(e.getKey())) {
+                        //Log.warn("Group file {} references unknown item/block: {}", source, e.getKey());
+                    //}
+                    continue;
                 }
 
                 // manually add item if fillItemGroup doesn't work for this item type (debug stick)
@@ -87,7 +97,7 @@ public class ItemList implements Sorter<ItemStack>, Comparator<ItemStack> {
         }
     }
 
-    public static ItemList read(BufferedReader reader) {
+    public static ItemList read(BufferedReader reader, String source) {
         AtomicInteger order = new AtomicInteger(0);
         Map<String, Entry> index = new HashMap<>(50);
         reader.lines().forEach(item -> {
@@ -97,6 +107,6 @@ public class ItemList implements Sorter<ItemStack>, Comparator<ItemStack> {
             index.put(item, new Entry(order.get(), Provider.item(item)));
             order.addAndGet(1);
         });
-        return new ItemList(index);
+        return new ItemList(index, source);
     }
 }

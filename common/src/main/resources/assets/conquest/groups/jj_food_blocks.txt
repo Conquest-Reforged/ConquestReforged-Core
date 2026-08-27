@@ -35,7 +35,6 @@ conquest:crate_of_beetroot
 conquest:empty_crate
 conquest:large_wooden_crate_of_food
 conquest:butter_churn
-conquest:hanging_butter_churn
 
 minecraft:melon
 minecraft:pumpkin

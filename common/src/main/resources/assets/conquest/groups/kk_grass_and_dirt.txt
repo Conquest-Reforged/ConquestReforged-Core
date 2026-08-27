@@ -25,7 +25,7 @@ conquest:heather_covered_moss
 
 conquest:unfertile_loamy_dirt
 minecraft:coarse_dirt
-conquest:grassy_dirt
+conquest:grassy_dirt_layer
 conquest:loamy_dirt_with_bones
 conquest:frozen_loamy_dirt
 conquest:lichen_loamy_dirt

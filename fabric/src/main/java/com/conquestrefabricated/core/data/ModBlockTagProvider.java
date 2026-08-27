@@ -38,7 +38,7 @@ public class ModBlockTagProvider extends FabricTagsProvider.BlockTagsProvider {
 
         BlockDataRegistry.getInstance().getData("conquest").forEach(blockData -> {
             for (TagKey<Block> tag : blockData.getTags()) {
-                valueLookupBuilder(tag).add(blockData.getBlock());
+                valueLookupBuilder(tag).add(blockData.getBlock()).setReplace(false);
             }
         });
 
@@ -48,16 +48,16 @@ public class ModBlockTagProvider extends FabricTagsProvider.BlockTagsProvider {
                     SoundType soundGroup = block.getSoundType(block.defaultBlockState());
                     if (blockId.getNamespace().equals("conquest")) {
                         if (block instanceof WallNew || block instanceof WallOld) {
-                            wallTagBuilder.add(block);
+                            wallTagBuilder.add(block).setReplace(false);
                         }
                         if (block instanceof Rail) {
-                            railTagBuilder.add(block);
+                            railTagBuilder.add(block).setReplace(false);
                         }
                         if (block instanceof Fence || block instanceof FenceVanilla || block instanceof FenceCross || block instanceof FenceToggle || block instanceof RusticFence || blockId.getPath().contains("fence")) {
-                            fenceTagBuilder.add(block);
+                            fenceTagBuilder.add(block).setReplace(false);
                         }
                         if (block instanceof Scaffolding) {
-                            climbableTagBuilder.add(block);
+                            climbableTagBuilder.add(block).setReplace(false);
                         }
                     }
                 });

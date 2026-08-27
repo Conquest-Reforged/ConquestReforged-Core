@@ -29,7 +29,7 @@ minecraft:netherite_leggings
 minecraft:netherite_boots
 minecraft:shield
 minecraft:elytra
-minecraft_turtle_helmet
+minecraft:turtle_helmet
 
 conquest:bearded_phrygian_helmet
 conquest:bronze_greaves

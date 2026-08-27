@@ -25,19 +25,19 @@ minecraft:honeycomb_block
 minecraft:sponge
 minecraft:wet_sponge
 
-conquest:tube_coral_block
+minecraft:tube_coral_block
 conquest:tube_coral
 conquest:tube_coral_fan
-conquest:fire_coral_block
+minecraft:fire_coral_block
 conquest:fire_coral
 conquest:fire_coral_fan
-conquest:brain_coral_block
+minecraft:brain_coral_block
 conquest:brain_coral
 conquest:brain_coral_fan
-conquest:bubble_coral_block
+minecraft:bubble_coral_block
 conquest:bubble_coral
 conquest:bubble_coral_fan
-conquest:horn_coral_block
+minecraft:horn_coral_block
 conquest:horn_coral
 conquest:horn_coral_fan
 

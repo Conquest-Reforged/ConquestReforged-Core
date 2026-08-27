@@ -63,7 +63,6 @@ conquest:wicker_basket_of_firewood
 conquest:empty_small_old_wicker_basket
 
 conquest:unfinished_woven_basket
-conquest:square_woven_basket
 conquest:small_square_woven_basket
 conquest:small_square_hand_basket
 conquest:square_hand_basket

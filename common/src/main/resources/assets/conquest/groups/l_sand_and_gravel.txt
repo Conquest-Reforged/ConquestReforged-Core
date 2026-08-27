@@ -21,7 +21,7 @@ conquest:pink_salt
 conquest:ash
 conquest:yellow_sulfur
 
-conquest:grass_and_sand
+conquest:grass_and_sand_layer
 minecraft:sand
 conquest:mossy_sand
 conquest:overgrown_sand

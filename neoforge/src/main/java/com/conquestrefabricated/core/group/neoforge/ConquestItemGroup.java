@@ -83,7 +83,7 @@ public abstract class ConquestItemGroup extends CreativeModeTab implements Conqu
                 return Sorter.none();
             }
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-                return ItemList.read(reader);
+                return ItemList.read(reader, path);
             }
         } catch (IOException e) {
             e.printStackTrace();

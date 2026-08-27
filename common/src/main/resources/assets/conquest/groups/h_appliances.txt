@@ -33,7 +33,7 @@ minecraft:cauldron
 conquest:cauldron_with_grille
 conquest:large_metal_pot
 
-conquest:beehive
+minecraft:beehive
 conquest:skep_beehive
 conquest:tall_wooden_beehive
 conquest:wooden_dovecote
