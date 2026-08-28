@@ -1,8 +1,0 @@
-{
-    "parent": "block/wall_nse_topbottom",
-    "textures": {
-        "wall": "block/bricks",
-        "top": "block/bricks_top",
-        "bottom": "block/bricks_top"
-    }
-}

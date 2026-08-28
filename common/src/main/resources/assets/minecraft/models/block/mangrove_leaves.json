@@ -1,6 +1,0 @@
-{
-	"parent": "minecraft:block/parent_leaves_no_shade",
-	"textures": {
-		"leaves_1": "minecraft:block/mangrove_leaves"
-	}
-}

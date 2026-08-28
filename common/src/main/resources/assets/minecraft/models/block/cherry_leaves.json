@@ -1,6 +1,0 @@
-{
-	"parent": "minecraft:block/parent_leaves",
-	"textures": {
-		"leaves_1": "minecraft:block/cherry_leaves_1"
-	}
-}

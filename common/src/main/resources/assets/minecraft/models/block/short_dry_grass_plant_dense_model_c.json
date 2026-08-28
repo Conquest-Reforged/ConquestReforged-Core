@@ -1,6 +1,0 @@
-{
-    "parent": "block/plant_dense_model_8_c",
-    "textures": {
-        "texture": "minecraft:block/short_dry_grass"
-    }
-}
