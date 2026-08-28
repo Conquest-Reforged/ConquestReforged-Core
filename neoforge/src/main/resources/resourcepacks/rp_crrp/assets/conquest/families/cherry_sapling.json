@@ -1,7 +1,0 @@
-{
-  "parent_block": "minecraft:cherry_sapling",
-  "family_blocks": [
-    "minecraft:oak_sapling",
-    "minecraft:spruce_sapling"
-  ]
-}
