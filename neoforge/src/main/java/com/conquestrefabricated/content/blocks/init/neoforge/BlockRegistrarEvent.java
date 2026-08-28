@@ -19,8 +19,6 @@ public class BlockRegistrarEvent {
             Log.info("Registering blocks");
             BlockRegistrar.blocks();
             //lilies and scaffolding are registered manually
-            LiliesInit.registerBlocks();
-            ScaffoldingInit.registerBlocks();
         });
 
         event.register(Registries.BLOCK_ENTITY_TYPE, blockEntityTypeRegisterHelper -> {
@@ -39,9 +37,6 @@ public class BlockRegistrarEvent {
     public static void items(RegisterEvent event) {
         event.register(Registries.ITEM, itemRegisterHelper -> {
             Log.info("Registering block items");
-            // lilies and scaffolding items are registered manually
-            LiliesInit.registerItems();
-            ScaffoldingInit.registerItems();
         });
     }
 }

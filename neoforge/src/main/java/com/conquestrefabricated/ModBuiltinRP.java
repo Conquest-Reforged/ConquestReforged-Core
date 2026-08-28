@@ -14,19 +14,65 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemAlreadyExistsException;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 
 @EventBusSubscriber(modid = "conquest", value = Dist.CLIENT)
 public class ModBuiltinRP {
     private static @Nullable Path resolveResourcePackPath(String packId) {
         var contents = ModList.get().getModFileById("conquest").getFile().getContents();
         for (Path root : contents.getContentRoots()) {
-            Path candidate = root.resolve("resourcepacks").resolve(packId);
-            if (java.nio.file.Files.isDirectory(candidate)) {
-                return candidate;
+            // Dev: content roots are loose directories on disk.
+            if (Files.isDirectory(root)) {
+                Path candidate = root.resolve("resourcepacks").resolve(packId);
+                if (Files.isDirectory(candidate)) {
+                    return candidate;
+                }
+                continue;
+            }
+
+            // Production: the content root is the mod's own jar file (not a mounted
+            // filesystem), so it has to be opened as a zip filesystem before resolving into it.
+            if (Files.isRegularFile(root)) {
+                Path candidate = resolveInJar(root, packId);
+                if (candidate != null) {
+                    return candidate;
+                }
             }
         }
         return null;
+    }
+
+    private static @Nullable Path resolveInJar(Path jarFile, String packId) {
+        try {
+            FileSystem fs = openJarFileSystem(jarFile);
+            Path candidate = fs.getPath("resourcepacks", packId);
+            return Files.isDirectory(candidate) ? candidate : null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    // Kept open for the JVM's lifetime: PathPackResources reads from this Path
+    // every time the resource pack list is (re)loaded, not just once at startup.
+    private static FileSystem openJarFileSystem(Path jarFile) throws IOException {
+        URI uri = URI.create("jar:" + jarFile.toUri());
+        try {
+            return FileSystems.getFileSystem(uri);
+        } catch (FileSystemNotFoundException e) {
+            try {
+                return FileSystems.newFileSystem(uri, Map.of());
+            } catch (FileSystemAlreadyExistsException race) {
+                return FileSystems.getFileSystem(uri);
+            }
+        }
     }
 
     @SubscribeEvent

@@ -10,7 +10,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public abstract class ShapeBlock extends Block {
+public abstract class ShapeBlock extends Shape {
 
     private final List<VoxelShape> hitBox;
 
