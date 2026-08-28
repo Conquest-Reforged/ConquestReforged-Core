@@ -116,6 +116,15 @@ allprojects {
         setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
         zip64(true)
     }
+
+    publishing {
+        repositories {
+            maven {
+                name = "GitHubPages"
+                url = uri("${rootProject.projectDir}/repo")
+            }
+        }
+    }
 }
 
 sourceSets {

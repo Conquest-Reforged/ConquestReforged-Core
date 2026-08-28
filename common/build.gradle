@@ -54,3 +54,11 @@ sourceSets {
 processResources {
     setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
 }
+
+publishing {
+    publications {
+        mavenCommon(MavenPublication) {
+            from components.java
+        }
+    }
+}

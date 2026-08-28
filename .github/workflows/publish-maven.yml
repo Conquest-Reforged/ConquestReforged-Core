@@ -1,0 +1,46 @@
+name: Publish library to GitHub Pages Maven
+
+# Runs when you push a version tag (e.g. `git tag v1.0.0 && git push --tags`),
+# or manually from the Actions tab.
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      # Pull down whatever is already published so Gradle merges the new
+      # version into the existing maven-metadata.xml instead of overwriting
+      # history. This step is expected to fail on the very first run, before
+      # the gh-pages branch exists — that's fine, Gradle will just create
+      # ./repo from scratch.
+      - name: Checkout existing Maven repo into ./repo
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: repo
+        continue-on-error: true
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+
+      - name: Publish artifacts into ./repo
+        run: ./gradlew publish
+
+      - name: Deploy ./repo to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./repo

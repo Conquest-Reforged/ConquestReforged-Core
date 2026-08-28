@@ -111,3 +111,14 @@ sourcesJar {
     dependsOn commonSources
     from commonSources.archiveFile.map { zipTree(it) }
 }
+
+publishing {
+    publications {
+        mavenNeoForge(MavenPublication) {
+            artifact(shadowJar) {
+                builtBy shadowJar
+            }
+            artifact(sourcesJar)
+        }
+    }
+}

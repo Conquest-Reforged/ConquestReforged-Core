@@ -149,3 +149,14 @@ sourceSets {
         }
     }
 }
+
+publishing {
+    publications {
+        mavenFabric(MavenPublication) {
+            artifact(shadowJar) {
+                builtBy shadowJar
+            }
+            artifact(sourcesJar)
+        }
+    }
+}
