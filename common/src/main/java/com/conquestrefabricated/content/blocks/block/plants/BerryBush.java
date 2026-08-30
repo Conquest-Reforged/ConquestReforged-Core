@@ -30,8 +30,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import static com.conquestrefabricated.api.tags.ModTags.PLANT_SLOWNESS;
-
 @Assets(
         state = @State(name = "%s", template = "parent_berry_bush"),
         item = @Model(name = "item/%s", parent = "block/%s_pane_ns", template = "item/parent_round_arch"),
@@ -100,7 +98,7 @@ public class BerryBush extends AbstractCropsBlock {
 
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
-        if (entity instanceof LivingEntity livingEntity && state.is(PLANT_SLOWNESS) && ConquestConfig.INSTANCE.plantSlowness.get()) {
+        if (entity instanceof LivingEntity livingEntity && ConquestConfig.INSTANCE.plantSlowness.get()) {
             int age = state.getValue(AGE);
             if (slowness > 0) {
                 Holder<MobEffect> slownessKey = level.registryAccess()

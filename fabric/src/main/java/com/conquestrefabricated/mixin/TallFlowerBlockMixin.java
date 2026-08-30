@@ -18,8 +18,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 
-import static com.conquestrefabricated.api.tags.ModTags.PLANT_SLOWNESS;
-
 @Mixin(TallFlowerBlock.class)
 public abstract class TallFlowerBlockMixin extends Block {
 
@@ -29,7 +27,7 @@ public abstract class TallFlowerBlockMixin extends Block {
 
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
-        if (entity instanceof LivingEntity livingEntity && state.is(PLANT_SLOWNESS) && ConquestConfig.INSTANCE.plantSlowness.get()) {
+        if (entity instanceof LivingEntity livingEntity && ConquestConfig.INSTANCE.plantSlowness.get()) {
             Holder<MobEffect> slowness = level.registryAccess()
                     .lookupOrThrow(Registries.MOB_EFFECT)
                     .wrapAsHolder(Effects.CUSTOM_SLOWNESS);

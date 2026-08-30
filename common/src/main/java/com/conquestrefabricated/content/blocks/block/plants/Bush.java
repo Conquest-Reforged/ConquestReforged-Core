@@ -10,9 +10,6 @@ import com.conquestrefabricated.core.block.builder.Props;
 import com.conquestrefabricated.core.block.properties.ModBlockProperties;
 import com.conquestrefabricated.core.block.properties.Waterloggable;
 import com.conquestrefabricated.core.util.RenderLayer;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -25,7 +22,10 @@ import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.*;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -42,7 +42,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import static com.conquestrefabricated.api.tags.ModTags.GARDENING_TOOLS;
-import static com.conquestrefabricated.api.tags.ModTags.PLANT_SLOWNESS;
 import static com.conquestrefabricated.core.block.properties.ModBlockProperties.TYPE_UPDOWN;
 
 @Render(RenderLayer.CUTOUT)
@@ -97,7 +96,7 @@ public class Bush extends AbstractBush implements Waterloggable {
 
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
-        if (entity instanceof LivingEntity livingEntity && state.is(PLANT_SLOWNESS) && ConquestConfig.INSTANCE.plantSlowness.get()) {
+        if (entity instanceof LivingEntity livingEntity && ConquestConfig.INSTANCE.plantSlowness.get()) {
             if (slowness > 0) {
                 Holder<MobEffect> slownessKey = level.registryAccess()
                         .lookupOrThrow(Registries.MOB_EFFECT)

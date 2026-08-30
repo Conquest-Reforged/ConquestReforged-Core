@@ -19,7 +19,7 @@ public class ModTags {
     public static final TagKey<Block> GRAVELS = blockTag("gravels");
 
 
-    public static final TagKey<Block> PLANT_SLOWNESS = blockTag("plant_slowness");
+    //public static final TagKey<Block> PLANT_SLOWNESS = blockTag("plant_slowness");
     public static final TagKey<Item> GARDENING_TOOLS = itemTag("gardening_tools");
     public static final TagKey<Item> CYCLING_TOOLS = itemTag("cycling_tools");
 

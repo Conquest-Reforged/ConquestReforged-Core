@@ -34,8 +34,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
-import static com.conquestrefabricated.api.tags.ModTags.PLANT_SLOWNESS;
-
 public abstract class AbstractCropsBlock extends CropBlock {
 
     public static final IntegerProperty LAYERS = BlockStateProperties.LAYERS;
@@ -49,7 +47,7 @@ public abstract class AbstractCropsBlock extends CropBlock {
 
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
-        if (entity instanceof LivingEntity livingEntity && state.is(PLANT_SLOWNESS) && ConquestConfig.INSTANCE.plantSlowness.get()) {
+        if (entity instanceof LivingEntity livingEntity && ConquestConfig.INSTANCE.plantSlowness.get()) {
             int age = state.getValue(AGE);
             if (slowness > 0 && age > 1) {
                 Holder<MobEffect> slownessKey = level.registryAccess()

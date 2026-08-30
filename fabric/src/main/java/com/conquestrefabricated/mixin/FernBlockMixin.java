@@ -17,8 +17,6 @@ import net.minecraft.world.level.block.TallGrassBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 
-import static com.conquestrefabricated.api.tags.ModTags.PLANT_SLOWNESS;
-
 @Mixin(TallGrassBlock.class)
 public abstract class FernBlockMixin extends Block {
 
@@ -35,7 +33,7 @@ public abstract class FernBlockMixin extends Block {
                     .lookupOrThrow(Registries.MOB_EFFECT)
                     .wrapAsHolder(Effects.CUSTOM_SLOWNESS);
 
-            if (livingEntity instanceof Player && state.is(PLANT_SLOWNESS) && ConquestConfig.INSTANCE.plantSlowness.get()) {
+            if (livingEntity instanceof Player && ConquestConfig.INSTANCE.plantSlowness.get()) {
                 livingEntity.addEffect(new MobEffectInstance(slowness, 15, 1, false, false));
             }
         }

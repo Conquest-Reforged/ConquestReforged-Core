@@ -35,7 +35,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import static com.conquestrefabricated.api.tags.ModTags.GARDENING_TOOLS;
-import static com.conquestrefabricated.api.tags.ModTags.PLANT_SLOWNESS;
 import static com.conquestrefabricated.content.blocks.block.plants.PlantsTall2.TWOTALL;
 
 public class PlantsTall0to3 extends Bush {
@@ -96,7 +95,7 @@ public class PlantsTall0to3 extends Bush {
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
 
-        if (entity instanceof LivingEntity livingEntity && state.is(PLANT_SLOWNESS)) {
+        if (entity instanceof LivingEntity livingEntity) {
             Holder<MobEffect> slownessKey = level.registryAccess()
                     .lookupOrThrow(Registries.MOB_EFFECT)
                     .wrapAsHolder(Effects.CUSTOM_SLOWNESS);

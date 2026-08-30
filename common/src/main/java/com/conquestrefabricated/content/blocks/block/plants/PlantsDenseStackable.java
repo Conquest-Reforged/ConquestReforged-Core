@@ -10,7 +10,6 @@ import com.conquestrefabricated.core.asset.annotation.Render;
 import com.conquestrefabricated.core.asset.annotation.State;
 import com.conquestrefabricated.core.block.builder.Props;
 import com.conquestrefabricated.core.util.RenderLayer;
-import java.util.Random;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
@@ -28,7 +27,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
-import static com.conquestrefabricated.api.tags.ModTags.PLANT_SLOWNESS;
+import java.util.Random;
 
 @Assets(
         state = @State(name = "%s", template = "parent_plant_dense_stackable"),
@@ -77,7 +76,7 @@ public class PlantsDenseStackable extends Bush {
                 .wrapAsHolder(Effects.CUSTOM_SLOWNESS);
 
 
-        if (entity instanceof LivingEntity livingEntity && state.is(PLANT_SLOWNESS) && ConquestConfig.INSTANCE.plantSlowness.get()) {
+        if (entity instanceof LivingEntity livingEntity && ConquestConfig.INSTANCE.plantSlowness.get()) {
             if (livingEntity instanceof Player) {
                 livingEntity.addEffect(new MobEffectInstance(slowness, 15, 3, false, false));
 

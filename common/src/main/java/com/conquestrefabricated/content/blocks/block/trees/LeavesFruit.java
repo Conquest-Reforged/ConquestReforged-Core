@@ -37,8 +37,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import static com.conquestrefabricated.api.tags.ModTags.PLANT_SLOWNESS;
-
 @Render(RenderLayer.CUTOUT_MIPPED)
 public class LeavesFruit extends CropBlock {
 
@@ -55,7 +53,7 @@ public class LeavesFruit extends CropBlock {
 
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
-        if (entity instanceof LivingEntity livingEntity && state.is(PLANT_SLOWNESS) && ConquestConfig.INSTANCE.plantSlowness.get()) {
+        if (entity instanceof LivingEntity livingEntity && ConquestConfig.INSTANCE.plantSlowness.get()) {
             Holder<MobEffect> slowness = level.registryAccess()
                     .lookupOrThrow(Registries.MOB_EFFECT)
                     .wrapAsHolder(Effects.CUSTOM_SLOWNESS);
