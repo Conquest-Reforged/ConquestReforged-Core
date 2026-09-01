@@ -10,6 +10,8 @@ import com.conquestrefabricated.client.models.ConquestModelLoadingPlugin;
 import com.conquestrefabricated.client.models.DuplicateDownUnbakedModel;
 import com.conquestrefabricated.client.models.obj.ObjLoader;
 import com.conquestrefabricated.client.tutorial.fabric.TutorialRenderEvent;
+import com.conquestrefabricated.content.arms.ArmsStation;
+import com.conquestrefabricated.content.arms.fabric.ArmsStationInit;
 import com.conquestrefabricated.content.blocks.group.ModGroups;
 import com.conquestrefabricated.content.blocks.init.BlockFamilyInit;
 import com.conquestrefabricated.content.blocks.init.fabric.BlockClientInit;
@@ -114,6 +116,8 @@ public class RefabricatedModClient implements ClientModInitializer {
             );
         }
 
+
+        ArmsStationInit.registerClient();
 
         BlockClientInit.clientBlockEntities();
         BlockClientInit.blockColors();
@@ -303,6 +307,10 @@ public class RefabricatedModClient implements ClientModInitializer {
                 entries.accept(block);
             });
         });
+
+        // The arms station lives in the conquest namespace but belongs with the gear it forges.
+        ResourceKey<CreativeModeTab> groupKeyArms = ResourceKey.create(Registries.CREATIVE_MODE_TAB, Identifier.fromNamespaceAndPath("conquest", "pp_weapons_and_tools"));
+        CreativeModeTabEvents.modifyOutputEvent(groupKeyArms).register(entries -> entries.accept(ArmsStation.ITEM));
 
         //InitClient.init();
         ClientTickEvents.START_CLIENT_TICK.register(Bindings::tick);

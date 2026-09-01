@@ -122,6 +122,23 @@ public class ModLangManualProvider extends FabricLanguageProvider {
         translationBuilder.add("itemGroup.conquest.r_miscellaneous", "Miscellaneous");
         translationBuilder.add("itemGroup.conquest.oo_animals", "Animals");
 
+        /* === Arms station === */
+        translationBuilder.add("block.conquest.arms_station", "Arms Station");
+        translationBuilder.add("container.conquest.arms_station", "Arms Station");
+        translationBuilder.add("tooltip.conquest.block.arms_station", "§eForges Conquest's medieval armors, weapons, and shields§r");
+        translationBuilder.add("tooltip.conquest.arms_station.material", "Material: %s");
+        /* Material names for reforged gear. Unlisted materials fall back to their id in title case. */
+        translationBuilder.add("material.conquest.wooden", "Wood");
+        translationBuilder.add("material.conquest.stone", "Stone");
+        translationBuilder.add("material.conquest.copper", "Copper");
+        translationBuilder.add("material.conquest.iron", "Iron");
+        translationBuilder.add("material.conquest.gold", "Gold");
+        translationBuilder.add("material.conquest.diamond", "Diamond");
+        translationBuilder.add("material.conquest.netherite", "Netherite");
+        translationBuilder.add("material.conquest.leather", "Leather");
+        translationBuilder.add("material.conquest.chain", "Chainmail");
+        translationBuilder.add("material.conquest.turtle", "Turtle Scute");
+
         translationBuilder.add("item.conquest.mallet_item", "Mallet (Conquest Toggle Tool)");
         translationBuilder.add("tooltip.conquest.mallet_item", "§6Use this (right-click) on toggleable blocks to change their shape");
 
