@@ -84,21 +84,55 @@ The text you pass is the **English (en_us) source**. The lang datagen writes it 
 generated key; translators override that key in their own lang file, and nothing in the game reads
 your Java string at runtime.
 
-**One entry per family, not per shape.** The key is built from the family's name, not from each
-block's registry name, so a `TypeList` of cube, slab, stairs and wall yields a single lang entry:
+**Lore belongs to the family, not to the block or the `register(..)` call.** The key comes from
+the family id, so one entry covers every shape — and every *pass*. A family that has to be split
+across several registrations declares its lore once and the rest inherit it by pointing at the same
+`family(..)`:
+
+```java
+VanillaProps.stone()
+        .name("marble_pediment_raking")
+        .lore("§9The raking crowns and frames the", "§9pediment of a classical temple.")
+        .register(TypeList.of(HingeToggle3.class));
+
+VanillaProps.stone()
+        .name("marble_pediment_raking_summit")
+        .family("marble_pediment_raking")     // same lore, no second .lore(..) call
+        .register(TypeList.of(HalfToggle4.class));
+
+VanillaProps.stone()
+        .name("marble_pediment_raking_vertical_slab")
+        .family("marble_pediment_raking")
+        .register(TypeList.of(PedimentVerticalSlab.class));
+```
+
+All four blocks share one set of keys:
 
 ```
-lore.myaddon.basalt_ashlar          # one line
-lore.myaddon.basalt_ashlar.0        # several lines are indexed
-lore.myaddon.basalt_ashlar.1
+lore.conquest.marble_pediment_raking          # a single line uses the bare key
+lore.conquest.marble_pediment_raking.0        # several lines are indexed
+lore.conquest.marble_pediment_raking.1
 ```
 
-The name used is the **singular** you gave `name(..)`, so
-`.name("basalt_ashlars", "basalt_ashlar")` keys on `basalt_ashlar`.
+The id is the `family(..)` target when there is one, otherwise `<namespace>:<singular name>` — so
+the family's root block, whose name is what everyone else's `family(..)` points at, lands on the
+same id without needing to declare a family of its own.
+
+It follows that members of one family cannot have *different* lore: the second declaration is
+ignored and logged. Declare it on whichever member reads best — the lookup happens when the
+tooltip is drawn, so registration order doesn't matter.
 
 **It appends to annotation lore.** Blocks whose class carries `@ItemDescription` (the stock "3
 Toggleable Variants (Right-Click)" style hints) keep it; yours is added underneath, in the order
 you passed the lines. Calling `.lore(..)` twice appends rather than replacing.
+
+**It is collapsed behind SHIFT.** However many lines a block has, the tooltip shows a single green
+`Hold SHIFT to reveal description...` until the player holds shift, then the lines are written out
+in full. A block with no lore shows no hint, and `@ItemDescription` hints are never collapsed —
+they are functional information, not flavour text.
+
+The hint's own text is the lang key `tooltip.conquest.hold_shift`, which Core ships, so addons get
+it for free. Its colour is `Lore.HINT_COLOR` if you are building Core and want blue instead.
 
 Run the lang datagen after adding lore. If two families end up sharing a name, they share a lore
 key too — datagen keeps the first and logs a warning naming the key.

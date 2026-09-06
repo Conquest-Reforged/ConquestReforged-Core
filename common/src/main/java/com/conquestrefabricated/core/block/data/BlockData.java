@@ -31,6 +31,7 @@ public class BlockData {
     private final BlockName blockName;
     private final BlockTemplate template;
     public final Identifier registryName;
+    private final Identifier loreId;
 
     private final List<TagKey<Block>> tags = new ArrayList<>();
 
@@ -42,7 +43,16 @@ public class BlockData {
         this.blockName = blockName;
         this.block = block;
         this.props = props;
+        this.loreId = Lore.familyId(props.getFamily(), blockName);
+        Lore.declare(loreId, props.getLore());
         registerBlock(this);
+    }
+
+    /**
+     * @return the family id this block's lore is shared under
+     */
+    public Identifier getLoreId() {
+        return loreId;
     }
 
     @ExpectPlatform
@@ -60,7 +70,7 @@ public class BlockData {
             properties.setId(ResourceKey.create(Registries.ITEM, registryName));
 
             try {
-                List<String> loreKeys = Lore.keys(blockName, props.getLore().size());
+                Identifier lore = loreId;
 
                 item = new BlockItem(getBlock(), properties) {
                     @Override
@@ -69,10 +79,10 @@ public class BlockData {
                         if (tooltipAnnotation != null) {
                             builder.accept(Component.translatable("tooltip.conquest.block." + tooltipAnnotation.description()));
                         }
-                        // lore set on the builder comes after whatever the block class contributes
-                        for (String key : loreKeys) {
-                            builder.accept(Component.translatable(key));
-                        }
+                        // the family's lore comes after whatever the block class contributes,
+                        // and stays collapsed until the expand key is held. Resolved here rather
+                        // than at registration so it doesn't matter which member declared it.
+                        Lore.append(lore, builder);
                     }
                 };
 

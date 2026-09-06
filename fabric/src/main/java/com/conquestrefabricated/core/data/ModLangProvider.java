@@ -4,9 +4,6 @@ import com.conquestrefabricated.core.Namespaces;
 
 import com.conquestrefabricated.core.asset.lang.Lore;
 import com.conquestrefabricated.core.asset.lang.Translations;
-import com.conquestrefabricated.core.block.data.BlockData;
-import com.conquestrefabricated.core.block.data.BlockDataRegistry;
-import com.conquestrefabricated.core.util.log.Log;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.core.HolderLookup;
@@ -44,41 +41,19 @@ public class ModLangProvider extends FabricLanguageProvider {
     /**
      * Writes the lore lines set with {@code Props.lore(..)}.
      * <p>
-     * Lore keys belong to the family rather than to each shape in it, so every block a
-     * {@code register(TypeList)} call produced maps to the same key. Emitting them once keeps the
-     * lang file to one entry per family instead of one per variant.
+     * Lore is stored per family rather than per block, so this walks the lore registry instead of
+     * the block registry. That is what keeps one entry per family even when a family is split
+     * across several {@code register(TypeList)} calls that share a {@code family(..)} target.
      */
     private void generateLore(TranslationBuilder translationBuilder) {
-        Map<String, String> written = new HashMap<>();
-
-        Namespaces.stream()
-                .flatMap(namespace -> BlockDataRegistry.getInstance().getData(namespace))
-                .forEach(blockData -> addLore(blockData, translationBuilder, written));
-    }
-
-    private void addLore(BlockData blockData, TranslationBuilder translationBuilder, Map<String, String> written) {
-        List<String> lines = blockData.getProps().getLore();
-        if (lines.isEmpty()) {
-            return;
-        }
-
-        List<String> keys = Lore.keys(blockData.getBlockName(), lines.size());
-        for (int i = 0; i < keys.size(); i++) {
-            String key = keys.get(i);
-            String line = lines.get(i);
-
-            String existing = written.putIfAbsent(key, line);
-            if (existing == null) {
-                translationBuilder.add(key, line);
-                continue;
+        Lore.entries().forEach((familyId, lines) -> {
+            if (!Namespaces.isRegistered(familyId.getNamespace())) {
+                return;
             }
-            // The family's other shapes carry the same key, which is the point - skip them
-            // quietly. Two *different* families landing on one key means two families share a
-            // name, and one lore would be lost silently, so say so.
-            if (!existing.equals(line)) {
-                Log.warn("Lore key {} is claimed by two families with different text; keeping \"{}\" and dropping \"{}\"",
-                        key, existing, line);
+            List<String> keys = Lore.keys(familyId, lines.size());
+            for (int i = 0; i < keys.size(); i++) {
+                translationBuilder.add(keys.get(i), lines.get(i));
             }
-        }
+        });
     }
 }

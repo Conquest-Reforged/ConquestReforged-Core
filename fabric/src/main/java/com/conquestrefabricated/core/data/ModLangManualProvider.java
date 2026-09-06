@@ -1,5 +1,6 @@
 package com.conquestrefabricated.core.data;
 
+import com.conquestrefabricated.core.asset.lang.Lore;
 import com.conquestrefabricated.core.asset.lang.Translations;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
@@ -58,6 +59,7 @@ public class ModLangManualProvider extends FabricLanguageProvider {
         translationBuilder.add("tooltip.conquest.block.toggle_10", "§610 Toggleable Variants (Right-Click)");
         translationBuilder.add("tooltip.conquest.block.loom_toggle_4", "§6Toggles: Mallet - Size, Rugs & Canvas - Weave, Hand - Position");
         translationBuilder.add("tooltip.conquest.block.board_toggle", "§6Toggles: Length (Right-Click), Width (Shift+Right-Click)");
+        translationBuilder.add(Lore.HINT_KEY, Lore.HINT_FALLBACK);
 
         //Intro screens
         translationBuilder.add("conquest.dependency.modpack", "Modpack");
