@@ -99,5 +99,6 @@
   "tooltip.conquest.block.toggle_6": "§66 Toggleable Variants (Right-Click)",
   "tooltip.conquest.block.toggle_7": "§67 Toggleable Variants (Right-Click)",
   "tooltip.conquest.block.toggle_8": "§68 Toggleable Variants (Right-Click)",
+  "tooltip.conquest.hold_shift": "Hold SHIFT to reveal description...",
   "tooltip.conquest.mallet_item": "§6Use this (right-click) on toggleable blocks to change their shape"
 }
