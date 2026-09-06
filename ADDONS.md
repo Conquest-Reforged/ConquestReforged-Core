@@ -69,6 +69,40 @@ only needed if you want to declare a fallback creative tab.
 Note that `family(..)` resolves immediately (it looks the parent block up in the registry), so
 either qualify its argument or call `namespace(..)` before it.
 
+## Block lore
+
+`Props.lore(..)` adds tooltip lines to the item form of every block a builder registers:
+
+```java
+VanillaProps.stone()
+        .name("basalt_ashlar")
+        .lore("Quarried from the black cliffs.", "Favoured by the old masons.")
+        .register(types);
+```
+
+The text you pass is the **English (en_us) source**. The lang datagen writes it out against a
+generated key; translators override that key in their own lang file, and nothing in the game reads
+your Java string at runtime.
+
+**One entry per family, not per shape.** The key is built from the family's name, not from each
+block's registry name, so a `TypeList` of cube, slab, stairs and wall yields a single lang entry:
+
+```
+lore.myaddon.basalt_ashlar          # one line
+lore.myaddon.basalt_ashlar.0        # several lines are indexed
+lore.myaddon.basalt_ashlar.1
+```
+
+The name used is the **singular** you gave `name(..)`, so
+`.name("basalt_ashlars", "basalt_ashlar")` keys on `basalt_ashlar`.
+
+**It appends to annotation lore.** Blocks whose class carries `@ItemDescription` (the stock "3
+Toggleable Variants (Right-Click)" style hints) keep it; yours is added underneath, in the order
+you passed the lines. Calling `.lore(..)` twice appends rather than replacing.
+
+Run the lang datagen after adding lore. If two families end up sharing a name, they share a lore
+key too — datagen keeps the first and logs a warning naming the key.
+
 ## Tags
 
 `ModTags.blockTag(..)` / `ModTags.itemTag(..)` are public and take either a bare path (resolved

@@ -1,6 +1,7 @@
 package com.conquestrefabricated.core.block.data;
 
 import com.conquestrefabricated.core.asset.annotation.ItemDescription;
+import com.conquestrefabricated.core.asset.lang.Lore;
 import com.conquestrefabricated.core.block.builder.BlockName;
 import com.conquestrefabricated.core.block.builder.Props;
 import com.conquestrefabricated.core.block.factory.InitializationException;
@@ -59,12 +60,18 @@ public class BlockData {
             properties.setId(ResourceKey.create(Registries.ITEM, registryName));
 
             try {
+                List<String> loreKeys = Lore.keys(blockName, props.getLore().size());
+
                 item = new BlockItem(getBlock(), properties) {
                     @Override
                     public void appendHoverText(ItemStack itemStack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
                         ItemDescription tooltipAnnotation = getBlock().getClass().getAnnotation(ItemDescription.class);
                         if (tooltipAnnotation != null) {
                             builder.accept(Component.translatable("tooltip.conquest.block." + tooltipAnnotation.description()));
+                        }
+                        // lore set on the builder comes after whatever the block class contributes
+                        for (String key : loreKeys) {
+                            builder.accept(Component.translatable(key));
                         }
                     }
                 };

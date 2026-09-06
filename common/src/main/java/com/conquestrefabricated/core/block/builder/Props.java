@@ -63,6 +63,7 @@ public class Props extends BlockProps<Props> implements BlockFactory {
     private String nameSingular = null;
 
     private List<TagKey<Block>> tags = Collections.emptyList();
+    private List<String> lore = Collections.emptyList();
 
     private boolean manual = false;
 
@@ -85,6 +86,7 @@ public class Props extends BlockProps<Props> implements BlockFactory {
         this.namespace = props.namespace;
         this.namePlural = props.namePlural;
         this.nameSingular = props.nameSingular;
+        this.lore = props.lore;
     }
 
     @Override
@@ -379,6 +381,41 @@ public class Props extends BlockProps<Props> implements BlockFactory {
 
     public List<TagKey<Block>> getTags() {
         return Collections.unmodifiableList(tags);
+    }
+
+    /**
+     * Adds lore to the item form of every block this builder registers — one line per argument,
+     * shown in the tooltip under the block's name.
+     * <p>
+     * The text given here is the English (en_us) source: the lang datagen writes it out against a
+     * generated key, which translators then override. The key belongs to the family as a whole
+     * ({@code lore.<namespace>.<name>}), so a {@code TypeList} of cube, slab, stairs and wall
+     * produces one lang entry rather than four.
+     * <p>
+     * This lore comes after anything the block class contributes through
+     * {@link com.conquestrefabricated.core.asset.annotation.ItemDescription}, so a block can carry
+     * both its shape's stock description and its own flavour text.
+     * <p>
+     * Calling this more than once appends.
+     *
+     * @param lines the English lore lines, in the order they should appear
+     */
+    public Props lore(String... lines) {
+        if (lines.length == 0) {
+            return this;
+        }
+        if (lore.isEmpty()) {
+            lore = new ArrayList<>(lines.length);
+        }
+        Collections.addAll(lore, lines);
+        return this;
+    }
+
+    /**
+     * @return the English lore lines set on this builder, in order
+     */
+    public List<String> getLore() {
+        return Collections.unmodifiableList(lore);
     }
 
     public Props template(BlockTemplate template) {

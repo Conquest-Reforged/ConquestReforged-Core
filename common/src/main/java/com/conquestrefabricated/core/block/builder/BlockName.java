@@ -16,6 +16,14 @@ public class BlockName {
         return namespace;
     }
 
+    public String getSingular() {
+        return singular;
+    }
+
+    public String getPlural() {
+        return plural;
+    }
+
     @Override
     public String toString() {
         return namespace + ":" + singular;
