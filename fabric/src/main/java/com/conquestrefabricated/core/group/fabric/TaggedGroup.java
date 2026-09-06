@@ -20,6 +20,10 @@ public abstract class TaggedGroup<T extends TaggedGroup> extends ConquestItemGro
         super(index, label, row, column, type, text, icon, entryCollector);
     }
 
+    public TaggedGroup(String namespace, int index, String label, Row row, int column, Type type, Component text, Supplier<ItemStack> icon, DisplayItemsGenerator entryCollector) {
+        super(namespace, index, label, row, column, type, text, icon, entryCollector);
+    }
+
     public abstract T self();
 
     @SafeVarargs

@@ -1,6 +1,6 @@
 package com.conquestrefabricated.core.init;
 
-import com.conquestrefabricated.core.item.group.sort.ItemList;
+import com.conquestrefabricated.core.item.group.sort.GroupFiles;
 import com.conquestrefabricated.core.item.group.sort.Sorter;
 import com.conquestrefabricated.core.util.Provider;
 import com.conquestrefabricated.mixin.CreativeModeTabAccessor;
@@ -16,10 +16,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 @EventBusSubscriber(modid = "conquest", value = Dist.CLIENT)
 public class VanillaTabReorganizer {
@@ -69,7 +65,7 @@ public class VanillaTabReorganizer {
         CreativeModeTab tab = BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(tabKey);
         CreativeModeTabAccessor accessor = (CreativeModeTabAccessor) tab;
 
-        Sorter<ItemStack> sorter = loadSorter("conquest", sortFileLabel);
+        Sorter<ItemStack> sorter = GroupFiles.loadSorter(sortFileLabel);
 
         accessor.conquest$setDisplayItemsGenerator((parameters, output) -> {
             int count = counter.incrementAndGet();
@@ -83,19 +79,5 @@ public class VanillaTabReorganizer {
         });
     }
 
-    private static Sorter<ItemStack> loadSorter(String namespace, String label) {
-        String path = String.format("assets/%s/groups/%s.txt", namespace, label);
-        try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(path)) {
-            if (in == null) {
-                return Sorter.none();
-            }
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-                return ItemList.read(reader, path);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return Sorter.none();
-    }
 
 }

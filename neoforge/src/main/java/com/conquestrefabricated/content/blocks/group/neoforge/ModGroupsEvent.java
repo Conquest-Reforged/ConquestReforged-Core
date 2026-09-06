@@ -15,7 +15,9 @@ public class ModGroupsEvent {
     public static void registerItemGroups(RegisterEvent event) {
         FamilyGroup.FAMILY_GROUPS.forEach(familyGroup -> {
             event.register(Registries.CREATIVE_MODE_TAB, itemGroupRegisterHelper -> {
-                itemGroupRegisterHelper.register(Identifier.fromNamespaceAndPath("conquest", familyGroup.label), familyGroup);
+                itemGroupRegisterHelper.register(
+                        Identifier.fromNamespaceAndPath(familyGroup.getNamespace(), familyGroup.label),
+                        familyGroup);
             });
 
         });

@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.UnaryOperator;
 
 public class Textures implements JsonOverride {
 
@@ -71,7 +72,19 @@ public class Textures implements JsonOverride {
         }
 
         public Textures build() {
-            return new Textures(ImmutableMap.copyOf(textures));
+            return build(UnaryOperator.identity());
+        }
+
+        /**
+         * Builds with each texture passed through {@code resolver}, which is what applies the
+         * owning builder's namespace to unqualified texture names.
+         */
+        public Textures build(UnaryOperator<String> resolver) {
+            ImmutableMap.Builder<String, String> resolved = ImmutableMap.builder();
+            for (Map.Entry<String, String> entry : textures.entrySet()) {
+                resolved.put(entry.getKey(), resolver.apply(entry.getValue()));
+            }
+            return new Textures(resolved.build());
         }
     }
 }

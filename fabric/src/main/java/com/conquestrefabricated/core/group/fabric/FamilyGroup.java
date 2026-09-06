@@ -20,10 +20,31 @@ public class FamilyGroup extends TaggedGroup<FamilyGroup> {
 
     private final Supplier<ItemStack> icon;
 
+    /**
+     * Addon tabs wire their own {@code modifyOutputEvent} when they are created, so Core's
+     * client-init loop must not wire them a second time.
+     */
+    private boolean selfWired = false;
+
     public FamilyGroup(int order, String label, Supplier<ItemStack> icon, Row row, int column, Type type, Component text, DisplayItemsGenerator entryCollector) {
         super(order, label, row, column, type, text, icon, entryCollector);
         this.icon = icon;
         FAMILY_GROUPS.add(this);
+    }
+
+    public FamilyGroup(String namespace, int order, String label, Supplier<ItemStack> icon, Row row, int column, Type type, Component text, DisplayItemsGenerator entryCollector) {
+        super(namespace, order, label, row, column, type, text, icon, entryCollector);
+        this.icon = icon;
+        FAMILY_GROUPS.add(this);
+    }
+
+    public boolean isSelfWired() {
+        return selfWired;
+    }
+
+    public FamilyGroup markSelfWired() {
+        this.selfWired = true;
+        return this;
     }
 
     @Override

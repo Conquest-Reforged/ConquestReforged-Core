@@ -2,7 +2,8 @@ package com.conquestrefabricated.core.group.neoforge;
 
 import com.conquestrefabricated.core.asset.lang.Translations;
 import com.conquestrefabricated.core.item.group.ConquestGroup;
-import com.conquestrefabricated.core.item.group.sort.ItemList;
+import com.conquestrefabricated.core.Namespaces;
+import com.conquestrefabricated.core.item.group.sort.GroupFiles;
 import com.conquestrefabricated.core.item.group.sort.Sorter;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
@@ -10,10 +11,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -21,21 +18,25 @@ import java.util.function.Supplier;
 
 public abstract class ConquestItemGroup extends CreativeModeTab implements ConquestGroup {
 
-    private static final String pathFormat = "/assets/%s/groups/%s.txt";
-
     private final int index;
+    private final String namespace;
     private final Component translationKey;
     public final Sorter<ItemStack> sorter;
     public List<ItemStack> cached = Collections.emptyList();
 
     public ConquestItemGroup(int index, String label, Row row, int i, Type type, Component text, Supplier<ItemStack> supplier, DisplayItemsGenerator entryCollector) {
+        this(Namespaces.DEFAULT, index, label, row, i, type, text, supplier, entryCollector);
+    }
+
+    public ConquestItemGroup(String namespace, int index, String label, Row row, int i, Type type, Component text, Supplier<ItemStack> supplier, DisplayItemsGenerator entryCollector) {
         super(CreativeModeTab.builder()
                 .icon(supplier)
                 .backgroundTexture(Identifier.parse("textures/gui/container/creative_inventory/tab_items.png"))
                 .title(text)
                         .displayItems((displayContext, output) -> {
-                            FamilyGroup self = (FamilyGroup) FamilyGroup.FAMILY_GROUPS.stream()
-                                    .filter(g -> g.label.equals(label))
+                            // keyed on namespace + label: an addon may reuse one of our labels
+                            FamilyGroup self = FamilyGroup.FAMILY_GROUPS.stream()
+                                    .filter(g -> g.getKey().equals(namespace + ':' + label))
                                     .findFirst()
                                     .orElseThrow();
 
@@ -54,14 +55,26 @@ public abstract class ConquestItemGroup extends CreativeModeTab implements Conqu
                             }
                         })
                 );
-        String namespace = "conquest";
         this.index = index;
+        this.namespace = namespace;
         this.translationKey = Component.translatable(Translations.getKey("itemGroup", namespace, label));
-        this.sorter = getItemSorter(namespace, label);
+        this.sorter = GroupFiles.loadSorter(label);
         //Log.info("Sorter for " + label + ": " + (this.sorter == Sorter.<ItemStack>none() ? "NONE (resource not found)" : "loaded"));
 
         Translations.getInstance().add(translationKey.getString(), Translations.translate(label));
     }
+
+    /** The namespace this tab is registered under. */
+    public String getNamespace() {
+        return namespace;
+    }
+
+    /** Unique across namespaces, unlike the label on its own. */
+    public String getKey() {
+        return namespace + ':' + getLabel();
+    }
+
+    protected abstract String getLabel();
 
     @Override
     public Component getDisplayName() {
@@ -76,20 +89,6 @@ public abstract class ConquestItemGroup extends CreativeModeTab implements Conqu
         return index;
     }
 
-    private Sorter<ItemStack> getItemSorter(String namespace, String label) {
-        String path = String.format(pathFormat, namespace, label);
-        try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(path.substring(1))) {
-            if (in == null) {
-                return Sorter.none();
-            }
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-                return ItemList.read(reader, path);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return Sorter.none();
-    }
 
 
 

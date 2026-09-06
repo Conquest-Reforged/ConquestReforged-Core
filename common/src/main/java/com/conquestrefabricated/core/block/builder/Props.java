@@ -1,5 +1,6 @@
 package com.conquestrefabricated.core.block.builder;
 
+import com.conquestrefabricated.core.Namespaces;
 import com.conquestrefabricated.core.block.data.BlockData;
 import com.conquestrefabricated.core.block.data.BlockTemplate;
 import com.conquestrefabricated.core.block.data.ColorType;
@@ -31,6 +32,12 @@ import net.minecraft.world.level.block.state.properties.WoodType;
 public class Props extends BlockProps<Props> implements BlockFactory {
 
     /**
+     * Namespace new builders start out with. Only ever changed, and always restored, by
+     * {@link #withDefaultNamespace(String, Runnable)}.
+     */
+    private static String defaultNamespace = Namespaces.DEFAULT;
+
+    /**
      * Certain Block constructor methods need a BlockState passing to them, ie a 'parent'.
      * For example, Slabs need the full-block instance passing to them to act as the double-slab variant.
      * <p>
@@ -51,6 +58,9 @@ public class Props extends BlockProps<Props> implements BlockFactory {
     private BlockSetType blockSetType = BlockSetType.OAK;
     private WoodType woodType = WoodType.OAK;
     private Identifier registryId = null;
+    private String namespace = defaultNamespace;
+    private String namePlural = null;
+    private String nameSingular = null;
 
     private List<TagKey<Block>> tags = Collections.emptyList();
 
@@ -72,6 +82,9 @@ public class Props extends BlockProps<Props> implements BlockFactory {
         this.renderLayer = props.renderLayer;
         this.familyFactory = props.familyFactory;
         this.family = props.family;
+        this.namespace = props.namespace;
+        this.namePlural = props.namePlural;
+        this.nameSingular = props.nameSingular;
     }
 
     @Override
@@ -97,6 +110,14 @@ public class Props extends BlockProps<Props> implements BlockFactory {
 
     @Override
     public BlockName getName() {
+        if (name == null && namePlural != null) {
+            // resolved lazily so namespace(..) works anywhere in the chain
+            name = BlockName.of(
+                    Namespaces.namespaceOf(namePlural, namespace),
+                    Namespaces.pathOf(namePlural),
+                    Namespaces.pathOf(nameSingular)
+            );
+        }
         if (name == null) {
             throw new InitializationException("Block name is null");
         }
@@ -131,6 +152,43 @@ public class Props extends BlockProps<Props> implements BlockFactory {
         return this;
     }
 
+    /**
+     * Sets the namespace that unqualified names and textures on this builder resolve against.
+     * Defaults to {@link Namespaces#DEFAULT}, so first-party content is unaffected. Third party
+     * addons should call this (or use {@link #withDefaultNamespace}, or an explicit
+     * {@code namespace:name}) so their content registers under their own id.
+     * <p>
+     * Names and textures are resolved lazily, so this may be called anywhere in the chain.
+     * {@link #family(String)} is the exception: it resolves immediately, so either qualify its
+     * argument or call this first.
+     */
+    public Props namespace(String namespace) {
+        this.namespace = namespace;
+        Namespaces.register(namespace);
+        return this;
+    }
+
+    /**
+     * Runs {@code registrations} with every {@link Props} it creates defaulting to
+     * {@code namespace} instead of {@link Namespaces#DEFAULT}. The previous default is restored
+     * afterwards, so an addon can wrap its whole block-init call without touching the submodules
+     * that register before or after it.
+     */
+    public static synchronized void withDefaultNamespace(String namespace, Runnable registrations) {
+        Namespaces.register(namespace);
+        String previous = defaultNamespace;
+        defaultNamespace = namespace;
+        try {
+            registrations.run();
+        } finally {
+            defaultNamespace = previous;
+        }
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
     public Optional<Identifier> getFamily() {
         return Optional.ofNullable(family);
     }
@@ -155,7 +213,16 @@ public class Props extends BlockProps<Props> implements BlockFactory {
         if (textures == null || textures.isEmpty()) {
             return Textures.NONE;
         }
-        return textures.build();
+        return textures.build(this::resolveTexture);
+    }
+
+    private String resolveTexture(String texture) {
+        String textureNamespace = Namespaces.namespaceOf(texture, namespace);
+        String path = Namespaces.pathOf(texture);
+        if (path.indexOf('/') == -1) {
+            path = "block/" + path;
+        }
+        return withNamespace(textureNamespace, path);
     }
 
     public boolean isManual() {
@@ -223,27 +290,29 @@ public class Props extends BlockProps<Props> implements BlockFactory {
     }
 
     public Props family(String name) {
-        String[] parts = name.split(":");
-        if (parts.length == 2) {
-            return family(parts[0], parts[1]);
-        }
-        return family("conquest", name);
+        return family(Namespaces.namespaceOf(name, namespace), Namespaces.pathOf(name));
     }
 
     public Props name(String namespace, String plural, String singular) {
         return name(BlockName.of(namespace, plural, singular));
     }
 
+
     public Props name(String plural, String singular) {
-        return name("conquest", plural, singular);
+        this.name = null;
+        this.namePlural = plural;
+        this.nameSingular = singular;
+        return this;
     }
 
     public Props name(String name) {
-        return name("conquest", name, name);
+        return name(name, name);
     }
 
     public Props name(BlockName name) {
         this.name = name;
+        this.namePlural = null;
+        this.nameSingular = null;
         return this;
     }
 
@@ -282,25 +351,12 @@ public class Props extends BlockProps<Props> implements BlockFactory {
     }
 
     public Props texture(String name, String texture) {
-        String namespace = "conquest";
-        String path = texture;
-
-        int i = texture.indexOf(':');
-        if (i != -1) {
-            namespace = texture.substring(0, i);
-            path = texture.substring(i + 1);
-        }
-
-        int j = path.indexOf('/');
-        if (j == -1) {
-            path = "block/" + path;
-        }
-
         if (textures == null) {
             textures = Textures.builder();
         }
 
-        textures.add(name, withNamespace(namespace, path));
+        // Left unqualified here so a later namespace(..) call still applies; resolved in textures().
+        textures.add(name, texture);
         return this;
     }
 

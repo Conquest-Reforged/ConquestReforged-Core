@@ -1,5 +1,7 @@
 package com.conquestrefabricated.core.data;
 
+import com.conquestrefabricated.core.Namespaces;
+
 import com.conquestrefabricated.content.blocks.block.*;
 import com.conquestrefabricated.content.blocks.block.decor.*;
 import com.conquestrefabricated.core.block.data.BlockDataRegistry;
@@ -36,7 +38,7 @@ public class ModBlockTagProvider extends FabricTagsProvider.BlockTagsProvider {
         //TagAppender<Block, Block> leafTagBuilder = valueLookupBuilder(BlockTags.LEAVES);
         //TagAppender<Block, Block> doorTagBuilder = valueLookupBuilder(BlockTags.DOORS);
 
-        BlockDataRegistry.getInstance().getData("conquest").forEach(blockData -> {
+        Namespaces.stream().flatMap(namespace -> BlockDataRegistry.getInstance().getData(namespace)).forEach(blockData -> {
             for (TagKey<Block> tag : blockData.getTags()) {
                 valueLookupBuilder(tag).add(blockData.getBlock()).setReplace(false);
             }
@@ -46,7 +48,7 @@ public class ModBlockTagProvider extends FabricTagsProvider.BlockTagsProvider {
                 .forEach(block -> {
                     Identifier blockId = BuiltInRegistries.BLOCK.getKey(block);
                     SoundType soundGroup = block.getSoundType(block.defaultBlockState());
-                    if (blockId.getNamespace().equals("conquest")) {
+                    if (Namespaces.isRegistered(blockId.getNamespace())) {
                         if (block instanceof WallNew || block instanceof WallOld) {
                             wallTagBuilder.add(block).setReplace(false);
                         }

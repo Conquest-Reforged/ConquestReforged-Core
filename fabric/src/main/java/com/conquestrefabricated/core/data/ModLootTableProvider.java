@@ -1,5 +1,7 @@
 package com.conquestrefabricated.core.data;
 
+import com.conquestrefabricated.core.Namespaces;
+
 import com.conquestrefabricated.content.blocks.block.*;
 import com.conquestrefabricated.content.blocks.block.decor.Bed;
 import com.conquestrefabricated.content.blocks.block.decor.DoubleHorizontalDirectional;
@@ -32,7 +34,7 @@ public class ModLootTableProvider extends FabricBlockLootSubProvider {
 
     @Override
     public void generate() {
-        BuiltInRegistries.BLOCK.stream().filter(block -> BuiltInRegistries.BLOCK.getKey(block).getNamespace().equals("conquest")).forEach(block -> {
+        BuiltInRegistries.BLOCK.stream().filter(block -> Namespaces.isRegistered(BuiltInRegistries.BLOCK.getKey(block).getNamespace())).forEach(block -> {
             if (block.asItem() == net.minecraft.world.item.Items.AIR) {
                 return; // no item form — nothing to generate a loot table for
             }

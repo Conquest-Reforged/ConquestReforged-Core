@@ -1,5 +1,6 @@
 package com.conquestrefabricated.core.block;
 
+import com.conquestrefabricated.core.Namespaces;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
@@ -30,7 +31,7 @@ public class BlockStats {
                 vs += block.getStateDefinition().getPossibleStates().size();
                 continue;
             }
-            if (name.getNamespace().equals("conquest")) {
+            if (Namespaces.isRegistered(name.getNamespace())) {
                 cb++;
                 cs += block.getStateDefinition().getPossibleStates().size();
             }

@@ -1,5 +1,7 @@
 package com.conquestrefabricated.core.data;
 
+import com.conquestrefabricated.core.Namespaces;
+
 import com.conquestrefabricated.core.asset.lang.Translations;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
@@ -21,7 +23,7 @@ public class ModLangProvider extends FabricLanguageProvider {
         /* === Blocks === */
         Map<String, String> specialCaseTranslations = new HashMap<>();
         BuiltInRegistries.BLOCK.stream()
-                .filter(block -> BuiltInRegistries.BLOCK.getKey(block).getNamespace().equals("conquest"))
+                .filter(block -> Namespaces.isRegistered(BuiltInRegistries.BLOCK.getKey(block).getNamespace()))
                 .forEach(block -> {
                     String path = BuiltInRegistries.BLOCK.getKey(block).getPath();
                     String translationKey = specialCaseTranslations.getOrDefault(

@@ -1,5 +1,7 @@
 package com.conquestrefabricated.core.data;
 
+import com.conquestrefabricated.core.Namespaces;
+
 import com.conquestrefabricated.content.blocks.block.*;
 import com.conquestrefabricated.content.blocks.block.directional.LayerDirectional;
 import com.conquestrefabricated.core.block.data.BlockDataRegistry;
@@ -31,7 +33,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
         return new RecipeProvider(registries, output) {
             @Override
             public void buildRecipes() {
-                BlockDataRegistry.getInstance().getData("conquest").forEach(blockData -> {
+                Namespaces.stream().flatMap(namespace -> BlockDataRegistry.getInstance().getData(namespace)).forEach(blockData -> {
                     if (blockData.getProps().hasParent()) {
                         Block rootBlock = blockData.getProps().getParent().getBlock();
                         Block productBlock = blockData.getBlock();

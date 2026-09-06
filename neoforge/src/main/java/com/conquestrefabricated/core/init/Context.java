@@ -1,5 +1,6 @@
 package com.conquestrefabricated.core.init;
 
+import com.conquestrefabricated.core.Namespaces;
 import net.minecraft.resources.Identifier;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModLoadingContext;
@@ -9,12 +10,21 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Context {
 
-    private static final Map<ModContainer, Context> contexts = new ConcurrentHashMap<>();
+    private static final Map<String, Context> contexts = new ConcurrentHashMap<>();
 
     private String namespace = "";
 
     public static Context getInstance() {
-        return getCurrentContext();
+        ModContainer current = ModLoadingContext.get().getActiveContainer();
+        String namespace = current == null ? Namespaces.DEFAULT : current.getNamespace();
+        return getInstance(namespace);
+    }
+
+    /**
+     * @param namespace the mod id to build resource locations for; addons pass their own
+     */
+    public static Context getInstance(String namespace) {
+        return getCurrentContext(namespace);
     }
 
     public synchronized String getNamespace() {
@@ -29,11 +39,10 @@ public class Context {
         this.namespace = namespace;
     }
 
-    private static Context getCurrentContext() {
-        ModContainer current = ModLoadingContext.get().getActiveContainer();
-        return contexts.computeIfAbsent(current, k -> {
+    private static Context getCurrentContext(String namespace) {
+        return contexts.computeIfAbsent(namespace, id -> {
             Context context = new Context();
-            context.setNamespace(k.getNamespace());
+            context.setNamespace(id);
             return context;
         });
     }

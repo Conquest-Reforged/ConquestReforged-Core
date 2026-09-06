@@ -98,15 +98,19 @@ public class ItemList implements Sorter<ItemStack>, Comparator<ItemStack> {
     }
 
     public static ItemList read(BufferedReader reader, String source) {
+        return read(reader.lines()::iterator, source);
+    }
+
+    public static ItemList read(Iterable<String> lines, String source) {
         AtomicInteger order = new AtomicInteger(0);
         Map<String, Entry> index = new HashMap<>(50);
-        reader.lines().forEach(item -> {
+        for (String item : lines) {
             if (item.isEmpty()) {
-                return;
+                continue;
             }
             index.put(item, new Entry(order.get(), Provider.item(item)));
             order.addAndGet(1);
-        });
+        }
         return new ItemList(index, source);
     }
 }

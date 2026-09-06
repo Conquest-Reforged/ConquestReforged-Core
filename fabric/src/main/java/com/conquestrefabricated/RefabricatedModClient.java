@@ -27,7 +27,8 @@ import com.conquestrefabricated.core.client.input.fabric.Bindings;
 import com.conquestrefabricated.core.group.fabric.FamilyGroup;
 import com.conquestrefabricated.core.init.InitClient;
 import com.conquestrefabricated.core.item.group.manager.ItemGroupManager;
-import com.conquestrefabricated.core.item.group.sort.ItemList;
+import com.conquestrefabricated.core.Namespaces;
+import com.conquestrefabricated.core.item.group.sort.GroupFiles;
 import com.conquestrefabricated.core.item.group.sort.Sorter;
 import com.conquestrefabricated.core.util.Provider;
 import com.conquestrefabricated.mixin.CreativeModeTabAccessor;
@@ -64,10 +65,6 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 
@@ -205,6 +202,10 @@ public class RefabricatedModClient implements ClientModInitializer {
 
         /* TODO: setup the following as its own init class/methods? */
         FamilyGroup.FAMILY_GROUPS.forEach(familyGroup -> {
+            if (familyGroup.isSelfWired()) {
+                // an addon tab; AddonGroups registered its output event when it was created
+                return;
+            }
             CreativeModeTabEvents.modifyOutputEvent(BuiltInRegistries.CREATIVE_MODE_TAB.getResourceKey(familyGroup).get()).register(entries -> {
                 if (familyGroup.cached.isEmpty()) {
                     NonNullList<ItemStack> list = NonNullList.create();
@@ -295,18 +296,22 @@ public class RefabricatedModClient implements ClientModInitializer {
         replaceVanillaTab(CreativeModeTabs.INGREDIENTS, "ee_advanced_carpentry");
         replaceVanillaTab(CreativeModeTabs.SPAWN_EGGS, "f_metal");
 
-        ResourceKey<CreativeModeTab> groupKeyUtility = ResourceKey.create(Registries.CREATIVE_MODE_TAB, Identifier.fromNamespaceAndPath("conquest", "rr_utility"));
-        BuiltInRegistries.ITEM.stream().filter(block -> BuiltInRegistries.ITEM.getKey(block).getNamespace().equals("conquest")).forEach(block -> {
-            CreativeModeTabEvents.modifyOutputEvent(groupKeyUtility).register(entries -> {
-                entries.accept(block);
-            });
-        });
-        BuiltInRegistries.ITEM.stream().filter(block -> BuiltInRegistries.ITEM.getKey(block).getNamespace().equals("conquest_armory")).forEach(block -> {
-            ResourceKey<CreativeModeTab> groupKey = ResourceKey.create(Registries.CREATIVE_MODE_TAB, Identifier.fromNamespaceAndPath("conquest", "pp_weapons_and_tools"));
-            CreativeModeTabEvents.modifyOutputEvent(groupKey).register(entries -> {
-                entries.accept(block);
-            });
-        });
+        // Every registered namespace - ours and any third party addon's - drops its items into the
+        // tab it declared with Namespaces.register(namespace, tabLabel).
+        for (String namespace : Namespaces.all()) {
+            String tabLabel = Namespaces.fallbackTab(namespace).orElse(null);
+            if (tabLabel == null) {
+                continue;
+            }
+            ResourceKey<CreativeModeTab> groupKey = ResourceKey.create(
+                    Registries.CREATIVE_MODE_TAB,
+                    Identifier.fromNamespaceAndPath(Namespaces.DEFAULT, tabLabel)
+            );
+            BuiltInRegistries.ITEM.stream()
+                    .filter(item -> BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(namespace))
+                    .forEach(item -> CreativeModeTabEvents.modifyOutputEvent(groupKey)
+                            .register(entries -> entries.accept(item)));
+        }
 
         // The arms station lives in the conquest namespace but belongs with the gear it forges.
         ResourceKey<CreativeModeTab> groupKeyArms = ResourceKey.create(Registries.CREATIVE_MODE_TAB, Identifier.fromNamespaceAndPath("conquest", "pp_weapons_and_tools"));
@@ -394,7 +399,7 @@ public class RefabricatedModClient implements ClientModInitializer {
         CreativeModeTab tab = BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(tabKey);
         CreativeModeTabAccessor accessor = (CreativeModeTabAccessor) tab;
 
-        Sorter<ItemStack> sorter = loadSorter("conquest", sortFileLabel);
+        Sorter<ItemStack> sorter = GroupFiles.loadSorter(sortFileLabel);
 
         accessor.conquest$setDisplayItemsGenerator((parameters, output) -> {
             NonNullList<ItemStack> list = NonNullList.create();
@@ -404,18 +409,4 @@ public class RefabricatedModClient implements ClientModInitializer {
         });
     }
 
-    private static Sorter<ItemStack> loadSorter(String namespace, String label) {
-        String path = String.format("/assets/%s/groups/%s.txt", namespace, label);
-        try (InputStream in = RefabricatedModClient.class.getResourceAsStream(path)) {
-            if (in == null) {
-                return Sorter.none();
-            }
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-                return ItemList.read(reader, path);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return Sorter.none();
-    }
 }

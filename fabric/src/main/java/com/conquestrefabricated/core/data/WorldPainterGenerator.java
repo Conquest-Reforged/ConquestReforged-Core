@@ -1,5 +1,7 @@
 package com.conquestrefabricated.core.data;
 
+import com.conquestrefabricated.core.Namespaces;
+
 import com.conquestrefabricated.content.blocks.block.Cube;
 import com.conquestrefabricated.content.blocks.block.VerticalCorner;
 import com.conquestrefabricated.content.blocks.block.VerticalQuarter;
@@ -27,7 +29,7 @@ public class WorldPainterGenerator {
     public static void run() {
         try (Writer blocks = newWriter("conquest_wp.csv")) {
             blocks.append("name,discriminator,properties,opacity,receivesLight,insubstantial,resource,tileEntity,tileEntityId,treeRelated,vegetation,blockLight,natural,watery,colour,horizontal_orientation_schemes,vertical_orientation_scheme\n");
-            BlockDataRegistry.getInstance().getData("conquest").forEach(blockData -> {
+            Namespaces.stream().flatMap(namespace -> BlockDataRegistry.getInstance().getData(namespace)).forEach(blockData -> {
                 Block block = BuiltInRegistries.BLOCK.get(blockData.getRegistryName()).get().value();
 
                 {

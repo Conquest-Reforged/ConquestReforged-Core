@@ -1,5 +1,7 @@
 package com.conquestrefabricated.core.data;
 
+import com.conquestrefabricated.core.Namespaces;
+
 import com.conquestrefabricated.content.blocks.block.*;
 import com.conquestrefabricated.content.blocks.block.arch.ArchSmall;
 import com.conquestrefabricated.content.blocks.block.arch.ArchSmallHalf;
@@ -74,7 +76,7 @@ public class ModModelProvider extends FabricModelProvider {
     @Override
     public void generateBlockStateModels(BlockModelGenerators blockStateModelGenerator) {
         //Get data from CR's BlockDataRegistry, so we can get each block's Props (specifically the texture paths)
-        BlockDataRegistry.getInstance().getData("conquest").forEach(blockData -> {
+        Namespaces.stream().flatMap(namespace -> BlockDataRegistry.getInstance().getData(namespace)).forEach(blockData -> {
             Identifier id = blockData.getRegistryName();
             Block block = BuiltInRegistries.BLOCK.get(id).get().value();
             //Some blocks have unique models, so we check to see which ones were marked as "manual" before proceeding

@@ -1,5 +1,6 @@
 package com.conquestrefabricated.api.tags;
 
+import com.conquestrefabricated.core.Namespaces;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
@@ -23,15 +24,23 @@ public class ModTags {
     public static final TagKey<Item> GARDENING_TOOLS = itemTag("gardening_tools");
     public static final TagKey<Item> CYCLING_TOOLS = itemTag("cycling_tools");
 
-    private static TagKey<Block> blockTag(String name) {
-        return TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath("conquest", name));
+    /**
+     * Creates a block tag. Accepts either a bare path, which resolves against
+     * {@link Namespaces#DEFAULT}, or an explicit {@code namespace:path} for addon tags.
+     */
+    public static TagKey<Block> blockTag(String name) {
+        return TagKey.create(Registries.BLOCK, Namespaces.id(name));
     }
 
     private static TagKey<Block> fabricConventionalTag(String name) {
         return TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath("c", name));
     }
 
-    private static TagKey<Item> itemTag(String name) {
-        return TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("conquest", name));
+    /**
+     * Creates an item tag. Accepts either a bare path, which resolves against
+     * {@link Namespaces#DEFAULT}, or an explicit {@code namespace:path} for addon tags.
+     */
+    public static TagKey<Item> itemTag(String name) {
+        return TagKey.create(Registries.ITEM, Namespaces.id(name));
     }
 }

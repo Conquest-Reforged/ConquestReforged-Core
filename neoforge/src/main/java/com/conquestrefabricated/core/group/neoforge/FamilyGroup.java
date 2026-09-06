@@ -29,6 +29,18 @@ public class FamilyGroup extends TaggedGroup<FamilyGroup> {
         FAMILY_GROUPS.add(this);
     }
 
+    public FamilyGroup(String namespace, int order, String label, Supplier<ItemStack> icon, Row row, int column, Type type, Component text, DisplayItemsGenerator entryCollector) {
+        super(namespace, order, label, row, column, type, text, icon, entryCollector);
+        this.icon = icon;
+        this.label = label;
+        FAMILY_GROUPS.add(this);
+    }
+
+    @Override
+    protected String getLabel() {
+        return label;
+    }
+
     @Override
     public FamilyGroup self() {
         return this;

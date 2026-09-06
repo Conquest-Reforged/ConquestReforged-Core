@@ -1,5 +1,7 @@
 package com.conquestrefabricated.core.data;
 
+import com.conquestrefabricated.core.Namespaces;
+
 import com.conquestrefabricated.content.blocks.block.Cube;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -18,7 +20,7 @@ public class BlockDump {
     public static void run() {
         try (Writer blocks = newWriter("blocks-pls.txt"); Writer states = newWriter("states-pls.txt")) {
             BuiltInRegistries.BLOCK.keySet().stream()
-                    .filter(block -> block.getNamespace().equals("conquest"))
+                    .filter(block -> Namespaces.isRegistered(block.getNamespace()))
                     .sorted(Comparator.comparing(Identifier::toString))
                     .forEach(block -> {
                         try {
