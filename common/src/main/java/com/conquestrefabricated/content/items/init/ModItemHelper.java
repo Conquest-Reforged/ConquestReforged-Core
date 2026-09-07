@@ -97,6 +97,20 @@ public final class ModItemHelper {
         return weapon(WeaponType.SHIELD, name, properties -> new Item(shield(properties, durability)));
     }
 
+    public Item pike(String name, ToolMaterial material, float attackDuration,
+                     float minReach, float maxReach, float hitboxMargin) {
+        return weapon(WeaponType.SPEAR, name, properties -> new Item(
+                pike(properties, material, attackDuration, minReach, maxReach, hitboxMargin)));
+    }
+
+    public Item lance(String name, ToolMaterial material, float attackDuration, float damageMultiplier,
+                      float delay, float dismountTime, float dismountThreshold, float knockbackTime,
+                      float knockbackThreshold, float damageTime, float damageThreshold) {
+        return weapon(WeaponType.SPEAR, name, properties -> new Item(
+                lance(properties, material, attackDuration, damageMultiplier, delay, dismountTime,
+                        dismountThreshold, knockbackTime, knockbackThreshold, damageTime, damageThreshold)));
+    }
+
     private static Item.Properties base(Item.Properties props, ToolMaterial material, float attackDuration) {
         return props.durability(material.durability())
                 .repairable(material.repairItems())
