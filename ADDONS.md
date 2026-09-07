@@ -210,6 +210,52 @@ under `itemId()` — and on the client point the menu type at `StationScreen::ne
 registering before Core's init runs is enough to be picked up. The item needs a model, and lang
 entries for `item.<ns>.<path>`, `container.<ns>.<path>` and `tooltip.<ns>.item.<path>`.
 
+## Arms station recipes for your gear
+
+Core generates these for you — one call in your recipe provider covers every piece of armour and
+every weapon your module registers:
+
+```java
+ArmsStationRecipeBuilder.Generated gear = ArmsStationRecipeBuilder.allEquipment(output, items);
+```
+
+Each piece gets a recipe taking the matching vanilla input, so any chestplate reforges into any of
+your chestplates, any sword into any of your swords, and the input's material carries across:
+
+| registered as | input |
+|---|---|
+| `ArmorType.HELMET` / `CHESTPLATE` / `LEGGINGS` / `BOOTS` | `#minecraft:head_armor` / `chest_armor` / `leg_armor` / `foot_armor` |
+| `WeaponType.SWORD` / `AXE` / `SPEAR` | `#minecraft:swords` / `axes` / `spears` |
+| `WeaponType.BOW` / `CROSSBOW` / `SHIELD` | `minecraft:bow` / `crossbow` / `shield` |
+
+### Registering so the generator can see it
+
+Item components are **not bound during data generation** — `Item.components()` throws there — so the
+generator cannot look at an item and work out that it is a helmet. It reads what you recorded at
+registration instead, which means gear has to go through `ModItemHelper`:
+
+```java
+helper.armor("crusader_chestplate", ArmorMaterials.IRON, ArmorType.CHESTPLATE);
+
+helper.sword("bastard_sword", ToolMaterial.IRON, 4.0F, -2.4F, 0.0F, 3.5F, 0.1F);
+helper.axe("bearded_axe", ToolMaterial.IRON, 6.0F, -3.1F, 0.0F, 3.0F, 0.1F);
+helper.bow("english_longbow", 384, 15);
+helper.crossbow("arbalest", 465, 15);
+helper.shield("heater_shield", 336);
+```
+
+Anything with a shape those don't cover — a pike, a lance, an animated subclass — goes through the
+general form, which takes your own factory:
+
+```java
+helper.weapon(WeaponType.SPEAR, "pike", properties ->
+        new Item(ModItemHelper.pike(properties, ToolMaterial.IRON, 1.2F, 0.0F, 5.0F, 0.1F)));
+```
+
+A weapon registered through plain `register(..)` has no recorded kind and is silently passed over.
+`Generated.skipped()` counts those, and Core logs the number, so a mismatch shows up in the datagen
+output rather than as a missing recipe in game.
+
 ## Tags
 
 `ModTags.blockTag(..)` / `ModTags.itemTag(..)` are public and take either a bare path (resolved

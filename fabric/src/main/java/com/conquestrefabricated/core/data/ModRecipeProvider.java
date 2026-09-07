@@ -4,8 +4,10 @@ import com.conquestrefabricated.core.Namespaces;
 
 import com.conquestrefabricated.content.blocks.block.*;
 import com.conquestrefabricated.content.blocks.block.directional.LayerDirectional;
+import com.conquestrefabricated.content.arms.ArmsStationRecipeBuilder;
 import com.conquestrefabricated.content.tools.ToolCraftingRecipeBuilder;
 import com.conquestrefabricated.core.block.data.BlockData;
+import com.conquestrefabricated.core.util.log.Log;
 import com.conquestrefabricated.core.block.data.BlockDataRegistry;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
@@ -38,6 +40,12 @@ public class ModRecipeProvider extends FabricRecipeProvider {
             @Override
             public void buildRecipes() {
                 HolderGetter<Item> items = registries.lookupOrThrow(Registries.ITEM);
+
+                // Any vanilla helmet reforges into any of ours, any sword into any of our swords, and
+                // so on. Only covers gear on the classpath of whichever module runs datagen.
+                ArmsStationRecipeBuilder.Generated gear = ArmsStationRecipeBuilder.allEquipment(output, items);
+                Log.info("Arms station: wrote {} recipes, passed over {} items with no recorded armour slot or weapon kind",
+                        gear.recipes(), gear.skipped());
 
                 Namespaces.stream().flatMap(namespace -> BlockDataRegistry.getInstance().getData(namespace)).forEach(blockData -> {
                     // Only the family's parent is made at a set of crafting tools; every other member

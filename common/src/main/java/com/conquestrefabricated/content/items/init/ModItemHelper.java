@@ -1,6 +1,7 @@
 package com.conquestrefabricated.content.items.init;
 
 import com.conquestrefabricated.content.items.item.ArmorItem;
+import com.conquestrefabricated.content.items.item.WeaponType;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -46,6 +47,54 @@ public final class ModItemHelper {
 
     public ArmorItem armor(String name, ArmorMaterial material, ArmorType type) {
         return register(name, properties -> new ArmorItem(material, type, properties.stacksTo(1)));
+    }
+
+    // ------------------------------------------------------------------------------------------
+    // Weapons.
+    //
+    // These register and remember what kind of weapon they made, which is what lets the arms
+    // station's datagen offer "any sword makes this sword". A weapon registered through plain
+    // register(..) is invisible to that: components are not bound during data generation, so there
+    // is nothing to read back off the item. Anything with a shape these methods do not cover -
+    // a pike, a lance, an animated subclass - goes through weapon(..) with its own factory.
+    // ------------------------------------------------------------------------------------------
+
+    /**
+     * Registers a weapon built however you like, and records what kind it is.
+     *
+     * <pre>{@code
+     * helper.weapon(WeaponType.SPEAR, "pike", properties ->
+     *         new Item(ModItemHelper.pike(properties, ToolMaterial.IRON, 1.2F, 0.0F, 5.0F, 0.1F)));
+     * }</pre>
+     */
+    public <T extends Item> T weapon(WeaponType kind, String name, Function<Item.Properties, T> factory) {
+        T item = register(name, factory);
+        WeaponType.declare(item, kind);
+        return item;
+    }
+
+    public Item sword(String name, ToolMaterial material, float attackDamageBaseline, float attackSpeedBaseline,
+                      float minReach, float maxReach, float hitboxMargin) {
+        return weapon(WeaponType.SWORD, name, properties -> new Item(
+                sword(properties, material, attackDamageBaseline, attackSpeedBaseline, minReach, maxReach, hitboxMargin)));
+    }
+
+    public Item axe(String name, ToolMaterial material, float attackDamageBaseline, float attackSpeedBaseline,
+                    float minReach, float maxReach, float hitboxMargin) {
+        return weapon(WeaponType.AXE, name, properties -> new Item(
+                axe(properties, material, attackDamageBaseline, attackSpeedBaseline, minReach, maxReach, hitboxMargin)));
+    }
+
+    public Item bow(String name, int durability, int enchantability) {
+        return weapon(WeaponType.BOW, name, properties -> new Item(bow(properties, durability, enchantability)));
+    }
+
+    public Item crossbow(String name, int durability, int enchantability) {
+        return weapon(WeaponType.CROSSBOW, name, properties -> new Item(crossbow(properties, durability, enchantability)));
+    }
+
+    public Item shield(String name, int durability) {
+        return weapon(WeaponType.SHIELD, name, properties -> new Item(shield(properties, durability)));
     }
 
     private static Item.Properties base(Item.Properties props, ToolMaterial material, float attackDuration) {
