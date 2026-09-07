@@ -8,6 +8,8 @@ import com.conquestrefabricated.content.blocks.block.BoardsHorizontal;
 import com.conquestrefabricated.content.blocks.block.decor.Chairs;
 import com.conquestrefabricated.content.blocks.block.trees.*;
 import com.conquestrefabricated.content.arms.fabric.ArmsStationInit;
+import com.conquestrefabricated.content.station.fabric.StationInit;
+import com.conquestrefabricated.content.tools.fabric.CraftingToolsInit;
 import com.conquestrefabricated.content.blocks.init.BlockRegistrar;
 import com.conquestrefabricated.content.blocks.init.fabric.TileRegistrar;
 import com.conquestrefabricated.content.blocks.init.fabric.ManualBlockRegistrar;
@@ -45,7 +47,9 @@ public class RefabricatedMod implements ModInitializer {
         ManualBlockRegistrar.manualItems();
        // InitCommon.items();
         ItemCommonInit.init();
+        StationInit.register();
         ArmsStationInit.register();
+        CraftingToolsInit.register();
         TileRegistrar.entities();
         EntityCommonInit.entities();
         ParticleRegistrarEvent.onIParticleTypeRegistration();

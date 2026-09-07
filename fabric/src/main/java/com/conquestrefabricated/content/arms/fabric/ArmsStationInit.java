@@ -1,18 +1,13 @@
 package com.conquestrefabricated.content.arms.fabric;
 
-import com.conquestrefabricated.client.gui.arms.ArmsStationClient;
-import com.conquestrefabricated.client.gui.arms.ArmsStationScreen;
+import com.conquestrefabricated.client.gui.station.StationScreen;
 import com.conquestrefabricated.content.arms.ArmsStation;
-import com.conquestrefabricated.content.arms.ArmsStationNetwork;
-import com.conquestrefabricated.content.arms.ArmsStationOptionsPayload;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import com.conquestrefabricated.content.arms.ArmsStationMenu;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 
-/** Fabric-side registration for the arms station block, menu, recipe type and option sync. */
+/** Fabric-side registration for the arms station block, menu and recipe type. */
 public final class ArmsStationInit {
 
     private ArmsStationInit() {
@@ -24,14 +19,9 @@ public final class ArmsStationInit {
         Registry.register(BuiltInRegistries.MENU, ArmsStation.ID, ArmsStation.createMenu());
         Registry.register(BuiltInRegistries.RECIPE_TYPE, ArmsStation.ID, ArmsStation.RECIPE_TYPE);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, ArmsStation.ID, ArmsStation.RECIPE_SERIALIZER);
-
-        PayloadTypeRegistry.clientboundPlay().register(ArmsStationOptionsPayload.ID, ArmsStationOptionsPayload.CODEC);
-        ArmsStationNetwork.setSender(ServerPlayNetworking::send);
     }
 
     public static void registerClient() {
-        MenuScreens.register(ArmsStation.MENU, ArmsStationScreen::new);
-        ClientPlayNetworking.registerGlobalReceiver(ArmsStationOptionsPayload.ID,
-                (payload, context) -> context.client().execute(() -> ArmsStationClient.applyOptions(payload)));
+        MenuScreens.register(ArmsStation.MENU, StationScreen<ArmsStationMenu>::new);
     }
 }

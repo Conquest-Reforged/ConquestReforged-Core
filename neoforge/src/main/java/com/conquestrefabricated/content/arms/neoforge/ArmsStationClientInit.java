@@ -1,6 +1,7 @@
 package com.conquestrefabricated.content.arms.neoforge;
 
-import com.conquestrefabricated.client.gui.arms.ArmsStationScreen;
+import com.conquestrefabricated.client.gui.station.StationScreen;
+import com.conquestrefabricated.content.arms.ArmsStationMenu;
 import com.conquestrefabricated.content.arms.ArmsStation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -13,6 +14,6 @@ public class ArmsStationClientInit {
 
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
-        event.register(ArmsStation.MENU, ArmsStationScreen::new);
+        event.register(ArmsStation.MENU, StationScreen<ArmsStationMenu>::new);
     }
 }

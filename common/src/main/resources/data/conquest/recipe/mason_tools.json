@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "#": "minecraft:stick",
+    "i": "minecraft:iron_ingot"
+  },
+  "pattern": [
+    "ii",
+    "#i",
+    "# "
+  ],
+  "result": {
+    "id": "conquest:mason_tools"
+  }
+}

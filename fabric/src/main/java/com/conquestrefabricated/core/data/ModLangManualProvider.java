@@ -141,6 +141,16 @@ public class ModLangManualProvider extends FabricLanguageProvider {
         translationBuilder.add("material.conquest.chain", "Chainmail");
         translationBuilder.add("material.conquest.turtle", "Turtle Scute");
 
+        /* === Crafting tools === */
+        translationBuilder.add("container.conquest.station.show_variants", "Show every shape");
+        translationBuilder.add("container.conquest.station.hide_variants", "Show base blocks only");
+        translationBuilder.add("item.conquest.woodworking_tools", "Woodworking Tools");
+        translationBuilder.add("item.conquest.mason_tools", "Mason's Tools");
+        translationBuilder.add("container.conquest.woodworking_tools", "Woodworking");
+        translationBuilder.add("container.conquest.mason_tools", "Masonry");
+        translationBuilder.add("tooltip.conquest.item.woodworking_tools", "§eRight-click to shape planks, beams and panelling§r");
+        translationBuilder.add("tooltip.conquest.item.mason_tools", "§eRight-click to shape ashlar, brick and tile§r");
+
         translationBuilder.add("item.conquest.mallet_item", "Mallet (Conquest Toggle Tool)");
         translationBuilder.add("tooltip.conquest.mallet_item", "§6Use this (right-click) on toggleable blocks to change their shape");
 

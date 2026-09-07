@@ -1,6 +1,6 @@
-package com.conquestrefabricated.client.gui.arms;
+package com.conquestrefabricated.client.gui.station;
 
-import com.conquestrefabricated.content.arms.ArmsStationMenu;
+import com.conquestrefabricated.content.station.StationMenu;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -18,14 +18,16 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 
 /**
- * The arms station's recipe picker, drawn on the vanilla stonecutter background.
+ * The recipe picker shared by Conquest's crafting stations, drawn on the vanilla stonecutter
+ * background.
  *
  * <p>Structurally a port of {@code StonecutterScreen}. The only difference is where the options come
- * from: the stonecutter reads them back out of the client's synced recipe list, while the arms
- * station renders the already-assembled preview stacks the server handed to
- * {@link ArmsStationMenu}.</p>
+ * from: the stonecutter reads them back out of the client's synced recipe list, while a station
+ * renders the already-assembled preview stacks the server handed to {@link StationMenu}.</p>
+ *
+ * @param <T> the station menu this screen is showing
  */
-public class ArmsStationScreen extends AbstractContainerScreen<ArmsStationMenu> {
+public class StationScreen<T extends StationMenu<?>> extends AbstractContainerScreen<T> {
 
     private static final Identifier SCROLLER_SPRITE = Identifier.withDefaultNamespace("container/stonecutter/scroller");
     private static final Identifier SCROLLER_DISABLED_SPRITE = Identifier.withDefaultNamespace("container/stonecutter/scroller_disabled");
@@ -45,12 +47,25 @@ public class ArmsStationScreen extends AbstractContainerScreen<ArmsStationMenu> 
     private static final int RECIPES_X = 52;
     private static final int RECIPES_Y = 14;
 
+    /**
+     * The variant toggle, in the blank strip between the input slot and the inventory label. Drawn
+     * with the picker's own button sprites so it reads as part of the same control, rather than
+     * needing artwork of its own.
+     */
+    private static final int TOGGLE_X = 20;
+    private static final int TOGGLE_Y = 52;
+    private static final int TOGGLE_WIDTH = 16;
+    private static final int TOGGLE_HEIGHT = 18;
+
+    private static final String SHOW_VARIANTS_KEY = "container.conquest.station.show_variants";
+    private static final String HIDE_VARIANTS_KEY = "container.conquest.station.hide_variants";
+
     private float scrollOffs;
     private boolean scrolling;
     private int startIndex;
     private boolean displayRecipes;
 
-    public ArmsStationScreen(ArmsStationMenu menu, Inventory inventory, Component title) {
+    public StationScreen(T menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         menu.registerUpdateListener(this::containerChanged);
         this.titleLabelY--;
@@ -82,11 +97,53 @@ public class ArmsStationScreen extends AbstractContainerScreen<ArmsStationMenu> 
         int endIndex = this.startIndex + RECIPES_PER_PAGE;
         this.extractButtons(graphics, mouseX, mouseY, x, y, endIndex);
         this.extractRecipes(graphics, x, y, endIndex);
+        this.extractVariantToggle(graphics, mouseX, mouseY);
+    }
+
+    private void extractVariantToggle(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY) {
+        if (!this.menu.supportsVariants()) {
+            return;
+        }
+
+        int x = this.leftPos + TOGGLE_X;
+        int y = this.topPos + TOGGLE_Y;
+        boolean hovered = this.isOverToggle(mouseX, mouseY);
+        boolean on = this.menu.showingVariants();
+
+        Identifier sprite;
+        if (on) {
+            sprite = RECIPE_SELECTED_SPRITE;
+        } else if (hovered) {
+            sprite = RECIPE_HIGHLIGHTED_SPRITE;
+        } else {
+            sprite = RECIPE_SPRITE;
+        }
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x, y, TOGGLE_WIDTH, TOGGLE_HEIGHT);
+        graphics.centeredText(this.font, on ? "-" : "+", x + TOGGLE_WIDTH / 2, y + 5, 0xFFDDDDDD);
+
+        if (hovered) {
+            graphics.requestCursor(CursorTypes.POINTING_HAND);
+        }
+    }
+
+    private boolean isOverToggle(final double mouseX, final double mouseY) {
+        if (!this.menu.supportsVariants()) {
+            return false;
+        }
+        int x = this.leftPos + TOGGLE_X;
+        int y = this.topPos + TOGGLE_Y;
+        return mouseX >= x && mouseX < x + TOGGLE_WIDTH && mouseY >= y && mouseY < y + TOGGLE_HEIGHT;
     }
 
     @Override
     protected void extractTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         super.extractTooltip(graphics, mouseX, mouseY);
+
+        if (this.isOverToggle(mouseX, mouseY)) {
+            graphics.setTooltipForNextFrame(this.font, Component.translatable(
+                    this.menu.showingVariants() ? HIDE_VARIANTS_KEY : SHOW_VARIANTS_KEY), mouseX, mouseY);
+        }
+
         if (!this.displayRecipes) {
             return;
         }
@@ -142,6 +199,14 @@ public class ArmsStationScreen extends AbstractContainerScreen<ArmsStationMenu> 
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (this.isOverToggle(event.x(), event.y())) {
+            this.menu.clickMenuButton(this.minecraft.player, StationMenu.TOGGLE_VARIANTS_BUTTON);
+            this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, StationMenu.TOGGLE_VARIANTS_BUTTON);
+            Minecraft.getInstance().getSoundManager().play(
+                    SimpleSoundInstance.forUI(SoundEvents.UI_STONECUTTER_SELECT_RECIPE, 1.0F));
+            return true;
+        }
+
         if (this.displayRecipes) {
             int xo = this.leftPos + RECIPES_X;
             int yo = this.topPos + RECIPES_Y;

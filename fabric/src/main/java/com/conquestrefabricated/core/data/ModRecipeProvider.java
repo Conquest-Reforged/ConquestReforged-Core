@@ -4,9 +4,12 @@ import com.conquestrefabricated.core.Namespaces;
 
 import com.conquestrefabricated.content.blocks.block.*;
 import com.conquestrefabricated.content.blocks.block.directional.LayerDirectional;
+import com.conquestrefabricated.content.tools.ToolCraftingRecipeBuilder;
+import com.conquestrefabricated.core.block.data.BlockData;
 import com.conquestrefabricated.core.block.data.BlockDataRegistry;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -14,6 +17,7 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
@@ -33,7 +37,16 @@ public class ModRecipeProvider extends FabricRecipeProvider {
         return new RecipeProvider(registries, output) {
             @Override
             public void buildRecipes() {
+                HolderGetter<Item> items = registries.lookupOrThrow(Registries.ITEM);
+
                 Namespaces.stream().flatMap(namespace -> BlockDataRegistry.getInstance().getData(namespace)).forEach(blockData -> {
+                    // Only the family's parent is made at a set of crafting tools; every other member
+                    // is cut from the parent by the stonecutting recipes below.
+                    if (isFamilyParent(blockData)) {
+                        blockData.getProps().getToolRecipe().ifPresent(spec ->
+                                ToolCraftingRecipeBuilder.from(spec, items, blockData.getBlock()).save(output));
+                    }
+
                     if (blockData.getProps().hasParent()) {
                         Block rootBlock = blockData.getProps().getParent().getBlock();
                         Block productBlock = blockData.getBlock();
@@ -67,6 +80,16 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 });
             }
         };
+    }
+
+    /**
+     * Whether {@code data} is the block a family is built from. A builder that never had a parent set
+     * registered one block and that block is its own root; otherwise the parent is whatever
+     * {@code Props.parent(..)} points at, which for cutout families lands on a copied {@code Props}
+     * whose parent was never filled in.
+     */
+    private static boolean isFamilyParent(BlockData data) {
+        return !data.getProps().hasParent() || data.getProps().getParent().getBlock() == data.getBlock();
     }
 
     public void offerSCRecipe(RecipeOutput exporter, RecipeCategory category, ItemLike output, ItemLike input, int count) {

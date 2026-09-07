@@ -6,19 +6,12 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.SingleRecipeInput;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -83,43 +76,5 @@ public final class ArmsStation {
     public static MenuType<ArmsStationMenu> createMenu() {
         MENU = new MenuType<>(ArmsStationMenu::new, FeatureFlags.DEFAULT_FLAGS);
         return MENU;
-    }
-
-    /**
-     * Every arms station recipe that accepts {@code input}, in datapack order.
-     *
-     * <p>Custom recipe types are never shipped to clients, so this only ever returns results on the
-     * logical server; the client is told what to draw by {@link ArmsStationOptionsPayload}.</p>
-     */
-    public static List<RecipeHolder<ArmsStationRecipe>> recipesFor(Level level, ItemStack input) {
-        if (input.isEmpty() || !(level.recipeAccess() instanceof RecipeManager recipes)) {
-            return List.of();
-        }
-
-        SingleRecipeInput recipeInput = new SingleRecipeInput(input);
-        List<RecipeHolder<ArmsStationRecipe>> matches = new ArrayList<>();
-        for (RecipeHolder<?> holder : recipes.getRecipes()) {
-            if (holder.value() instanceof ArmsStationRecipe recipe && recipe.matches(recipeInput, level)) {
-                @SuppressWarnings("unchecked")
-                RecipeHolder<ArmsStationRecipe> typed = (RecipeHolder<ArmsStationRecipe>) holder;
-                matches.add(typed);
-            }
-        }
-        return matches;
-    }
-
-    /** Whether any arms station recipe accepts {@code input}. Logical server only. */
-    public static boolean isValidInput(Level level, ItemStack input) {
-        if (input.isEmpty() || !(level.recipeAccess() instanceof RecipeManager recipes)) {
-            return false;
-        }
-
-        SingleRecipeInput recipeInput = new SingleRecipeInput(input);
-        for (RecipeHolder<?> holder : recipes.getRecipes()) {
-            if (holder.value() instanceof ArmsStationRecipe recipe && recipe.matches(recipeInput, level)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

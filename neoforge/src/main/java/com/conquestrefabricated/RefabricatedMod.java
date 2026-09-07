@@ -1,10 +1,10 @@
 package com.conquestrefabricated;
 
 import com.conquestrefabricated.client.gui.config.ConquestConfig;
-import com.conquestrefabricated.client.gui.arms.ArmsStationClient;
+import com.conquestrefabricated.client.gui.station.StationClient;
 import com.conquestrefabricated.client.gui.config.neoforge.ConfigSyncPacket;
-import com.conquestrefabricated.content.arms.ArmsStationOptionsPayload;
-import com.conquestrefabricated.content.arms.neoforge.ArmsStationInit;
+import com.conquestrefabricated.content.station.StationOptionsPayload;
+import com.conquestrefabricated.content.station.StationNetwork;
 import com.conquestrefabricated.content.blocks.group.neoforge.ModGroupsEvent;
 import com.conquestrefabricated.content.blocks.tileentity.neoforge.TileEntityTypesImpl;
 import net.minecraft.server.level.ServerPlayer;
@@ -41,11 +41,11 @@ public class RefabricatedMod {
                 ConfigSyncPacket::handle
         );
         registrar.playToClient(
-                ArmsStationOptionsPayload.ID,
-                ArmsStationOptionsPayload.CODEC,
-                (payload, context) -> context.enqueueWork(() -> ArmsStationClient.applyOptions(payload))
+                StationOptionsPayload.ID,
+                StationOptionsPayload.CODEC,
+                (payload, context) -> context.enqueueWork(() -> StationClient.applyOptions(payload))
         );
-        ArmsStationInit.installPayloadSender();
+        StationNetwork.setSender(PacketDistributor::sendToPlayer);
     }
 
     @SubscribeEvent

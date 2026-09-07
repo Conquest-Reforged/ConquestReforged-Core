@@ -137,6 +137,79 @@ it for free. Its colour is `Lore.HINT_COLOR` if you are building Core and want b
 Run the lang datagen after adding lore. If two families end up sharing a name, they share a lore
 key too — datagen keeps the first and logs a warning naming the key.
 
+## Crafting tools
+
+A set of crafting tools is a held item that opens a stonecutter-style picker: put an ingredient in
+the input slot, pick a shape from the grid, take the block out. Core ships two —
+`CraftingTools.WOODWORKING` and `CraftingTools.MASON` — and blocks opt in through `Props`:
+
+```java
+VanillaProps.stone()
+        .name("granite_ashlar")
+        .craftedWith(CraftingTools.MASON.id(), Blocks.GRANITE)
+        .register(types);
+```
+
+The ingredient may be a block, an item, or an item tag, with an optional yield:
+
+```java
+        .craftedWith(CraftingTools.WOODWORKING.id(), ItemTags.PLANKS, 4)
+```
+
+**Only the family's parent gets the recipe.** That is the block a builder registers first, or
+whatever `parent(..)` was pointed at. Every other member of the `TypeList` — slab, stairs, wall,
+vertical slab — is cut from that parent by the stonecutting recipes Core already generates, so one
+`craftedWith(..)` call covers the whole family. Run the recipe datagen after adding it.
+
+A builder whose `parent(..)` or `family(..)` points at someone else's block has no parent of its own,
+so `craftedWith(..)` on it generates nothing — its blocks are already reachable by stonecutting from
+that other family's parent, and that parent is where the tool recipe belongs.
+
+### Reaching the rest of the family
+
+A tool recipe is only ever written for the family's parent, but the picker can still offer the whole
+family. The toggle under the input slot switches between two lists — never both at once:
+
+- `+` — **base blocks.** The tool recipes that accept what is in the input slot.
+- `-` — **family shapes.** Everything one stonecutting step from the input itself, at the cut's own
+  yield. No recipe file per shape, and datapack edits to those cuts are picked up for free.
+
+So the flow is two passes: granite in, take the ashlar block on the base list; put the ashlar block
+back in, switch to family shapes, take its slab or stairs.
+
+Family shapes are gated by `StationMenu.worksWith(..)`, because the stonecutting graph knows nothing
+about which station is open — without it a set of woodworking tools would happily cut granite. A set
+of tools works a material it has a recipe for, plus anything it made itself, so its own output can go
+back in to be shaped.
+
+Stations opt in with `StationMenu.supportsVariants()`; the crafting tools do, the arms station does
+not, since nothing is cut from iron.
+
+For one-off recipes that don't belong to a block family, build them directly:
+
+```java
+ToolCraftingRecipeBuilder.toolCrafting(CraftingTools.MASON.id(), Blocks.CLAY, ModBlocks.ROOF_TILES)
+        .count(4)
+        .save(this.output);
+```
+
+### Adding your own tool set
+
+Tool sets are told apart by id on a shared `conquest:tool_crafting` recipe type, so a new one needs
+an item and a menu type rather than a new recipe type:
+
+```java
+public static final CraftingTool GLASSBLOWING =
+        CraftingTools.register(CraftingTool.of(Identifier.fromNamespaceAndPath("myaddon", "glassblowing_tools")));
+```
+
+Then register what its registration phase hands you — `GLASSBLOWING.createItem()` into
+`BuiltInRegistries.ITEM` under `itemKey()`, `GLASSBLOWING.createMenu()` into `BuiltInRegistries.MENU`
+under `itemId()` — and on the client point the menu type at `StationScreen::new`. Core's
+`CraftingToolsInit` on each loader does exactly this for every set in `CraftingTools.all()`, so
+registering before Core's init runs is enough to be picked up. The item needs a model, and lang
+entries for `item.<ns>.<path>`, `container.<ns>.<path>` and `tooltip.<ns>.item.<path>`.
+
 ## Tags
 
 `ModTags.blockTag(..)` / `ModTags.itemTag(..)` are public and take either a bare path (resolved

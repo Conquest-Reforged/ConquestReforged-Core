@@ -23,6 +23,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -62,6 +64,8 @@ public class Props extends BlockProps<Props> implements BlockFactory {
     private String namePlural = null;
     private String nameSingular = null;
 
+    private ToolRecipeSpec toolRecipe = null;
+
     private List<TagKey<Block>> tags = Collections.emptyList();
     private List<String> lore = Collections.emptyList();
 
@@ -87,6 +91,7 @@ public class Props extends BlockProps<Props> implements BlockFactory {
         this.namePlural = props.namePlural;
         this.nameSingular = props.nameSingular;
         this.lore = props.lore;
+        this.toolRecipe = props.toolRecipe;
     }
 
     @Override
@@ -416,6 +421,67 @@ public class Props extends BlockProps<Props> implements BlockFactory {
      */
     public List<String> getLore() {
         return Collections.unmodifiableList(lore);
+    }
+
+    /**
+     * Declares that this block is made at a set of crafting tools, from {@code ingredient}.
+     * <p>
+     * Only the family's parent gets the recipe - the block this builder registers first, or whatever
+     * {@link #parent(BlockState)} was pointed at. Every other member of the family is cut from that
+     * parent by the stonecutting recipes the core already generates, so one call here is enough for
+     * a whole {@code TypeList} of cube, slab, stairs and wall.
+     * <p>
+     * The tool set is named by id rather than by object so the block builder stays independent of
+     * the tools themselves; Conquest's own are
+     * {@code CraftingTools.WOODWORKING.id()} and {@code CraftingTools.MASON.id()}.
+     *
+     * <pre>{@code
+     * VanillaProps.stone()
+     *         .name("granite_ashlar")
+     *         .craftedWith(CraftingTools.MASON.id(), Blocks.GRANITE)
+     *         .register(types);
+     * }</pre>
+     *
+     * @param tool       id of the tool set that makes this block
+     * @param ingredient the block or item that goes into the tools' input slot
+     */
+    public Props craftedWith(Identifier tool, ItemLike ingredient) {
+        return craftedWith(tool, ingredient, 1);
+    }
+
+    /**
+     * @param count how many the recipe yields
+     * @see #craftedWith(Identifier, ItemLike)
+     */
+    public Props craftedWith(Identifier tool, ItemLike ingredient, int count) {
+        this.toolRecipe = ToolRecipeSpec.of(tool, ingredient, count);
+        return this;
+    }
+
+    /**
+     * Accepts anything in {@code ingredient}, for parents that can be made from a whole family of
+     * inputs - all planks, all cobblestones.
+     *
+     * @see #craftedWith(Identifier, ItemLike)
+     */
+    public Props craftedWith(Identifier tool, TagKey<Item> ingredient) {
+        return craftedWith(tool, ingredient, 1);
+    }
+
+    /**
+     * @param count how many the recipe yields
+     * @see #craftedWith(Identifier, TagKey)
+     */
+    public Props craftedWith(Identifier tool, TagKey<Item> ingredient, int count) {
+        this.toolRecipe = ToolRecipeSpec.of(tool, ingredient, count);
+        return this;
+    }
+
+    /**
+     * @return the crafting tool recipe declared for this family, if any
+     */
+    public Optional<ToolRecipeSpec> getToolRecipe() {
+        return Optional.ofNullable(toolRecipe);
     }
 
     public Props template(BlockTemplate template) {
