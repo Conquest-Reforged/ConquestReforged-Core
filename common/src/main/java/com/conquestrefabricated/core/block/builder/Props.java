@@ -24,7 +24,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -435,8 +434,8 @@ public class Props extends BlockProps<Props> implements BlockFactory {
      * a whole {@code TypeList} of cube, slab, stairs and wall.
      * <p>
      * The tool set is named by id rather than by object so the block builder stays independent of
-     * the tools themselves; Conquest's own are
-     * {@code CraftingTools.WOODWORKING.id()} and {@code CraftingTools.MASON.id()}.
+     * the tools themselves; Conquest's own are {@code CraftingTools.WOODWORKING.id()},
+     * {@code CraftingTools.MASON.id()} and {@code CraftingTools.METALWORKING.id()}.
      *
      * <pre>{@code
      * VanillaProps.stone()
@@ -446,38 +445,88 @@ public class Props extends BlockProps<Props> implements BlockFactory {
      * }</pre>
      *
      * @param tool       id of the tool set that makes this block
-     * @param ingredient the block or item that goes into the tools' input slot
+     * @param ingredient what goes into the tools' input slot
+     * @see RecipeIngredient
      */
-    public Props craftedWith(Identifier tool, ItemLike ingredient) {
+    public Props craftedWith(Identifier tool, RecipeIngredient ingredient) {
         return craftedWith(tool, ingredient, 1);
     }
 
     /**
      * @param count how many the recipe yields
-     * @see #craftedWith(Identifier, ItemLike)
+     * @see #craftedWith(Identifier, RecipeIngredient)
      */
-    public Props craftedWith(Identifier tool, ItemLike ingredient, int count) {
+    public Props craftedWith(Identifier tool, RecipeIngredient ingredient, int count) {
         this.toolRecipe = ToolRecipeSpec.of(tool, ingredient, count);
         return this;
     }
 
+    /** @see #craftedWith(Identifier, RecipeIngredient) */
+    public Props craftedWith(Identifier tool, ItemLike ingredient) {
+        return craftedWith(tool, RecipeIngredient.of(ingredient), 1);
+    }
+
+    /**
+     * @param count how many the recipe yields
+     * @see #craftedWith(Identifier, RecipeIngredient)
+     */
+    public Props craftedWith(Identifier tool, ItemLike ingredient, int count) {
+        return craftedWith(tool, RecipeIngredient.of(ingredient), count);
+    }
+
     /**
      * Accepts anything in {@code ingredient}, for parents that can be made from a whole family of
-     * inputs - all planks, all cobblestones.
+     * inputs - all planks, all cobblestones. Takes a tag of either items or blocks; a block tag is
+     * usually the handier of the two, since that is how Conquest's own families are grouped.
      *
-     * @see #craftedWith(Identifier, ItemLike)
+     * @see #craftedWith(Identifier, RecipeIngredient)
      */
-    public Props craftedWith(Identifier tool, TagKey<Item> ingredient) {
-        return craftedWith(tool, ingredient, 1);
+    public Props craftedWith(Identifier tool, TagKey<?> ingredient) {
+        return craftedWith(tool, RecipeIngredient.of(ingredient), 1);
     }
 
     /**
      * @param count how many the recipe yields
      * @see #craftedWith(Identifier, TagKey)
      */
-    public Props craftedWith(Identifier tool, TagKey<Item> ingredient, int count) {
-        this.toolRecipe = ToolRecipeSpec.of(tool, ingredient, count);
-        return this;
+    public Props craftedWith(Identifier tool, TagKey<?> ingredient, int count) {
+        return craftedWith(tool, RecipeIngredient.of(ingredient), count);
+    }
+
+    /**
+     * Names the ingredient by id, for the many Conquest blocks that have no static field to point
+     * at.
+     *
+     * @see #craftedWith(Identifier, RecipeIngredient)
+     */
+    public Props craftedWith(Identifier tool, Identifier ingredient) {
+        return craftedWith(tool, RecipeIngredient.of(ingredient), 1);
+    }
+
+    /**
+     * @param count how many the recipe yields
+     * @see #craftedWith(Identifier, Identifier)
+     */
+    public Props craftedWith(Identifier tool, Identifier ingredient, int count) {
+        return craftedWith(tool, RecipeIngredient.of(ingredient), count);
+    }
+
+    /**
+     * Names the ingredient by id. A bare path resolves against {@link Namespaces#DEFAULT}, so
+     * {@code "granite_ashlar"} is one of ours and {@code "minecraft:stone"} reaches outside.
+     *
+     * @see #craftedWith(Identifier, RecipeIngredient)
+     */
+    public Props craftedWith(Identifier tool, String ingredient) {
+        return craftedWith(tool, RecipeIngredient.of(ingredient), 1);
+    }
+
+    /**
+     * @param count how many the recipe yields
+     * @see #craftedWith(Identifier, String)
+     */
+    public Props craftedWith(Identifier tool, String ingredient, int count) {
+        return craftedWith(tool, RecipeIngredient.of(ingredient), count);
     }
 
     /**
@@ -505,54 +554,126 @@ public class Props extends BlockProps<Props> implements BlockFactory {
      *         .register(types);
      * }</pre>
      *
-     * @param ingredient the block or item that goes into the loom's input slot
+     * @param ingredient what goes into the loom's input slot
+     * @see RecipeIngredient
      */
-    public Props woven(ItemLike ingredient) {
+    public Props woven(RecipeIngredient ingredient) {
         return woven(ingredient, 1);
     }
 
     /**
      * @param count how many the recipe yields
-     * @see #woven(ItemLike)
+     * @see #woven(RecipeIngredient)
      */
-    public Props woven(ItemLike ingredient, int count) {
+    public Props woven(RecipeIngredient ingredient, int count) {
         return woven(ingredient, count, WeavingRecipe.DEFAULT_TIME);
     }
 
     /**
      * @param time how many ticks one craft takes
-     * @see #woven(ItemLike)
+     * @see #woven(RecipeIngredient)
      */
-    public Props woven(ItemLike ingredient, int count, int time) {
+    public Props woven(RecipeIngredient ingredient, int count, int time) {
         this.weavingRecipe = WeavingRecipeSpec.of(ingredient, count, time);
         return this;
+    }
+
+    /** @see #woven(RecipeIngredient) */
+    public Props woven(ItemLike ingredient) {
+        return woven(RecipeIngredient.of(ingredient), 1);
+    }
+
+    /**
+     * @param count how many the recipe yields
+     * @see #woven(RecipeIngredient)
+     */
+    public Props woven(ItemLike ingredient, int count) {
+        return woven(RecipeIngredient.of(ingredient), count);
+    }
+
+    /**
+     * @param time how many ticks one craft takes
+     * @see #woven(RecipeIngredient)
+     */
+    public Props woven(ItemLike ingredient, int count, int time) {
+        return woven(RecipeIngredient.of(ingredient), count, time);
     }
 
     /**
      * Accepts anything in {@code ingredient}, for cloths that can be woven from a whole family of
-     * inputs - any wool, any plant fibre.
+     * inputs - any wool, any plant fibre. Takes a tag of either items or blocks.
      *
-     * @see #woven(ItemLike)
+     * @see #woven(RecipeIngredient)
      */
-    public Props woven(TagKey<Item> ingredient) {
-        return woven(ingredient, 1);
+    public Props woven(TagKey<?> ingredient) {
+        return woven(RecipeIngredient.of(ingredient), 1);
     }
 
     /**
      * @param count how many the recipe yields
      * @see #woven(TagKey)
      */
-    public Props woven(TagKey<Item> ingredient, int count) {
-        return woven(ingredient, count, WeavingRecipe.DEFAULT_TIME);
+    public Props woven(TagKey<?> ingredient, int count) {
+        return woven(RecipeIngredient.of(ingredient), count);
     }
 
     /**
      * @param time how many ticks one craft takes
      * @see #woven(TagKey)
      */
-    public Props woven(TagKey<Item> ingredient, int count, int time) {
-        this.weavingRecipe = WeavingRecipeSpec.of(ingredient, count, time);
-        return this;
+    public Props woven(TagKey<?> ingredient, int count, int time) {
+        return woven(RecipeIngredient.of(ingredient), count, time);
+    }
+
+    /**
+     * Names the ingredient by id, for the many Conquest blocks that have no static field to point
+     * at.
+     *
+     * @see #woven(RecipeIngredient)
+     */
+    public Props woven(Identifier ingredient) {
+        return woven(RecipeIngredient.of(ingredient), 1);
+    }
+
+    /**
+     * @param count how many the recipe yields
+     * @see #woven(Identifier)
+     */
+    public Props woven(Identifier ingredient, int count) {
+        return woven(RecipeIngredient.of(ingredient), count);
+    }
+
+    /**
+     * @param time how many ticks one craft takes
+     * @see #woven(Identifier)
+     */
+    public Props woven(Identifier ingredient, int count, int time) {
+        return woven(RecipeIngredient.of(ingredient), count, time);
+    }
+
+    /**
+     * Names the ingredient by id. A bare path resolves against {@link Namespaces#DEFAULT}.
+     *
+     * @see #woven(RecipeIngredient)
+     */
+    public Props woven(String ingredient) {
+        return woven(RecipeIngredient.of(ingredient), 1);
+    }
+
+    /**
+     * @param count how many the recipe yields
+     * @see #woven(String)
+     */
+    public Props woven(String ingredient, int count) {
+        return woven(RecipeIngredient.of(ingredient), count);
+    }
+
+    /**
+     * @param time how many ticks one craft takes
+     * @see #woven(String)
+     */
+    public Props woven(String ingredient, int count, int time) {
+        return woven(RecipeIngredient.of(ingredient), count, time);
     }
 
     /**

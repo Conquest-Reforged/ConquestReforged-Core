@@ -151,10 +151,13 @@ VanillaProps.stone()
         .register(types);
 ```
 
-The ingredient may be a block, an item, or an item tag, with an optional yield:
+The ingredient can be named in whichever way is handiest, with an optional yield — see
+[Naming an ingredient](#naming-an-ingredient):
 
 ```java
         .craftedWith(CraftingTools.WOODWORKING.id(), ItemTags.PLANKS, 4)
+        .craftedWith(CraftingTools.MASON.id(), ModTags.STONE)
+        .craftedWith(CraftingTools.MASON.id(), "granite_ashlar")
 ```
 
 **Only the family's parent gets the recipe.** That is the block a builder registers first, or
@@ -276,7 +279,8 @@ VanillaProps.cloth()
         .register(types);
 ```
 
-The ingredient may be a block, an item, or an item tag, with an optional yield and time in ticks:
+The ingredient is named the same way `craftedWith(..)` names one — see
+[Naming an ingredient](#naming-an-ingredient) — with an optional yield and time in ticks:
 
 ```java
         .woven(ItemTags.WOOL, 2, 160)
@@ -329,6 +333,43 @@ Looms saved before the loom had slots are translated on load: the cloth they wer
 back into the output slot, which leaves the weave identical while making it something a player can
 take out again. If that cloth is not a registered item — a rug from a module that is not loaded — the
 loom keeps drawing what it always drew rather than being stripped.
+
+## Naming an ingredient
+
+`craftedWith(..)` and `woven(..)` both take their input as a `RecipeIngredient`, and there is an
+overload for every way you might have of naming one:
+
+| You have | Write | Goes into the recipe as |
+|---|---|---|
+| a static block or item | `Blocks.GRANITE` | `"minecraft:granite"` |
+| an item tag | `ItemTags.PLANKS` | `"#minecraft:planks"` |
+| a block tag | `ModTags.STONE` | `"#conquest:stone"` |
+| an id | `Identifier.parse("conquest:granite_ashlar")` | `"conquest:granite_ashlar"` |
+| an id, as a string | `"granite_ashlar"` | `"conquest:granite_ashlar"` |
+
+Most Conquest blocks are built from templates rather than declared one by one, so there is no static
+field to point at. The last two rows are for those: a bare string path resolves against the Conquest
+namespace, exactly as `ModTags.blockTag(..)` does, so `"granite_ashlar"` and
+`"conquest:granite_ashlar"` mean the same thing while `"minecraft:stone"` reaches outside. An id that
+resolves to nothing fails data generation with a message naming it, rather than quietly writing a
+recipe that can never match.
+
+**Block tags are usually the useful one**, since that is already how a whole family is grouped. Tags
+of either kind go through the same `TagKey<?>` overload — `TagKey<Item>` and `TagKey<Block>` erase to
+the same signature, so they cannot be separate overloads — and anything that is neither is rejected
+where it is declared.
+
+### How a block tag reaches a recipe
+
+A recipe can only ever match on an **item** tag, so a block tag ingredient is written out as the item
+tag with the same id. For most vanilla block tags that counterpart already exists
+(`BlockTags.PLANKS` and `ItemTags.PLANKS` are both `minecraft:planks`). Conquest's own tags are
+declared as block tags only, so `ModItemTagProvider` mirrors them: every block tag used as an
+ingredient gets an item tag of the same id, filled with the items of the blocks carrying it.
+
+That mirroring is why declaring `craftedWith(MASON.id(), ModTags.STONE)` just works. It only covers
+tags actually used as an ingredient, so it stays empty until you craft from one, and picks up new
+ones on its own — but it does mean the recipe and tag datagen have to be run together, which they are.
 
 ## Tags
 
