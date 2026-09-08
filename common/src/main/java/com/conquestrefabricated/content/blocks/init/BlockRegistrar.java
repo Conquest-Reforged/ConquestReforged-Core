@@ -1,33 +1,6 @@
 package com.conquestrefabricated.content.blocks.init;
 
 
-import com.conquestrefabricated.content.blocks.block.*;
-import com.conquestrefabricated.content.blocks.block.arch.ArchSmall;
-import com.conquestrefabricated.content.blocks.block.arch.ArchSmallHalf;
-import com.conquestrefabricated.content.blocks.block.arch.ArchTwoMeter;
-import com.conquestrefabricated.content.blocks.block.arch.ArchTwoMeterHalf;
-import com.conquestrefabricated.content.blocks.block.beam.*;
-import com.conquestrefabricated.content.blocks.block.classical.*;
-import com.conquestrefabricated.content.blocks.block.decor.DoorFrameLintels;
-import com.conquestrefabricated.content.blocks.block.decor.DoorFramePost;
-import com.conquestrefabricated.content.blocks.block.decor.Lintels;
-import com.conquestrefabricated.content.blocks.block.decor.Posts;
-import com.conquestrefabricated.content.blocks.block.overlay_tinted.TintedOverlayLayer;
-import com.conquestrefabricated.content.blocks.block.overlay_tinted.TintedOverlayStairs;
-import com.conquestrefabricated.content.blocks.block.overlay_top.inverted.*;
-import com.conquestrefabricated.content.blocks.block.overlay_wall.*;
-import com.conquestrefabricated.content.blocks.block.topography.Rocks;
-import com.conquestrefabricated.content.blocks.block.trees.*;
-import com.conquestrefabricated.content.blocks.block.tudor.TudorVerticalCorner;
-import com.conquestrefabricated.content.blocks.block.tudor.TudorVerticalQuarter;
-import com.conquestrefabricated.content.blocks.block.tudor.TudorVerticalSlab;
-import com.conquestrefabricated.content.blocks.block.uniquetexture.BeamPillar;
-import com.conquestrefabricated.content.blocks.block.uniquetexture.WallUniqueTexture;
-import com.conquestrefabricated.content.blocks.block.windows.ArrowSlit;
-import com.conquestrefabricated.content.blocks.block.windows.WindowSmall;
-import com.conquestrefabricated.content.blocks.block.windows.WindowSmallHalf;
-import com.conquestrefabricated.core.block.factory.TypeList;
-
 public class BlockRegistrar {
 
     //@SubscribeEvent

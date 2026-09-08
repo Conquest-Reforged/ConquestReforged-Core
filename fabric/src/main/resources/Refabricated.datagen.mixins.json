@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.conquestrefabricated.mixin.datagen",
+  "compatibilityLevel": "JAVA_25",
+  "plugin": "com.conquestrefabricated.core.data.offset.DatagenMixinPlugin",
+  "client": [
+    "SimpleModelStateMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

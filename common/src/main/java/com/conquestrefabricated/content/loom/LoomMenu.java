@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
@@ -29,15 +30,28 @@ import java.util.List;
  * block rather than to the menu: a loom keeps its material, keeps weaving and keeps showing its
  * weave with nobody stood at it, so closing the screen must not hand anything back.
  *
- * <p>Picking an option only tells the block entity what to work on. Everything after that - the
- * ticking, the crafting, the weave - happens in {@link LoomBlockEntity}, which is what lets a loom
- * finish a job while the player walks away.</p>
+ * <p>Picking an option only highlights it; the confirm control is what tells the block entity to
+ * start. Everything after that - the ticking, the crafting, the weave - happens in
+ * {@link LoomBlockEntity}, which is what lets a loom finish a job while the player walks away.</p>
  */
 public class LoomMenu extends StationMenu<WeavingRecipe> {
+
+    /**
+     * Button id the confirm control sends. Sits just past the picker's variant toggle, and far above
+     * any option index.
+     */
+    public static final int CONFIRM_BUTTON = StationMenu.TOGGLE_VARIANTS_BUTTON + 1;
 
     private final Container loom;
     private final ContainerData data;
     private final Slot inputSlot;
+
+    /**
+     * Whether the highlighted option is the job the loom is actually running, so the screen can draw
+     * the confirm control as a stop. The client cannot work this out for itself - it never learns
+     * which recipe the block entity holds - so the server keeps it in a slot of its own.
+     */
+    private final DataSlot activeSelection = DataSlot.standalone();
 
     /** Client-side constructor: an empty stand-in the server then fills in over the wire. */
     public LoomMenu(int containerId, Inventory inventory) {
@@ -79,6 +93,7 @@ public class LoomMenu extends StationMenu<WeavingRecipe> {
         });
         this.addStandardInventorySlots(inventory, 8, 84);
         this.addDataSlots(data);
+        this.addDataSlot(this.activeSelection);
     }
 
     private static ContainerLevelAccess accessOf(@Nullable Container loom) {
@@ -113,14 +128,67 @@ public class LoomMenu extends StationMenu<WeavingRecipe> {
                 || StationRecipes.produces(this.level, this.recipeType(), this::accepts, input);
     }
 
-    /** Picking an option just points the loom at a recipe; the block entity does the rest. */
+    /**
+     * Picking an option only highlights it. Unlike the other stations, where the result slot is a
+     * preview you can ignore, a loom picking up a new job the moment you brush past an icon would
+     * throw away the one it is part way through - so starting one is a separate, deliberate click.
+     *
+     * @see #confirmSelection()
+     */
     @Override
     protected void selectOption(int index) {
+    }
+
+    @Override
+    public boolean clickMenuButton(Player player, int buttonId) {
+        if (buttonId == CONFIRM_BUTTON) {
+            if (!this.level.isClientSide()) {
+                this.confirmSelection();
+            }
+            return true;
+        }
+        return super.clickMenuButton(player, buttonId);
+    }
+
+    /** Whether there is a highlighted option for the confirm control to start. */
+    public boolean canConfirm() {
+        return this.getSelectedRecipeIndex() >= 0 && this.getNumberOfVisibleRecipes() > 0;
+    }
+
+    /** Whether the highlighted option is the job the loom is running, so confirm reads as a stop. */
+    public boolean isSelectionActive() {
+        return this.activeSelection.get() != 0;
+    }
+
+    /**
+     * Starts the loom on whatever is highlighted, or stops it if that is already what it is doing.
+     * Server side.
+     *
+     * <p>Stopping throws away the part-done craft rather than banking it, which is the same bargain
+     * a furnace makes when you pull its input back out.</p>
+     */
+    private void confirmSelection() {
         List<Option> options = this.options();
+        int index = this.getSelectedRecipeIndex();
         if (index < 0 || index >= options.size() || !(this.loom instanceof LoomBlockEntity blockEntity)) {
             return;
         }
-        blockEntity.setSelectedRecipe(options.get(index).used().id());
+        ResourceKey<Recipe<?>> picked = options.get(index).used().id();
+        blockEntity.setSelectedRecipe(picked.equals(blockEntity.getSelectedRecipe()) ? null : picked);
+    }
+
+    /** Server side: whether the block entity is working on the option the picker has highlighted. */
+    private boolean selectionIsRunning() {
+        if (!(this.loom instanceof LoomBlockEntity blockEntity)) {
+            return false;
+        }
+        ResourceKey<Recipe<?>> running = blockEntity.getSelectedRecipe();
+        if (running == null) {
+            return false;
+        }
+        List<Option> options = this.options();
+        int index = this.getSelectedRecipeIndex();
+        return index >= 0 && index < options.size() && options.get(index).used().id().equals(running);
     }
 
     /** Reopening a loom should show what it is part way through, not an empty picker. */
@@ -149,6 +217,9 @@ public class LoomMenu extends StationMenu<WeavingRecipe> {
     @Override
     public void broadcastChanges() {
         this.refreshOptions();
+        if (!this.level.isClientSide()) {
+            this.activeSelection.set(this.selectionIsRunning() ? 1 : 0);
+        }
         super.broadcastChanges();
     }
 

@@ -146,13 +146,19 @@ public class ModLangManualProvider extends FabricLanguageProvider {
         translationBuilder.add("container.conquest.station.hide_variants", "Show base blocks only");
         translationBuilder.add("item.conquest.woodworking_tools", "Woodworking Tools");
         translationBuilder.add("item.conquest.mason_tools", "Mason's Tools");
+        translationBuilder.add("item.conquest.metalworking_tools", "Metalworking Tools");
         translationBuilder.add("container.conquest.woodworking_tools", "Woodworking");
         translationBuilder.add("container.conquest.mason_tools", "Masonry");
+        translationBuilder.add("container.conquest.metalworking_tools", "Metalworking");
         translationBuilder.add("tooltip.conquest.item.woodworking_tools", "§eRight-click to shape planks, beams and panelling§r");
         translationBuilder.add("tooltip.conquest.item.mason_tools", "§eRight-click to shape ashlar, brick and tile§r");
+        translationBuilder.add("tooltip.conquest.item.metalworking_tools", "§eRight-click to shape plate, bar and grillwork§r");
 
         /* === Loom === */
         translationBuilder.add("container.conquest.loom.weaving", "Weaving: %s%%");
+        translationBuilder.add("container.conquest.loom.confirm", "Begin weaving");
+        translationBuilder.add("container.conquest.loom.stop", "Stop weaving");
+        translationBuilder.add("container.conquest.loom.no_selection", "Choose something to weave");
 
         translationBuilder.add("item.conquest.mallet_item", "Mallet (Conquest Toggle Tool)");
         translationBuilder.add("tooltip.conquest.mallet_item", "§6Use this (right-click) on toggleable blocks to change their shape");

@@ -31,9 +31,9 @@ public class StationScreen<T extends StationMenu<?>> extends AbstractContainerSc
 
     private static final Identifier SCROLLER_SPRITE = Identifier.withDefaultNamespace("container/stonecutter/scroller");
     private static final Identifier SCROLLER_DISABLED_SPRITE = Identifier.withDefaultNamespace("container/stonecutter/scroller_disabled");
-    private static final Identifier RECIPE_SELECTED_SPRITE = Identifier.withDefaultNamespace("container/stonecutter/recipe_selected");
-    private static final Identifier RECIPE_HIGHLIGHTED_SPRITE = Identifier.withDefaultNamespace("container/stonecutter/recipe_highlighted");
-    private static final Identifier RECIPE_SPRITE = Identifier.withDefaultNamespace("container/stonecutter/recipe");
+    protected static final Identifier RECIPE_SELECTED_SPRITE = Identifier.withDefaultNamespace("container/stonecutter/recipe_selected");
+    protected static final Identifier RECIPE_HIGHLIGHTED_SPRITE = Identifier.withDefaultNamespace("container/stonecutter/recipe_highlighted");
+    protected static final Identifier RECIPE_SPRITE = Identifier.withDefaultNamespace("container/stonecutter/recipe");
     private static final Identifier BG_LOCATION = Identifier.withDefaultNamespace("textures/gui/container/stonecutter.png");
 
     private static final int SCROLLER_WIDTH = 12;
@@ -50,12 +50,13 @@ public class StationScreen<T extends StationMenu<?>> extends AbstractContainerSc
     /**
      * The variant toggle, in the blank strip between the input slot and the inventory label. Drawn
      * with the picker's own button sprites so it reads as part of the same control, rather than
-     * needing artwork of its own.
+     * needing artwork of its own, and sized a little over the sprite's own 16x18 to give it a
+     * target worth aiming at.
      */
-    private static final int TOGGLE_X = 20;
-    private static final int TOGGLE_Y = 52;
-    private static final int TOGGLE_WIDTH = 16;
-    private static final int TOGGLE_HEIGHT = 18;
+    private static final int TOGGLE_X = 18;
+    private static final int TOGGLE_Y = 50;
+    private static final int TOGGLE_WIDTH = 20;
+    private static final int TOGGLE_HEIGHT = 20;
 
     private static final String SHOW_VARIANTS_KEY = "container.conquest.station.show_variants";
     private static final String HIDE_VARIANTS_KEY = "container.conquest.station.hide_variants";
@@ -119,7 +120,8 @@ public class StationScreen<T extends StationMenu<?>> extends AbstractContainerSc
             sprite = RECIPE_SPRITE;
         }
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x, y, TOGGLE_WIDTH, TOGGLE_HEIGHT);
-        graphics.centeredText(this.font, on ? "-" : "+", x + TOGGLE_WIDTH / 2, y + 5, 0xFFDDDDDD);
+        graphics.centeredText(this.font, on ? "-" : "+", x + TOGGLE_WIDTH / 2,
+                y + (TOGGLE_HEIGHT - this.font.lineHeight) / 2, 0xFFDDDDDD);
 
         if (hovered) {
             graphics.requestCursor(CursorTypes.POINTING_HAND);

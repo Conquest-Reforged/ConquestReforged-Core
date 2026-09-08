@@ -42,6 +42,10 @@ public final class CraftingTools {
     public static final CraftingTool MASON = register(CraftingTool.of(
             Identifier.fromNamespaceAndPath(Namespaces.DEFAULT, "mason_tools")));
 
+    /** Hammer, tongs: plate, bar, grillwork, anything worked from metal. */
+    public static final CraftingTool METALWORKING = register(CraftingTool.of(
+            Identifier.fromNamespaceAndPath(Namespaces.DEFAULT, "metalworking_tools")));
+
     private CraftingTools() {
     }
 

@@ -41,6 +41,10 @@
     {
       "config": "Refabricated.client.mixins.json",
       "environment": "client"
+    },
+    {
+      "config": "Refabricated.datagen.mixins.json",
+      "environment": "client"
     }
   ],
   "depends": {
