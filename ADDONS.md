@@ -256,6 +256,79 @@ A weapon registered through plain `register(..)` has no recorded kind and is sil
 `Generated.skipped()` counts those, and Core logs the number, so a mismatch shows up in the datagen
 output rather than as a missing recipe in game.
 
+## Weaving at the loom
+
+A loom is the third kind of station, and the only one that is a block you stand at with slots of its
+own. It works like the crafting tools — input slot, picker, family toggle — with two differences:
+
+- **Weaving takes time.** Picking a cloth starts a craft that ticks down in the block, and the loom
+  keeps going with the screen shut. The bar beside the result slot shows how far along it is.
+- **Family shapes are instant.** A cut is shaping, not weaving, so selecting one works through the
+  whole input stack in a single tick.
+
+Blocks opt in through `Props`, the same way they do for the crafting tools:
+
+```java
+VanillaProps.cloth()
+        .name("red_canvas")
+        .woven(Blocks.RED_WOOL)
+        .register(types);
+```
+
+The ingredient may be a block, an item, or an item tag, with an optional yield and time in ticks:
+
+```java
+        .woven(ItemTags.WOOL, 2, 160)
+```
+
+Leaving the time out gives `WeavingRecipe.DEFAULT_TIME` — 100 ticks, the same five seconds an iron
+ingot takes to smelt. **Only the family's parent gets the recipe**, exactly as with `craftedWith(..)`;
+the rest of the family is reached through the picker's family toggle, so one `woven(..)` call covers
+the whole `TypeList`. Run the recipe datagen after adding it.
+
+For one-off recipes that don't belong to a block family, build them directly:
+
+```java
+WeavingRecipeBuilder.weaving(Items.STRING, ModBlocks.LINEN)
+        .count(2)
+        .time(160)
+        .save(this.output);
+```
+
+Recipes land under `<result namespace>:<result path>_from_loom` and look like this:
+
+```json
+{
+  "type": "conquest:weaving",
+  "ingredient": "minecraft:red_wool",
+  "result": { "id": "conquest:red_canvas", "count": 1 },
+  "time": 100
+}
+```
+
+`time` and `count` are both optional, and the generator leaves them out when they are at their
+defaults — so a plain five-second recipe writes just the `ingredient` and the `result`.
+
+A `time` of `0` makes a recipe of your own instant, in the same way family shapes are. Use it
+sparingly — it is what separates a loom from a set of tools.
+
+### What the loom draws
+
+The weave on the block follows its slots: the finished cloth in the output slot if there is one,
+otherwise whatever is going in, otherwise nothing. Only a product with a weave of its own shows —
+`LoomWeaves` holds that table, and it is also what `HAS_THREAD` is set from, so a loom part way
+through a job with plain wool in it is drawn bare rather than in a fallback white.
+
+Adding a weave means adding a sprite under
+`conquest:block/7_tools/3_utility/loom/weaves/<size>/loom_weave_<name>` for each size and an entry in
+`LoomWeaves`. The ids and their indices are the ones looms have saved since 1.20, so they must not be
+reordered — a loom placed long ago stores the product id and nothing else.
+
+Looms saved before the loom had slots are translated on load: the cloth they were dressed with is put
+back into the output slot, which leaves the weave identical while making it something a player can
+take out again. If that cloth is not a registered item — a rug from a module that is not loaded — the
+loom keeps drawing what it always drew rather than being stripped.
+
 ## Tags
 
 `ModTags.blockTag(..)` / `ModTags.itemTag(..)` are public and take either a bare path (resolved

@@ -3,6 +3,7 @@ package com.conquestrefabricated.client.models;
 import com.conquestrefabricated.content.blocks.block.decor.Loom;
 import com.conquestrefabricated.content.blocks.tileentity.TileEntityTypes;
 import com.conquestrefabricated.content.blocks.tileentity.loom.LoomBlockEntity;
+import com.conquestrefabricated.content.loom.LoomWeaves;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
@@ -53,9 +54,9 @@ public class LoomBlockStateModel implements BlockStateModel {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity != null && blockEntity.getType() == TileEntityTypes.LOOM) {
                 String productData = ((LoomBlockEntity) blockEntity).getProduct();
-                sprite = sprites[getTextureVariant(productData)];
+                sprite = sprites[LoomWeaves.spriteIndex(productData)];
             }
-            TextureAtlasSprite originalSprite = sprites[getTextureVariant("conquest:white_canvas")];
+            TextureAtlasSprite originalSprite = sprites[LoomWeaves.spriteIndex(LoomWeaves.REFERENCE_PRODUCT)];
             TextureAtlasSprite finalSprite = sprite;
 
             for (BlockStateModelPart part : baseParts) {
@@ -90,43 +91,6 @@ public class LoomBlockStateModel implements BlockStateModel {
         return wrapped.materialFlags();
     }
 
-    private int getTextureVariant(String productData) {
-        return switch (productData) {
-            case "conquest:red_canvas" -> 1;
-            case "conquest:black_canvas" -> 2;
-            case "conquest:gray_canvas" -> 3;
-            case "conquest:light_gray_canvas" -> 4;
-            case "conquest:white_canvas" -> 5;
-            case "conquest:brown_canvas" -> 6;
-            case "conquest:yellow_canvas" -> 7;
-            case "conquest:orange_canvas" -> 8;
-            case "conquest:pink_canvas" -> 9;
-            case "conquest:magenta_canvas" -> 10;
-            case "conquest:purple_canvas" -> 11;
-            case "conquest:blue_canvas" -> 12;
-            case "conquest:light_blue_canvas" -> 13;
-            case "conquest:cyan_canvas" -> 14;
-            case "conquest:green_canvas" -> 15;
-            case "conquest:lime_canvas" -> 16;
-            case "conquest:baotuo_rug" -> 17;
-            case "conquest:berber_rug" -> 18;
-            case "conquest:black_persian_rug" -> 19;
-            case "conquest:blue_nain_rug" -> 20;
-            case "conquest:brown_oriental_carpet" -> 21;
-            case "conquest:celtic_knot_rug" -> 22;
-            case "conquest:kashmiri_carpet" -> 23;
-            case "conquest:kazakh_rug" -> 24;
-            case "conquest:kilim_rug" -> 25;
-            case "conquest:nahavand_rug" -> 26;
-            case "conquest:red_and_blue_sarouk_rug" -> 27;
-            case "conquest:red_oriental_carpet" -> 28;
-            case "conquest:red_pazyryk_rug" -> 29;
-            case "conquest:shirishabad_rug" -> 30;
-            case "conquest:william_morris_rug" -> 31;
-            case "conquest:yellow_red_persian_rug" -> 32;
-            default -> 0;
-        };
-    }
 
     private static class RetexturedPart implements BlockStateModelPart {
         private final BlockStateModelPart original;

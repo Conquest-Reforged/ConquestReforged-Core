@@ -5,14 +5,12 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -27,8 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Base for Conquest's stonecutter-style crafting stations: an input slot, a result slot, and a
- * picker listing every recipe of one type that accepts the current input.
+ * The recipe picker shared by Conquest's crafting stations: a list of everything one recipe type can
+ * make from whatever is in the input slot, and the selection the player made from it.
  *
  * <p>Modelled on {@code StonecutterMenu}, with one structural difference. The stonecutter can
  * recompute its option list on both sides because vanilla syncs stonecutting recipes to clients;
@@ -36,13 +34,16 @@ import java.util.List;
  * preview stacks over with {@link StationOptionsPayload}. The client therefore never derives options
  * itself, it only renders what it was told.</p>
  *
- * <p>Subclasses supply the recipe type, the menu type and what keeps the menu open. Everything
- * else - slot layout, selection, quick-move, option sync - is shared.</p>
- *
  * <p>A station may also offer <i>variants</i>: the rest of the block family the input belongs to,
  * found by walking one stonecutting step from the input itself. The toggle under the input slot
  * switches between the two - base results or family shapes, never both at once - see
  * {@link #supportsVariants()}.</p>
+ *
+ * <p>This class deliberately owns no slots. What a station does with a selection differs too much
+ * for one implementation: the arms station and the crafting tools show a preview you pull out of the
+ * result slot ({@link PreviewStationMenu}), while a loom starts a craft that takes time and lands in
+ * a slot belonging to the block. Subclasses add their own slots and implement {@link #selectOption};
+ * everything above the slots is shared.</p>
  *
  * @param <R> the recipe type this station crafts with
  */
@@ -74,58 +75,31 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
 
     private ItemStack input = ItemStack.EMPTY;
     private long lastSoundTime;
-    protected final Slot inputSlot;
-    protected final Slot resultSlot;
     private Runnable slotUpdateListener = () -> {
     };
-
-    public final Container container = new SimpleContainer(1) {
-        @Override
-        public void setChanged() {
-            super.setChanged();
-            StationMenu.this.slotsChanged(this);
-            StationMenu.this.slotUpdateListener.run();
-        }
-    };
-
-    private final ResultContainer resultContainer = new ResultContainer();
 
     protected StationMenu(MenuType<?> menuType, int containerId, Inventory inventory, ContainerLevelAccess access) {
         super(menuType, containerId);
         this.access = access;
         this.level = inventory.player.level();
         this.owner = inventory.player instanceof ServerPlayer serverPlayer ? serverPlayer : null;
-        this.inputSlot = this.addSlot(new Slot(this.container, INPUT_SLOT, 20, 33));
-        this.resultSlot = this.addSlot(new Slot(this.resultContainer, RESULT_SLOT, 143, 33) {
-            @Override
-            public boolean mayPlace(ItemStack stack) {
-                return false;
-            }
-
-            @Override
-            public void onTake(Player player, ItemStack stack) {
-                stack.onCraftedBy(player, stack.getCount());
-                StationMenu.this.resultContainer.awardUsedRecipes(player, this.getRelevantItems());
-                ItemStack remaining = StationMenu.this.inputSlot.remove(1);
-                if (!remaining.isEmpty()) {
-                    StationMenu.this.setupResultSlot(StationMenu.this.selectedRecipeIndex.get());
-                }
-
-                StationMenu.this.playTakeSound(player);
-                super.onTake(player, stack);
-            }
-
-            private List<ItemStack> getRelevantItems() {
-                return List.of(StationMenu.this.inputSlot.getItem());
-            }
-        });
-        this.addStandardInventorySlots(inventory, 8, 84);
+        // Added before the subclass adds any of its own so both sides agree on the indices. Item
+        // slots live in a separate list, so a subclass adding those later changes nothing here.
         this.addDataSlot(this.selectedRecipeIndex);
         this.addDataSlot(this.showVariants);
     }
 
     /** The recipe type this station draws its options from. */
     protected abstract RecipeType<R> recipeType();
+
+    /** Whatever is currently in the input slot. */
+    protected abstract ItemStack stationInput();
+
+    /**
+     * Act on the player picking option {@code index}. Only ever called on the server, and only with
+     * an index the picker actually offers.
+     */
+    protected abstract void selectOption(int index);
 
     /** Narrows {@link #recipeType()} further, for stations that share a type. */
     protected boolean accepts(R recipe) {
@@ -168,7 +142,12 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
     }
 
     public boolean hasInputItem() {
-        return this.inputSlot.hasItem() && !this.optionIcons.isEmpty();
+        return !this.stationInput().isEmpty() && !this.optionIcons.isEmpty();
+    }
+
+    /** The options behind {@link #getOptionIcons()}. Server side only; empty on the client. */
+    protected List<Option> options() {
+        return this.options;
     }
 
     /** Called by the client payload handler when the server sends a new option list. */
@@ -189,7 +168,7 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
             // Flipped on both sides: the client redraws the toggle straight away, the server
             // rebuilds the list and pushes it. The slot re-syncs either way.
             this.showVariants.set(this.showingVariants() ? 0 : 1);
-            this.setupRecipeList(this.inputSlot.getItem());
+            this.setupRecipeList(this.stationInput());
             return true;
         }
 
@@ -199,26 +178,38 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
 
         if (this.isValidRecipeIndex(buttonId)) {
             this.selectedRecipeIndex.set(buttonId);
-            this.setupResultSlot(buttonId);
+            if (!this.level.isClientSide()) {
+                this.selectOption(buttonId);
+            }
         }
 
         return true;
     }
 
-    private boolean isValidRecipeIndex(int buttonId) {
+    protected boolean isValidRecipeIndex(int buttonId) {
         return buttonId >= 0 && buttonId < this.optionIcons.size();
     }
 
     @Override
     public void slotsChanged(Container container) {
-        ItemStack stack = this.inputSlot.getItem();
+        this.refreshOptions();
+    }
+
+    /**
+     * Rebuilds the option list if the input has become a different item since last time.
+     *
+     * <p>A station whose container tells the menu when it changed gets this through
+     * {@link #slotsChanged}; one backed by a block entity, which does not, calls it itself.</p>
+     */
+    protected void refreshOptions() {
+        ItemStack stack = this.stationInput();
         if (!stack.is(this.input.getItem())) {
             this.input = stack.copy();
             this.setupRecipeList(stack);
         }
     }
 
-    private void setupRecipeList(ItemStack stack) {
+    protected void setupRecipeList(ItemStack stack) {
         if (this.level.isClientSide()) {
             // Only the server can resolve modded recipes, and it pushes a fresh option list right
             // after this runs, so leave the current one on screen until that arrives.
@@ -226,8 +217,7 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
         }
 
         this.selectedRecipeIndex.set(-1);
-        this.resultSlot.set(ItemStack.EMPTY);
-        this.resultContainer.setRecipeUsed(null);
+        this.clearSelection();
         this.options = this.buildOptions(stack);
 
         List<ItemStack> icons = new ArrayList<>(this.options.size());
@@ -236,9 +226,28 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
         }
         this.optionIcons = List.copyOf(icons);
 
+        int restored = this.preferredSelection(this.options);
+        if (restored >= 0 && restored < this.options.size()) {
+            this.selectedRecipeIndex.set(restored);
+        }
+
         if (this.owner != null) {
             StationNetwork.send(this.owner, new StationOptionsPayload(this.containerId, this.optionIcons));
         }
+    }
+
+    /** Drops whatever the last selection left behind, just before a new option list is built. */
+    protected void clearSelection() {
+    }
+
+    /**
+     * Which option should come up already highlighted, or -1 for none.
+     *
+     * <p>Only a station that remembers a selection of its own has anything to say here: a loom
+     * carries on weaving with its screen shut, so reopening it should show what it is working on.</p>
+     */
+    protected int preferredSelection(List<Option> options) {
+        return -1;
     }
 
     /**
@@ -317,24 +326,7 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
         }
     }
 
-    private void setupResultSlot(int index) {
-        if (this.level.isClientSide()) {
-            return;
-        }
-
-        if (this.isValidRecipeIndex(index) && index < this.options.size()) {
-            Option option = this.options.get(index);
-            this.resultContainer.setRecipeUsed(option.used());
-            this.resultSlot.set(option.result().copy());
-        } else {
-            this.resultSlot.set(ItemStack.EMPTY);
-            this.resultContainer.setRecipeUsed(null);
-        }
-
-        this.broadcastChanges();
-    }
-
-    private void playTakeSound(Player player) {
+    protected void playTakeSound(Player player) {
         SoundEvent sound = this.takeResultSound();
         long gameTime = this.level.getGameTime();
         if (this.lastSoundTime == gameTime) {
@@ -352,9 +344,14 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
         this.slotUpdateListener = slotUpdateListener;
     }
 
+    /** Lets a subclass tell the screen something changed without a slot having moved. */
+    protected void notifyScreen() {
+        this.slotUpdateListener.run();
+    }
+
     @Override
     public boolean canTakeItemForPickAll(ItemStack carried, Slot target) {
-        return target.container != this.resultContainer && super.canTakeItemForPickAll(carried, target);
+        return target != this.slots.get(RESULT_SLOT) && super.canTakeItemForPickAll(carried, target);
     }
 
     @Override
@@ -411,16 +408,5 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
         }
 
         return clicked;
-    }
-
-    @Override
-    public void removed(Player player) {
-        super.removed(player);
-        this.resultContainer.removeItemNoUpdate(RESULT_SLOT);
-        if (this.access == ContainerLevelAccess.NULL) {
-            this.clearContainer(player, this.container);
-        } else {
-            this.access.execute((level, pos) -> this.clearContainer(player, this.container));
-        }
     }
 }

@@ -5,6 +5,7 @@ import com.conquestrefabricated.core.Namespaces;
 import com.conquestrefabricated.content.blocks.block.*;
 import com.conquestrefabricated.content.blocks.block.directional.LayerDirectional;
 import com.conquestrefabricated.content.arms.ArmsStationRecipeBuilder;
+import com.conquestrefabricated.content.loom.WeavingRecipeBuilder;
 import com.conquestrefabricated.content.tools.ToolCraftingRecipeBuilder;
 import com.conquestrefabricated.core.block.data.BlockData;
 import com.conquestrefabricated.core.util.log.Log;
@@ -48,11 +49,14 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                         gear.recipes(), gear.skipped());
 
                 Namespaces.stream().flatMap(namespace -> BlockDataRegistry.getInstance().getData(namespace)).forEach(blockData -> {
-                    // Only the family's parent is made at a set of crafting tools; every other member
-                    // is cut from the parent by the stonecutting recipes below.
+                    // Only the family's parent is made at a set of crafting tools or on a loom; every
+                    // other member is cut from the parent by the stonecutting recipes below, which is
+                    // also what the pickers' family toggle walks.
                     if (isFamilyParent(blockData)) {
                         blockData.getProps().getToolRecipe().ifPresent(spec ->
                                 ToolCraftingRecipeBuilder.from(spec, items, blockData.getBlock()).save(output));
+                        blockData.getProps().getWeavingRecipe().ifPresent(spec ->
+                                WeavingRecipeBuilder.from(spec, items, blockData.getBlock()).save(output));
                     }
 
                     if (blockData.getProps().hasParent()) {

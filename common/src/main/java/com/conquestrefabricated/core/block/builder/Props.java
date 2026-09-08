@@ -1,5 +1,6 @@
 package com.conquestrefabricated.core.block.builder;
 
+import com.conquestrefabricated.content.loom.WeavingRecipe;
 import com.conquestrefabricated.core.Namespaces;
 import com.conquestrefabricated.core.block.data.BlockData;
 import com.conquestrefabricated.core.block.data.BlockTemplate;
@@ -65,6 +66,7 @@ public class Props extends BlockProps<Props> implements BlockFactory {
     private String nameSingular = null;
 
     private ToolRecipeSpec toolRecipe = null;
+    private WeavingRecipeSpec weavingRecipe = null;
 
     private List<TagKey<Block>> tags = Collections.emptyList();
     private List<String> lore = Collections.emptyList();
@@ -92,6 +94,7 @@ public class Props extends BlockProps<Props> implements BlockFactory {
         this.nameSingular = props.nameSingular;
         this.lore = props.lore;
         this.toolRecipe = props.toolRecipe;
+        this.weavingRecipe = props.weavingRecipe;
     }
 
     @Override
@@ -482,6 +485,81 @@ public class Props extends BlockProps<Props> implements BlockFactory {
      */
     public Optional<ToolRecipeSpec> getToolRecipe() {
         return Optional.ofNullable(toolRecipe);
+    }
+
+    /**
+     * Declares that this block is woven at a loom, from {@code ingredient}.
+     * <p>
+     * The same family rule as {@link #craftedWith} applies: only the parent gets the recipe, and
+     * every other member is reached from it - here through the loom picker's family toggle, which
+     * shapes a finished cloth into its layers and slabs for nothing.
+     * <p>
+     * Weaving takes time, which is what separates a loom from a set of crafting tools. Leave the
+     * time out for the default of {@value com.conquestrefabricated.content.loom.WeavingRecipe#DEFAULT_TIME}
+     * ticks.
+     *
+     * <pre>{@code
+     * VanillaProps.cloth()
+     *         .name("red_canvas")
+     *         .woven(Blocks.RED_WOOL)
+     *         .register(types);
+     * }</pre>
+     *
+     * @param ingredient the block or item that goes into the loom's input slot
+     */
+    public Props woven(ItemLike ingredient) {
+        return woven(ingredient, 1);
+    }
+
+    /**
+     * @param count how many the recipe yields
+     * @see #woven(ItemLike)
+     */
+    public Props woven(ItemLike ingredient, int count) {
+        return woven(ingredient, count, WeavingRecipe.DEFAULT_TIME);
+    }
+
+    /**
+     * @param time how many ticks one craft takes
+     * @see #woven(ItemLike)
+     */
+    public Props woven(ItemLike ingredient, int count, int time) {
+        this.weavingRecipe = WeavingRecipeSpec.of(ingredient, count, time);
+        return this;
+    }
+
+    /**
+     * Accepts anything in {@code ingredient}, for cloths that can be woven from a whole family of
+     * inputs - any wool, any plant fibre.
+     *
+     * @see #woven(ItemLike)
+     */
+    public Props woven(TagKey<Item> ingredient) {
+        return woven(ingredient, 1);
+    }
+
+    /**
+     * @param count how many the recipe yields
+     * @see #woven(TagKey)
+     */
+    public Props woven(TagKey<Item> ingredient, int count) {
+        return woven(ingredient, count, WeavingRecipe.DEFAULT_TIME);
+    }
+
+    /**
+     * @param time how many ticks one craft takes
+     * @see #woven(TagKey)
+     */
+    public Props woven(TagKey<Item> ingredient, int count, int time) {
+        this.weavingRecipe = WeavingRecipeSpec.of(ingredient, count, time);
+        return this;
+    }
+
+    /**
+     * @return the weaving recipe declared for this family, if any
+     */
+    public Optional<WeavingRecipeSpec> getWeavingRecipe() {
+        return Optional.ofNullable(weavingRecipe);
     }
 
     public Props template(BlockTemplate template) {

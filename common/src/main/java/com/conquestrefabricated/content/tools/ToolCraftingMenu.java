@@ -1,6 +1,6 @@
 package com.conquestrefabricated.content.tools;
 
-import com.conquestrefabricated.content.station.StationMenu;
+import com.conquestrefabricated.content.station.PreviewStationMenu;
 import com.conquestrefabricated.content.station.StationRecipes;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -16,7 +16,7 @@ import java.util.List;
  * The picker a set of crafting tools opens. Held rather than placed, so it stays open only while the
  * player is still carrying the tools that opened it.
  */
-public class ToolCraftingMenu extends StationMenu<ToolCraftingRecipe> {
+public class ToolCraftingMenu extends PreviewStationMenu<ToolCraftingRecipe> {
 
     private final CraftingTool tool;
 

@@ -12,6 +12,7 @@ import com.conquestrefabricated.client.models.obj.ObjLoader;
 import com.conquestrefabricated.client.tutorial.fabric.TutorialRenderEvent;
 import com.conquestrefabricated.content.arms.ArmsStation;
 import com.conquestrefabricated.content.arms.fabric.ArmsStationInit;
+import com.conquestrefabricated.content.loom.fabric.LoomStationInit;
 import com.conquestrefabricated.content.station.fabric.StationInit;
 import com.conquestrefabricated.content.tools.fabric.CraftingToolsInit;
 import com.conquestrefabricated.content.blocks.group.ModGroups;
@@ -119,6 +120,7 @@ public class RefabricatedModClient implements ClientModInitializer {
         StationInit.registerClient();
         ArmsStationInit.registerClient();
         CraftingToolsInit.registerClient();
+        LoomStationInit.registerClient();
 
         BlockClientInit.clientBlockEntities();
         BlockClientInit.blockColors();

@@ -57,7 +57,7 @@ public class ModLangManualProvider extends FabricLanguageProvider {
         translationBuilder.add("tooltip.conquest.block.toggle_7", "§67 Toggleable Variants (Right-Click)");
         translationBuilder.add("tooltip.conquest.block.toggle_8", "§68 Toggleable Variants (Right-Click)");
         translationBuilder.add("tooltip.conquest.block.toggle_10", "§610 Toggleable Variants (Right-Click)");
-        translationBuilder.add("tooltip.conquest.block.loom_toggle_4", "§6Toggles: Mallet - Size, Rugs & Canvas - Weave, Hand - Position");
+        translationBuilder.add("tooltip.conquest.block.loom_toggle_4", "§6Toggles: Mallet - Size, Sneak - Position, Rugs & Canvas - Weave, Hand - Open");
         translationBuilder.add("tooltip.conquest.block.board_toggle", "§6Toggles: Length (Right-Click), Width (Shift+Right-Click)");
         translationBuilder.add(Lore.HINT_KEY, Lore.HINT_FALLBACK);
 
@@ -150,6 +150,9 @@ public class ModLangManualProvider extends FabricLanguageProvider {
         translationBuilder.add("container.conquest.mason_tools", "Masonry");
         translationBuilder.add("tooltip.conquest.item.woodworking_tools", "§eRight-click to shape planks, beams and panelling§r");
         translationBuilder.add("tooltip.conquest.item.mason_tools", "§eRight-click to shape ashlar, brick and tile§r");
+
+        /* === Loom === */
+        translationBuilder.add("container.conquest.loom.weaving", "Weaving: %s%%");
 
         translationBuilder.add("item.conquest.mallet_item", "Mallet (Conquest Toggle Tool)");
         translationBuilder.add("tooltip.conquest.mallet_item", "§6Use this (right-click) on toggleable blocks to change their shape");
