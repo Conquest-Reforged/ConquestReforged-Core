@@ -5,7 +5,7 @@ issueTrackerURL=""
 
 [[mods]] #mandatory
 modId="conquest" #mandatory
-version="${version}" #mandatory
+version="0.0.1" #mandatory
 authors="Hippokleides, Monsterfish_, Dechoppy, Eag_inc, Wheellee, Xone"
 displayName="Conquest Reforged" #mandatory
 logoFile="icon.png" #optional
