@@ -1,0 +1,119 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.conquestreforged.core",
+    "module": "common",
+    "version": "BETA-0.0.8",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "9.3.0"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 25,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "net.fabricmc.fabric-api",
+          "module": "fabric-api",
+          "version": {
+            "requires": "0.150.0+26.1.2"
+          }
+        },
+        {
+          "group": "dev.architectury",
+          "module": "architectury",
+          "version": {
+            "requires": "20.0.4"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "common-BETA-0.0.8-dev.jar",
+          "url": "common-BETA-0.0.8-dev.jar",
+          "size": 8851932,
+          "sha512": "680d87206180c287f7e0d3448ce2a7166fb61d26d5914e87c50a2d6418fda5c226c5deee890f3f0f5cf9e0109c519819b3223e1340d22959e6d1c2eb9d2bb1ce",
+          "sha256": "abc3c079bde0e57b13297a264f0a26fd1b8925cccf77ba89618bdbd1021bfd8b",
+          "sha1": "f05efdda210ebab1a4d1b9a6de9520fa6d8ece65",
+          "md5": "fac9199cda6a8d5a1d0fec06e249d1f5"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 25,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "net.fabricmc",
+          "module": "fabric-loader",
+          "version": {
+            "requires": "0.19.3"
+          }
+        },
+        {
+          "group": "net.fabricmc.fabric-api",
+          "module": "fabric-api",
+          "version": {
+            "requires": "0.150.0+26.1.2"
+          }
+        },
+        {
+          "group": "dev.architectury",
+          "module": "architectury",
+          "version": {
+            "requires": "20.0.4"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "common-BETA-0.0.8-dev.jar",
+          "url": "common-BETA-0.0.8-dev.jar",
+          "size": 8851932,
+          "sha512": "680d87206180c287f7e0d3448ce2a7166fb61d26d5914e87c50a2d6418fda5c226c5deee890f3f0f5cf9e0109c519819b3223e1340d22959e6d1c2eb9d2bb1ce",
+          "sha256": "abc3c079bde0e57b13297a264f0a26fd1b8925cccf77ba89618bdbd1021bfd8b",
+          "sha1": "f05efdda210ebab1a4d1b9a6de9520fa6d8ece65",
+          "md5": "fac9199cda6a8d5a1d0fec06e249d1f5"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "common-BETA-0.0.8-sources.jar",
+          "url": "common-BETA-0.0.8-sources.jar",
+          "size": 8123482,
+          "sha512": "594eddebda3ae76bc6ea5062e3b89588b2eadd06a07c52cc66620fb68e185c15c2b644a7eb4c38bb55868b43e0dba5cbe03942622e96a1bf74d77633b68e4ead",
+          "sha256": "81556de8d8cc796ecaff937cf5f25b1667700755d42c3b1580e14470ebb7c238",
+          "sha1": "1015574be8412e3e21703093950dba22e4e6a9bf",
+          "md5": "746212f6ceef6ec8fcf04ccddfed20dc"
+        }
+      ]
+    }
+  ]
+}
