@@ -19,6 +19,10 @@ public class ModTags {
     public static final TagKey<Block> COBBLESTONES = blockTag("cobblestones");
     public static final TagKey<Block> GRAVELS = blockTag("gravels");
 
+    public static final TagKey<Block> NATURAL_MARBLE = blockTag("natural_marble");
+    public static final TagKey<Block> NATURAL_LIMESTONE = blockTag("natural_limestone");
+    public static final TagKey<Block> NATURAL_SANDSTONE = blockTag("natural_sandstone");
+    public static final TagKey<Block> NATURAL_GRANITE = blockTag("natural_granite");
 
     //public static final TagKey<Block> PLANT_SLOWNESS = blockTag("plant_slowness");
     public static final TagKey<Item> GARDENING_TOOLS = itemTag("gardening_tools");
