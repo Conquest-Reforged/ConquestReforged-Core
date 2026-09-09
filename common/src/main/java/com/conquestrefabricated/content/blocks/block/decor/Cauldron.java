@@ -10,8 +10,6 @@ import com.conquestrefabricated.core.block.builder.SpecialOffsetType;
 import com.conquestrefabricated.core.util.RenderLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.cauldron.CauldronInteraction;
-import net.minecraft.core.cauldron.CauldronInteractions;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -36,7 +34,6 @@ import java.util.List;
 @SpecialOffset(offsetType = SpecialOffsetType.XYZ)
 public class Cauldron extends Block {
     private final CauldronBehavior behavior;
-    protected final CauldronInteraction.Dispatcher interactions = CauldronInteractions.EMPTY;
 
     public Cauldron(Props props) {
         super(props
@@ -79,6 +76,11 @@ public class Cauldron extends Block {
     }
 
     @Override
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        return behavior.useItemOn(state, world, pos, player, hand, stack);
+    }
+
+    @Override
     public void handlePrecipitation(BlockState state, Level world, BlockPos pos, Biome.Precipitation precipitation) {
         behavior.precipitationTick(state, world, pos, precipitation);
     }
@@ -102,7 +104,6 @@ public class Cauldron extends Block {
     @SpecialOffset(offsetType = SpecialOffsetType.XYZ)
     public static class CauldronDirectional extends HorizontalDirectional {
         private final CauldronBehavior behavior;
-        protected final CauldronInteraction.Dispatcher interactions = CauldronInteractions.EMPTY;
 
         public CauldronDirectional(Props props) {
             super(props
@@ -145,8 +146,7 @@ public class Cauldron extends Block {
 
         @Override
         protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-            net.minecraft.core.cauldron.CauldronInteraction cauldronBehavior = this.interactions.get(stack);
-            return cauldronBehavior.interact(state, world, pos, player, hand, stack);
+            return behavior.useItemOn(state, world, pos, player, hand, stack);
         }
 
         @Override

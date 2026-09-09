@@ -52,7 +52,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                     // Only the family's parent is made at a set of crafting tools or on a loom; every
                     // other member is cut from the parent by the stonecutting recipes below, which is
                     // also what the pickers' family toggle walks.
-                    if (isFamilyParent(blockData)) {
+                    if (blockData.isFamilyParent()) {
                         blockData.getProps().getToolRecipe().ifPresent(spec ->
                                 ToolCraftingRecipeBuilder.from(spec, items, blockData.getBlock()).save(output));
                         blockData.getProps().getWeavingRecipe().ifPresent(spec ->
@@ -92,16 +92,6 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 });
             }
         };
-    }
-
-    /**
-     * Whether {@code data} is the block a family is built from. A builder that never had a parent set
-     * registered one block and that block is its own root; otherwise the parent is whatever
-     * {@code Props.parent(..)} points at, which for cutout families lands on a copied {@code Props}
-     * whose parent was never filled in.
-     */
-    private static boolean isFamilyParent(BlockData data) {
-        return !data.getProps().hasParent() || data.getProps().getParent().getBlock() == data.getBlock();
     }
 
     public void offerSCRecipe(RecipeOutput exporter, RecipeCategory category, ItemLike output, ItemLike input, int count) {

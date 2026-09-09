@@ -109,4 +109,15 @@ public class BlockData {
     public List<TagKey<Block>> getTags() {
         return props.getTags();
     }
+
+    /**
+     * Whether this is the block its family is built from - the cube rather than the slab cut from it.
+     *
+     * <p>A builder that never had a parent set registered one block and that block is its own root;
+     * otherwise the parent is whatever {@code Props.parent(..)} points at, which for cutout families
+     * lands on a copied {@code Props} whose parent was never filled in.</p>
+     */
+    public boolean isFamilyParent() {
+        return !props.hasParent() || props.getParent().getBlock() == block;
+    }
 }

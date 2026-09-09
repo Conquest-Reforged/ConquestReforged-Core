@@ -45,14 +45,24 @@ public sealed interface RecipeIngredient {
     Ingredient toIngredient(HolderGetter<Item> items);
 
     /**
-     * The block tag this names, if it names one.
+     * The item tag Core has to generate for this ingredient, if it needs one.
      *
-     * <p>A recipe can only ever match on an <i>item</i> tag, so a block tag is written out as the
-     * item tag with the same id - and that item tag has to exist for the recipe to match anything.
-     * Core's item tag generation reads this to know which ones to mirror.</p>
+     * <p>A recipe can only ever match on an <i>item</i> tag, so a block tag ingredient names one that
+     * has to be filled in from the blocks carrying the block tag. {@code ModItemTagProvider} reads
+     * this to know what to generate.</p>
      */
-    default Optional<TagKey<Block>> blockTag() {
+    default Optional<BlockTagMirror> mirror() {
         return Optional.empty();
+    }
+
+    /**
+     * An item tag Core generates from a block tag, so a recipe can match on it.
+     *
+     * @param source    the block tag as it was declared
+     * @param target    the item tag the recipe actually names
+     * @param basesOnly whether only the families' parent blocks belong in it
+     */
+    record BlockTagMirror(TagKey<Block> source, TagKey<Item> target, boolean basesOnly) {
     }
 
     static RecipeIngredient of(ItemLike item) {
@@ -73,7 +83,7 @@ public sealed interface RecipeIngredient {
             return new OfItemTag(tag.cast(Registries.ITEM).orElseThrow());
         }
         if (tag.isFor(Registries.BLOCK)) {
-            return new OfBlockTag(tag.cast(Registries.BLOCK).orElseThrow());
+            return new OfBlockTag(tag.cast(Registries.BLOCK).orElseThrow(), false);
         }
         throw new IllegalArgumentException(
                 "A crafting ingredient must be an item or block tag, got " + tag.registry().identifier() + " tag " + tag.location());
@@ -84,6 +94,28 @@ public sealed interface RecipeIngredient {
     }
 
     /**
+     * Only the blocks a family is built from - the cube, not the slab, stairs or wall cut from it.
+     *
+     * <p>{@code Props} are shared by every member of a family, so a block tag holds the whole family:
+     * {@code ModTags.BRICKS} is every brick <i>shape</i>, not every brick. That is right for an
+     * ingredient like "any log shape I have lying around", and wrong for one like "any brick",
+     * where being able to feed a slab back in is just a way to lose material.</p>
+     *
+     * <pre>{@code
+     * .craftedWith(CraftingTools.MASON.id(), RecipeIngredient.basesOf(ModTags.BRICKS))
+     * }</pre>
+     *
+     * <p>Core generates a second item tag for these, alongside the full one, so both readings of a
+     * block tag can be used by different recipes.</p>
+     */
+    static RecipeIngredient basesOf(TagKey<Block> blockTag) {
+        return new OfBlockTag(blockTag, true);
+    }
+
+    /** Appended to a block tag's path for the parents-only item tag cut from it. */
+    String BASES_SUFFIX = "/bases";
+
+    /**
      * The item tag a block tag ingredient is written out as: the same id, in the item registry.
      *
      * <p>Kept in one place so the recipes and the item tags Core generates for them cannot drift
@@ -91,6 +123,13 @@ public sealed interface RecipeIngredient {
      */
     static TagKey<Item> itemTagFor(TagKey<Block> blockTag) {
         return TagKey.create(Registries.ITEM, blockTag.location());
+    }
+
+    /** As {@link #itemTagFor}, for the {@link #basesOf} cut of a block tag. */
+    static TagKey<Item> baseItemTagFor(TagKey<Block> blockTag) {
+        Identifier id = blockTag.location();
+        return TagKey.create(Registries.ITEM,
+                Identifier.fromNamespaceAndPath(id.getNamespace(), id.getPath() + BASES_SUFFIX));
     }
 
     /**
@@ -121,11 +160,13 @@ public sealed interface RecipeIngredient {
     /**
      * Anything in a block tag, which is what most Conquest families are grouped by.
      *
-     * <p>Written out as the item tag with the same id, since that is all a recipe can match on. For
-     * a vanilla tag that counterpart already exists; for one of Conquest's own, Core generates it -
-     * see {@link #blockTag()}.</p>
+     * <p>Written out as an item tag, since that is all a recipe can match on. For a vanilla tag that
+     * counterpart usually exists already; for one of Conquest's own, Core generates it - see
+     * {@link #mirror()}.</p>
+     *
+     * @param basesOnly whether to take only the families' parent blocks - see {@link #basesOf}
      */
-    record OfBlockTag(TagKey<Block> tag) implements RecipeIngredient {
+    record OfBlockTag(TagKey<Block> tag, boolean basesOnly) implements RecipeIngredient {
         @Override
         public Ingredient toIngredient(HolderGetter<Item> items) {
             return Ingredient.of(items.getOrThrow(itemTag()));
@@ -133,12 +174,12 @@ public sealed interface RecipeIngredient {
 
         /** The item tag this is written out as. */
         public TagKey<Item> itemTag() {
-            return itemTagFor(this.tag);
+            return this.basesOnly ? baseItemTagFor(this.tag) : itemTagFor(this.tag);
         }
 
         @Override
-        public Optional<TagKey<Block>> blockTag() {
-            return Optional.of(this.tag);
+        public Optional<BlockTagMirror> mirror() {
+            return Optional.of(new BlockTagMirror(this.tag, itemTag(), this.basesOnly));
         }
     }
 

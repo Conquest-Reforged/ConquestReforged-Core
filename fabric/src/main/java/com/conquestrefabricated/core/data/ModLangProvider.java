@@ -34,6 +34,16 @@ public class ModLangProvider extends FabricLanguageProvider {
                     );
                     if (block.asItem() != net.minecraft.world.item.Items.AIR) translationBuilder.add(block.asItem(), translationKey);
                 });
+        BuiltInRegistries.ITEM.stream()
+                .filter(item -> Namespaces.isRegistered(BuiltInRegistries.ITEM.getKey(item).getNamespace()))
+                .forEach(item -> {
+                    String path = BuiltInRegistries.ITEM.getKey(item).getPath();
+                    String translationKey = specialCaseTranslations.getOrDefault(
+                            path,
+                            Translations.translate(path)
+                    );
+                    if (item.asItem() != net.minecraft.world.item.Items.AIR) translationBuilder.add(item.asItem(), translationKey);
+                });
 
         generateLore(translationBuilder);
     }

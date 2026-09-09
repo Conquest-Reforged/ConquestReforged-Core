@@ -38,12 +38,12 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        Set<TagKey<Block>> crafted = craftedFromTags();
-        if (crafted.isEmpty()) {
+        Set<RecipeIngredient.BlockTagMirror> mirrors = mirrorsInUse();
+        if (mirrors.isEmpty()) {
             return;
         }
 
-        int mirrored = 0;
+        int entries = 0;
         for (BlockData data : blockData().toList()) {
             Item item = data.getBlock().asItem();
             if (item == Items.AIR) {
@@ -51,27 +51,40 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider {
                 continue;
             }
             for (TagKey<Block> tag : data.getTags()) {
-                if (crafted.contains(tag)) {
-                    valueLookupBuilder(RecipeIngredient.itemTagFor(tag)).add(item).setReplace(false);
-                    mirrored++;
+                for (RecipeIngredient.BlockTagMirror mirror : mirrors) {
+                    if (!mirror.source().equals(tag)) {
+                        continue;
+                    }
+                    if (mirror.basesOnly() && !data.isFamilyParent()) {
+                        // The shapes cut from this block stay out, so a recipe asking for "any brick"
+                        // is not also offered every slab and stair of one.
+                        continue;
+                    }
+                    valueLookupBuilder(mirror.target()).add(item).setReplace(false);
+                    entries++;
                 }
             }
         }
 
+        for (RecipeIngredient.BlockTagMirror mirror : mirrors) {
+            Log.info("Crafting ingredients: {} -> {}{}",
+                    mirror.source().location(), mirror.target().location(),
+                    mirror.basesOnly() ? " (family parents only)" : "");
+        }
         Log.info("Crafting ingredients: mirrored {} block tag(s) into item tags, {} entries",
-                crafted.size(), mirrored);
+                mirrors.size(), entries);
     }
 
-    /** Every block tag some block declares itself as being crafted or woven from. */
-    private static Set<TagKey<Block>> craftedFromTags() {
-        Set<TagKey<Block>> tags = new LinkedHashSet<>();
+    /** Every block tag some block declares itself as being crafted or woven from, and how. */
+    private static Set<RecipeIngredient.BlockTagMirror> mirrorsInUse() {
+        Set<RecipeIngredient.BlockTagMirror> mirrors = new LinkedHashSet<>();
         blockData().forEach(data -> {
             data.getProps().getToolRecipe()
-                    .ifPresent(spec -> spec.ingredient().blockTag().ifPresent(tags::add));
+                    .ifPresent(spec -> spec.ingredient().mirror().ifPresent(mirrors::add));
             data.getProps().getWeavingRecipe()
-                    .ifPresent(spec -> spec.ingredient().blockTag().ifPresent(tags::add));
+                    .ifPresent(spec -> spec.ingredient().mirror().ifPresent(mirrors::add));
         });
-        return tags;
+        return mirrors;
     }
 
     private static Stream<BlockData> blockData() {

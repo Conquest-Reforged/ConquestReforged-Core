@@ -346,6 +346,7 @@ overload for every way you might have of naming one:
 | a block tag | `ModTags.STONE` | `"#conquest:stone"` |
 | an id | `Identifier.parse("conquest:granite_ashlar")` | `"conquest:granite_ashlar"` |
 | an id, as a string | `"granite_ashlar"` | `"conquest:granite_ashlar"` |
+| a block tag, whole blocks only | `RecipeIngredient.basesOf(ModTags.BRICKS)` | `"#conquest:bricks/bases"` |
 
 Most Conquest blocks are built from templates rather than declared one by one, so there is no static
 field to point at. The last two rows are for those: a bare string path resolves against the Conquest
@@ -358,6 +359,27 @@ recipe that can never match.
 of either kind go through the same `TagKey<?>` overload — `TagKey<Item>` and `TagKey<Block>` erase to
 the same signature, so they cannot be separate overloads — and anything that is neither is rejected
 where it is declared.
+
+### Excluding the shapes cut from a family
+
+`Props` are shared by every member of a family, so a block tag holds the whole family: `ModTags.BRICKS`
+is every brick *shape*, not every brick — 264 entries in Classical, for 12 blocks. Feed that to an
+ingredient and a slab counts as a brick, which is usually a way to lose material rather than a
+feature.
+
+`basesOf(..)` takes only the block each family is built from:
+
+```java
+.craftedWith(CraftingTools.MASON.id(), RecipeIngredient.basesOf(ModTags.BRICKS))
+```
+
+That writes `#conquest:bricks/bases`, and Core generates that tag beside the full one — so the same
+block tag can be read both ways by different recipes. Plain `of(..)` still takes the whole family,
+which is what you want for an ingredient like "any log shape I have lying around".
+
+"Base" here is the same notion as the picker's own base-blocks-versus-shapes toggle: a block is a base
+if it has no parent, or is its own family's parent. It is the identical test that decides which member
+of a family gets the tool recipe in the first place.
 
 ### How a block tag reaches a recipe
 

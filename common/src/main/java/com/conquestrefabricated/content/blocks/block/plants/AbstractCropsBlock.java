@@ -98,10 +98,17 @@ public abstract class AbstractCropsBlock extends CropBlock {
         BlockPos down = currentPos.below();
         BlockState blockStateDown = level.getBlockState(down);
 
+        BlockState result = super.updateShape(stateIn, level, ticks, currentPos, directionToNeighbour, neighbourPos, neighbourState, random);
+        // Guard: if the parent already turned this into a different block (e.g. AIR because
+        // support was lost), don't try to set LAYERS on it — it won't have that property.
+        if (!result.hasProperty(LAYERS)) {
+            return result;
+        }
+
         if (blockStateDown.hasProperty(Layer.LAYERS) || blockStateDown.hasProperty(Slab.LAYERS)) {
-            return super.updateShape(stateIn, level, ticks, currentPos, directionToNeighbour, neighbourPos, neighbourState, random).setValue(LAYERS, blockStateDown.getValue(LAYERS));
+            return result.setValue(LAYERS, blockStateDown.getValue(LAYERS));
         } else {
-            return super.updateShape(stateIn, level, ticks, currentPos, directionToNeighbour, neighbourPos, neighbourState, random).setValue(LAYERS, 8);
+            return result.setValue(LAYERS, 8);
         }
     }
 

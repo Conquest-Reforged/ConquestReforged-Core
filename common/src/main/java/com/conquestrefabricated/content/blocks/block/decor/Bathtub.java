@@ -10,8 +10,6 @@ import com.conquestrefabricated.core.block.properties.ModBlockProperties;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.cauldron.CauldronInteraction;
-import net.minecraft.core.cauldron.CauldronInteractions;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -60,8 +58,6 @@ public class Bathtub extends HorizontalDirectionalBlock {
     ).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get());
 
     private final CauldronBehavior behavior;
-
-    protected final CauldronInteraction.Dispatcher interactions = CauldronInteractions.EMPTY;
 
     public Bathtub(Props props) {
         super(props
@@ -179,9 +175,8 @@ public class Bathtub extends HorizontalDirectionalBlock {
 
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        net.minecraft.core.cauldron.CauldronInteraction cauldronBehavior = this.interactions.get(stack);
         syncLevelToOtherHalf(world, pos, world.getBlockState(pos));
-        return cauldronBehavior.interact(state, world, pos, player, hand, stack);
+        return behavior.useItemOn(state, world, pos, player, hand, stack);
     }
 
     @Override
