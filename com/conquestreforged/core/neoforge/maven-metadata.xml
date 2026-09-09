@@ -3,8 +3,8 @@
   <groupId>com.conquestreforged.core</groupId>
   <artifactId>neoforge</artifactId>
   <versioning>
-    <latest>BETA-0.0.8</latest>
-    <release>BETA-0.0.8</release>
+    <latest>BETA-0.0.9</latest>
+    <release>BETA-0.0.9</release>
     <versions>
       <version>BETA-0.0.1</version>
       <version>BETA-0.0.2</version>
@@ -14,7 +14,8 @@
       <version>BETA-0.0.6</version>
       <version>BETA-0.0.7</version>
       <version>BETA-0.0.8</version>
+      <version>BETA-0.0.9</version>
     </versions>
-    <lastUpdated>20260909161759</lastUpdated>
+    <lastUpdated>20260909164918</lastUpdated>
   </versioning>
 </metadata>
