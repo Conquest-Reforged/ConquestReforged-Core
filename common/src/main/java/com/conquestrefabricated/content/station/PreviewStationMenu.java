@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @param <R> the recipe type this station crafts with
  */
-public abstract class PreviewStationMenu<R extends Recipe<SingleRecipeInput>> extends StationMenu<R> {
+public abstract class PreviewStationMenu<R extends Recipe<SingleRecipeInput>> extends StationMenu<R, SingleRecipeInput> {
 
     protected final Slot inputSlot;
     protected final Slot resultSlot;
@@ -66,12 +66,27 @@ public abstract class PreviewStationMenu<R extends Recipe<SingleRecipeInput>> ex
                 return List.of(PreviewStationMenu.this.inputSlot.getItem());
             }
         });
-        this.addStandardInventorySlots(inventory, 8, 84);
+        this.addPlayerInventory(inventory);
     }
 
     @Override
     protected ItemStack stationInput() {
         return this.inputSlot.getItem();
+    }
+
+    @Override
+    protected SingleRecipeInput recipeInput() {
+        return new SingleRecipeInput(this.inputSlot.getItem());
+    }
+
+    @Override
+    protected SingleRecipeInput emptyRecipeInput() {
+        return new SingleRecipeInput(ItemStack.EMPTY);
+    }
+
+    @Override
+    protected SingleRecipeInput inputWith(ItemStack stack) {
+        return new SingleRecipeInput(stack);
     }
 
     @Override

@@ -50,9 +50,10 @@ public class ToolCraftingMenu extends PreviewStationMenu<ToolCraftingRecipe> {
      * slab, because nothing takes ashlar as an ingredient.
      */
     @Override
-    protected boolean worksWith(ItemStack input, List<RecipeHolder<ToolCraftingRecipe>> direct) {
-        return super.worksWith(input, direct)
-                || StationRecipes.produces(this.level, this.recipeType(), this::accepts, input);
+    protected boolean worksWith(ItemStack input) {
+        return super.worksWith(input)
+                || StationRecipes.produces(this.level, this.recipeType(), this::accepts, input,
+                        this.emptyRecipeInput());
     }
 
     @Override

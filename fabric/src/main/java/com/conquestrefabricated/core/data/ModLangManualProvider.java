@@ -144,6 +144,7 @@ public class ModLangManualProvider extends FabricLanguageProvider {
         /* === Crafting tools === */
         translationBuilder.add("container.conquest.station.show_variants", "Show every shape");
         translationBuilder.add("container.conquest.station.hide_variants", "Show base blocks only");
+        translationBuilder.add("container.conquest.station.needs", "Needs: %s");
         translationBuilder.add("item.conquest.woodworking_tools", "Woodworking Tools");
         translationBuilder.add("item.conquest.mason_tools", "Mason's Tools");
         translationBuilder.add("item.conquest.metalworking_tools", "Metalworking Tools");
@@ -153,6 +154,16 @@ public class ModLangManualProvider extends FabricLanguageProvider {
         translationBuilder.add("tooltip.conquest.item.woodworking_tools", "§eRight-click to shape planks, beams and panelling§r");
         translationBuilder.add("tooltip.conquest.item.mason_tools", "§eRight-click to shape ashlar, brick and tile§r");
         translationBuilder.add("tooltip.conquest.item.metalworking_tools", "§eRight-click to shape plate, bar and grillwork§r");
+
+        /* === Painter's kit === */
+        translationBuilder.add("item.conquest.painters_kit", "Painter's Kit");
+        translationBuilder.add("container.conquest.painters_kit", "Painting");
+        translationBuilder.add("tooltip.conquest.item.painters_kit", "§eRight-click to paint plaster, stucco and washes§r");
+
+        /* === The lime cycle === */
+        translationBuilder.add("item.conquest.quicklime", "Quicklime");
+        translationBuilder.add("item.conquest.slaked_lime", "Slaked Lime");
+        translationBuilder.add("item.conquest.lime_plaster", "Lime Plaster");
 
         /* === Loom === */
         translationBuilder.add("container.conquest.loom.weaving", "Weaving: %s%%");

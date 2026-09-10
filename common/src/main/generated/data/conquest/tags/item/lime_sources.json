@@ -1,0 +1,21 @@
+{
+  "values": [
+    {
+      "id": "#conquest:natural_marble",
+      "required": false
+    },
+    {
+      "id": "#conquest:natural_limestone",
+      "required": false
+    },
+    {
+      "id": "#conquest:natural_chalk",
+      "required": false
+    },
+    {
+      "id": "#conquest:natural_calcite",
+      "required": false
+    },
+    "minecraft:calcite"
+  ]
+}

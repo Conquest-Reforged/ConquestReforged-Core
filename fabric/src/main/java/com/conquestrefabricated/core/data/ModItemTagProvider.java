@@ -1,5 +1,6 @@
 package com.conquestrefabricated.core.data;
 
+import com.conquestrefabricated.api.tags.ModTags;
 import com.conquestrefabricated.core.Namespaces;
 import com.conquestrefabricated.core.block.builder.RecipeIngredient;
 import com.conquestrefabricated.core.block.data.BlockData;
@@ -8,6 +9,7 @@ import com.conquestrefabricated.core.util.log.Log;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.data.tags.TagAppender;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -38,7 +40,17 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
+        this.addLimeSources();
+
         Set<RecipeIngredient.BlockTagMirror> mirrors = mirrorsInUse();
+        // Some tags are mirrored whether or not a recipe asks, because other tags are built on them.
+        for (TagKey<Block> always : ModTags.MIRRORED_TO_ITEMS) {
+            mirrors.add(new RecipeIngredient.BlockTagMirror(always, RecipeIngredient.itemTagFor(always), false));
+            // Touch the builder so the file exists even where this module has no blocks in the tag -
+            // the union below refers to it, and the modules that do have blocks merge into it.
+            this.valueLookupBuilder(RecipeIngredient.itemTagFor(always));
+        }
+
         if (mirrors.isEmpty()) {
             return;
         }
@@ -75,6 +87,20 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider {
                 mirrors.size(), entries);
     }
 
+    /**
+     * The union every quicklime recipe smelts: the calcareous stones, plus vanilla calcite.
+     *
+     * <p>Written as tag references rather than as a flattened list of blocks, so a module adding its
+     * own chalk joins it by tagging the block and re-running its own data generation.</p>
+     */
+    private void addLimeSources() {
+        TagAppender<Item, Item> limeSources = this.valueLookupBuilder(ModTags.LIME_SOURCES);
+        for (TagKey<Block> stone : ModTags.MIRRORED_TO_ITEMS) {
+            limeSources.addOptionalTag(RecipeIngredient.itemTagFor(stone));
+        }
+        limeSources.add(Items.CALCITE).setReplace(false);
+    }
+
     /** Every block tag some block declares itself as being crafted or woven from, and how. */
     private static Set<RecipeIngredient.BlockTagMirror> mirrorsInUse() {
         Set<RecipeIngredient.BlockTagMirror> mirrors = new LinkedHashSet<>();
@@ -83,6 +109,10 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider {
                     .ifPresent(spec -> spec.ingredient().mirror().ifPresent(mirrors::add));
             data.getProps().getWeavingRecipe()
                     .ifPresent(spec -> spec.ingredient().mirror().ifPresent(mirrors::add));
+            data.getProps().getPaintingRecipe().ifPresent(spec -> {
+                spec.base().mirror().ifPresent(mirrors::add);
+                spec.paint().mirror().ifPresent(mirrors::add);
+            });
         });
         return mirrors;
     }

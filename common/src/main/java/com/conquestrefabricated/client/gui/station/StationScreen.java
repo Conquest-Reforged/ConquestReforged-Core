@@ -2,6 +2,7 @@ package com.conquestrefabricated.client.gui.station;
 
 import com.conquestrefabricated.content.station.StationMenu;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -27,13 +28,16 @@ import java.util.List;
  *
  * @param <T> the station menu this screen is showing
  */
-public class StationScreen<T extends StationMenu<?>> extends AbstractContainerScreen<T> {
+public class StationScreen<T extends StationMenu<?, ?>> extends AbstractContainerScreen<T> {
 
     private static final Identifier SCROLLER_SPRITE = Identifier.withDefaultNamespace("container/stonecutter/scroller");
     private static final Identifier SCROLLER_DISABLED_SPRITE = Identifier.withDefaultNamespace("container/stonecutter/scroller_disabled");
     protected static final Identifier RECIPE_SELECTED_SPRITE = Identifier.withDefaultNamespace("container/stonecutter/recipe_selected");
     protected static final Identifier RECIPE_HIGHLIGHTED_SPRITE = Identifier.withDefaultNamespace("container/stonecutter/recipe_highlighted");
     protected static final Identifier RECIPE_SPRITE = Identifier.withDefaultNamespace("container/stonecutter/recipe");
+    /** Vanilla's "this slot is switched off" artwork, for an option the slots cannot yet pay for. */
+    protected static final Identifier RECIPE_UNAVAILABLE_SPRITE =
+            Identifier.withDefaultNamespace("container/crafter/disabled_slot");
     private static final Identifier BG_LOCATION = Identifier.withDefaultNamespace("textures/gui/container/stonecutter.png");
 
     private static final int SCROLLER_WIDTH = 12;
@@ -57,6 +61,8 @@ public class StationScreen<T extends StationMenu<?>> extends AbstractContainerSc
     private static final int TOGGLE_Y = 50;
     private static final int TOGGLE_WIDTH = 20;
     private static final int TOGGLE_HEIGHT = 20;
+
+    private static final String NEEDS_KEY = "container.conquest.station.needs";
 
     private static final String SHOW_VARIANTS_KEY = "container.conquest.station.show_variants";
     private static final String HIDE_VARIANTS_KEY = "container.conquest.station.hide_variants";
@@ -106,8 +112,8 @@ public class StationScreen<T extends StationMenu<?>> extends AbstractContainerSc
             return;
         }
 
-        int x = this.leftPos + TOGGLE_X;
-        int y = this.topPos + TOGGLE_Y;
+        int x = this.leftPos + toggleX();
+        int y = this.topPos + this.toggleY();
         boolean hovered = this.isOverToggle(mouseX, mouseY);
         boolean on = this.menu.showingVariants();
 
@@ -119,22 +125,39 @@ public class StationScreen<T extends StationMenu<?>> extends AbstractContainerSc
         } else {
             sprite = RECIPE_SPRITE;
         }
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x, y, TOGGLE_WIDTH, TOGGLE_HEIGHT);
-        graphics.centeredText(this.font, on ? "-" : "+", x + TOGGLE_WIDTH / 2,
-                y + (TOGGLE_HEIGHT - this.font.lineHeight) / 2, 0xFFDDDDDD);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x, y, this.toggleWidth(), this.toggleHeight());
+        graphics.centeredText(this.font, on ? "-" : "+", x + this.toggleWidth() / 2,
+                y + (this.toggleHeight() - this.font.lineHeight) / 2, 0xFFDDDDDD);
 
         if (hovered) {
             graphics.requestCursor(CursorTypes.POINTING_HAND);
         }
     }
 
+    /** Where the variant toggle sits. Overridable for stations whose slots need that corner. */
+    protected int toggleX() {
+        return TOGGLE_X;
+    }
+
+    protected int toggleY() {
+        return TOGGLE_Y;
+    }
+
+    protected int toggleWidth() {
+        return TOGGLE_WIDTH;
+    }
+
+    protected int toggleHeight() {
+        return TOGGLE_HEIGHT;
+    }
+
     private boolean isOverToggle(final double mouseX, final double mouseY) {
         if (!this.menu.supportsVariants()) {
             return false;
         }
-        int x = this.leftPos + TOGGLE_X;
-        int y = this.topPos + TOGGLE_Y;
-        return mouseX >= x && mouseX < x + TOGGLE_WIDTH && mouseY >= y && mouseY < y + TOGGLE_HEIGHT;
+        int x = this.leftPos + toggleX();
+        int y = this.topPos + this.toggleY();
+        return mouseX >= x && mouseX < x + this.toggleWidth() && mouseY >= y && mouseY < y + this.toggleHeight();
     }
 
     @Override
@@ -161,7 +184,15 @@ public class StationScreen<T extends StationMenu<?>> extends AbstractContainerSc
             int itemTop = edgeTop + posIndex / RECIPES_COLUMNS * RECIPES_IMAGE_SIZE_HEIGHT + 2;
             if (mouseX >= itemLeft && mouseX < itemLeft + RECIPES_IMAGE_SIZE_WIDTH
                     && mouseY >= itemTop && mouseY < itemTop + RECIPES_IMAGE_SIZE_HEIGHT) {
-                graphics.setTooltipForNextFrame(this.font, options.get(index), mouseX, mouseY);
+                ItemStack requirement = this.menu.getOptionRequirement(index);
+                if (requirement.isEmpty()) {
+                    graphics.setTooltipForNextFrame(this.font, options.get(index), mouseX, mouseY);
+                } else {
+                    graphics.setComponentTooltipForNextFrame(this.font, List.of(
+                            options.get(index).getHoverName(),
+                            Component.translatable(NEEDS_KEY, requirement.getHoverName())
+                                    .withStyle(ChatFormatting.GRAY)), mouseX, mouseY);
+                }
             }
         }
     }
@@ -173,7 +204,9 @@ public class StationScreen<T extends StationMenu<?>> extends AbstractContainerSc
             int posY = y + posIndex / RECIPES_COLUMNS * RECIPES_IMAGE_SIZE_HEIGHT + 2;
 
             Identifier sprite;
-            if (index == this.menu.getSelectedRecipeIndex()) {
+            if (!this.menu.isOptionReady(index)) {
+                sprite = RECIPE_UNAVAILABLE_SPRITE;
+            } else if (index == this.menu.getSelectedRecipeIndex()) {
                 sprite = RECIPE_SELECTED_SPRITE;
             } else if (xm >= posX && ym >= posY && xm < posX + RECIPES_IMAGE_SIZE_WIDTH && ym < posY + RECIPES_IMAGE_SIZE_HEIGHT) {
                 sprite = RECIPE_HIGHLIGHTED_SPRITE;

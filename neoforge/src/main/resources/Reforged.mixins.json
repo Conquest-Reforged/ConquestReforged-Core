@@ -4,6 +4,7 @@
   "package": "com.conquestrefabricated.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "ItemEntityMixin",
     "PathNodeTypeMixin",
     "LeavesBlockMixin",
     "EntityRenderersMixin",

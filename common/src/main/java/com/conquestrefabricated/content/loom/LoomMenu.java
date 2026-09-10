@@ -19,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +35,7 @@ import java.util.List;
  * start. Everything after that - the ticking, the crafting, the weave - happens in
  * {@link LoomBlockEntity}, which is what lets a loom finish a job while the player walks away.</p>
  */
-public class LoomMenu extends StationMenu<WeavingRecipe> {
+public class LoomMenu extends StationMenu<WeavingRecipe, SingleRecipeInput> {
 
     /**
      * Button id the confirm control sends. Sits just past the picker's variant toggle, and far above
@@ -91,7 +92,7 @@ public class LoomMenu extends StationMenu<WeavingRecipe> {
                 super.onTake(player, stack);
             }
         });
-        this.addStandardInventorySlots(inventory, 8, 84);
+        this.addPlayerInventory(inventory);
         this.addDataSlots(data);
         this.addDataSlot(this.activeSelection);
     }
@@ -113,6 +114,21 @@ public class LoomMenu extends StationMenu<WeavingRecipe> {
     }
 
     @Override
+    protected SingleRecipeInput recipeInput() {
+        return new SingleRecipeInput(this.inputSlot.getItem());
+    }
+
+    @Override
+    protected SingleRecipeInput emptyRecipeInput() {
+        return new SingleRecipeInput(ItemStack.EMPTY);
+    }
+
+    @Override
+    protected SingleRecipeInput inputWith(ItemStack stack) {
+        return new SingleRecipeInput(stack);
+    }
+
+    @Override
     public boolean supportsVariants() {
         return true;
     }
@@ -123,9 +139,10 @@ public class LoomMenu extends StationMenu<WeavingRecipe> {
      * finished canvas as an ingredient.
      */
     @Override
-    protected boolean worksWith(ItemStack input, List<RecipeHolder<WeavingRecipe>> direct) {
-        return super.worksWith(input, direct)
-                || StationRecipes.produces(this.level, this.recipeType(), this::accepts, input);
+    protected boolean worksWith(ItemStack input) {
+        return super.worksWith(input)
+                || StationRecipes.produces(this.level, this.recipeType(), this::accepts, input,
+                        this.emptyRecipeInput());
     }
 
     /**

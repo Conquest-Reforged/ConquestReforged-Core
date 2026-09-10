@@ -66,6 +66,7 @@ public class Props extends BlockProps<Props> implements BlockFactory {
 
     private ToolRecipeSpec toolRecipe = null;
     private WeavingRecipeSpec weavingRecipe = null;
+    private PaintingRecipeSpec paintingRecipe = null;
 
     private List<TagKey<Block>> tags = Collections.emptyList();
     private List<String> lore = Collections.emptyList();
@@ -94,6 +95,7 @@ public class Props extends BlockProps<Props> implements BlockFactory {
         this.lore = props.lore;
         this.toolRecipe = props.toolRecipe;
         this.weavingRecipe = props.weavingRecipe;
+        this.paintingRecipe = props.paintingRecipe;
     }
 
     @Override
@@ -681,6 +683,78 @@ public class Props extends BlockProps<Props> implements BlockFactory {
      */
     public Optional<WeavingRecipeSpec> getWeavingRecipe() {
         return Optional.ofNullable(weavingRecipe);
+    }
+
+    /**
+     * Declares that this block is made with a painter's kit, from {@code base} coloured with
+     * {@code paint}.
+     * <p>
+     * The same family rule as {@link #craftedWith} applies: only the parent gets the recipe. The rest
+     * of the family is reached through the picker's family toggle, and reshaping a painted block
+     * costs no paint - a kit will cut the slabs of a stucco it made, but will not cut the raw
+     * cobblestone it paints onto.
+     *
+     * <pre>{@code
+     * VanillaProps.stone()
+     *         .name("red_stucco")
+     *         .painted(Blocks.COBBLESTONE, Items.RED_DYE)
+     *         .register(types);
+     * }</pre>
+     *
+     * <p>Only the commonest shapes have overloads of their own; wrap anything else with
+     * {@link RecipeIngredient#of}, which covers tags, ids and bare strings alike.</p>
+     *
+     * @param base  what goes into the kit's upper slot - the material being painted
+     * @param paint what goes into the lower slot - the dye, lime or wash it is painted with
+     */
+    public Props painted(RecipeIngredient base, RecipeIngredient paint) {
+        return painted(base, paint, 1);
+    }
+
+    /**
+     * @param count how many the recipe yields
+     * @see #painted(RecipeIngredient, RecipeIngredient)
+     */
+    public Props painted(RecipeIngredient base, RecipeIngredient paint, int count) {
+        this.paintingRecipe = PaintingRecipeSpec.of(base, paint, count);
+        return this;
+    }
+
+    /** @see #painted(RecipeIngredient, RecipeIngredient) */
+    public Props painted(ItemLike base, ItemLike paint) {
+        return painted(RecipeIngredient.of(base), RecipeIngredient.of(paint), 1);
+    }
+
+    /**
+     * @param count how many the recipe yields
+     * @see #painted(RecipeIngredient, RecipeIngredient)
+     */
+    public Props painted(ItemLike base, ItemLike paint, int count) {
+        return painted(RecipeIngredient.of(base), RecipeIngredient.of(paint), count);
+    }
+
+    /**
+     * Paints anything in {@code base}, which is usually how a whole family of materials is named.
+     *
+     * @see #painted(RecipeIngredient, RecipeIngredient)
+     */
+    public Props painted(TagKey<?> base, ItemLike paint) {
+        return painted(RecipeIngredient.of(base), RecipeIngredient.of(paint), 1);
+    }
+
+    /**
+     * @param count how many the recipe yields
+     * @see #painted(TagKey, ItemLike)
+     */
+    public Props painted(TagKey<?> base, ItemLike paint, int count) {
+        return painted(RecipeIngredient.of(base), RecipeIngredient.of(paint), count);
+    }
+
+    /**
+     * @return the painting recipe declared for this family, if any
+     */
+    public Optional<PaintingRecipeSpec> getPaintingRecipe() {
+        return Optional.ofNullable(paintingRecipe);
     }
 
     public Props template(BlockTemplate template) {

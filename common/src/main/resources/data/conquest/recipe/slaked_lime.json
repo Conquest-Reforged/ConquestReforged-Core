@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "conquest:quicklime",
+    "minecraft:water_bucket"
+  ],
+  "result": {
+    "id": "conquest:slaked_lime"
+  }
+}

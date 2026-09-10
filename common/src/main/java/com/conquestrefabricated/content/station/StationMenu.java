@@ -16,8 +16,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +26,7 @@ import java.util.List;
 
 /**
  * The recipe picker shared by Conquest's crafting stations: a list of everything one recipe type can
- * make from whatever is in the input slot, and the selection the player made from it.
+ * make from what is in the input slots, and the selection the player made from it.
  *
  * <p>Modelled on {@code StonecutterMenu}, with one structural difference. The stonecutter can
  * recompute its option list on both sides because vanilla syncs stonecutting recipes to clients;
@@ -41,26 +41,26 @@ import java.util.List;
  *
  * <p>This class deliberately owns no slots. What a station does with a selection differs too much
  * for one implementation: the arms station and the crafting tools show a preview you pull out of the
- * result slot ({@link PreviewStationMenu}), while a loom starts a craft that takes time and lands in
- * a slot belonging to the block. Subclasses add their own slots and implement {@link #selectOption};
- * everything above the slots is shared.</p>
+ * result slot ({@link PreviewStationMenu}), a loom starts a craft that takes time, and a painter's
+ * kit has two inputs rather than one. Subclasses add their own slots and implement
+ * {@link #selectOption}; everything above the slots is shared.</p>
  *
  * @param <R> the recipe type this station crafts with
+ * @param <I> what those recipes take as input
  */
-public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends AbstractContainerMenu {
+public abstract class StationMenu<R extends Recipe<I>, I extends RecipeInput> extends AbstractContainerMenu {
 
     public static final int INPUT_SLOT = 0;
     public static final int RESULT_SLOT = 1;
-    protected static final int INV_SLOT_START = 2;
-    protected static final int INV_SLOT_END = 29;
-    protected static final int USE_ROW_SLOT_START = 29;
-    protected static final int USE_ROW_SLOT_END = 38;
 
     /**
      * Button id the picker's variant toggle sends. Far above any option index, and positive so it
      * passes the server's usual sanity checks on a menu button.
      */
     public static final int TOGGLE_VARIANTS_BUTTON = 1_000_000;
+
+    /** Stands in for "no option list has been built yet", so the first refresh always builds one. */
+    private static final Object NO_SIGNATURE = new Object();
 
     protected final ContainerLevelAccess access;
     protected final Level level;
@@ -72,11 +72,16 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
     private List<Option> options = List.of();
     /** The assembled previews for the picker. Filled in locally on the server, by payload on the client. */
     private List<ItemStack> optionIcons = List.of();
+    /** What each option is still missing, parallel to the icons. Empty stacks where nothing is. */
+    private List<ItemStack> optionRequirements = List.of();
 
-    private ItemStack input = ItemStack.EMPTY;
+    private Object inputSignature = NO_SIGNATURE;
     private long lastSoundTime;
     private Runnable slotUpdateListener = () -> {
     };
+
+    /** Where the player's inventory starts, once the subclass has added its own slots. */
+    private int invSlotStart = 2;
 
     protected StationMenu(MenuType<?> menuType, int containerId, Inventory inventory, ContainerLevelAccess access) {
         super(menuType, containerId);
@@ -89,10 +94,39 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
         this.addDataSlot(this.showVariants);
     }
 
+    /**
+     * Adds the player's inventory, remembering where it starts.
+     *
+     * <p>Stations do not all have the same number of slots of their own - a painter's kit has a
+     * second input - so the quick-move bounds are worked out here rather than hard-coded.</p>
+     */
+    protected void addPlayerInventory(Inventory inventory) {
+        this.invSlotStart = this.slots.size();
+        this.addStandardInventorySlots(inventory, 8, 84);
+    }
+
+    protected int invSlotStart() {
+        return this.invSlotStart;
+    }
+
+    protected int invSlotEnd() {
+        return this.invSlotStart + 27;
+    }
+
+    protected int useRowEnd() {
+        return this.invSlotStart + 36;
+    }
+
     /** The recipe type this station draws its options from. */
     protected abstract RecipeType<R> recipeType();
 
-    /** Whatever is currently in the input slot. */
+    /** The input its slots currently form. */
+    protected abstract I recipeInput();
+
+    /** An empty input of the same shape, for asking a recipe what it makes without any ingredients. */
+    protected abstract I emptyRecipeInput();
+
+    /** Whatever is in the main input slot - the material, for a station with more than one. */
     protected abstract ItemStack stationInput();
 
     /**
@@ -137,6 +171,21 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
         return this.optionIcons;
     }
 
+    /**
+     * What option {@code index} is still missing before it can be crafted, or an empty stack if it is
+     * ready. Drawn as a hint on the picker, and what makes an option unselectable.
+     */
+    public ItemStack getOptionRequirement(int index) {
+        return index >= 0 && index < this.optionRequirements.size()
+                ? this.optionRequirements.get(index)
+                : ItemStack.EMPTY;
+    }
+
+    /** Whether option {@code index} can actually be made with what is in the slots. */
+    public boolean isOptionReady(int index) {
+        return this.getOptionRequirement(index).isEmpty();
+    }
+
     public int getNumberOfVisibleRecipes() {
         return this.optionIcons.size();
     }
@@ -151,8 +200,9 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
     }
 
     /** Called by the client payload handler when the server sends a new option list. */
-    public void setClientOptions(List<ItemStack> options) {
+    public void setClientOptions(List<ItemStack> options, List<ItemStack> requirements) {
         this.optionIcons = List.copyOf(options);
+        this.optionRequirements = List.copyOf(requirements);
         if (!this.isValidRecipeIndex(this.selectedRecipeIndex.get())) {
             this.selectedRecipeIndex.set(-1);
         }
@@ -168,7 +218,7 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
             // Flipped on both sides: the client redraws the toggle straight away, the server
             // rebuilds the list and pushes it. The slot re-syncs either way.
             this.showVariants.set(this.showingVariants() ? 0 : 1);
-            this.setupRecipeList(this.stationInput());
+            this.setupRecipeList();
             return true;
         }
 
@@ -176,7 +226,9 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
             return false;
         }
 
-        if (this.isValidRecipeIndex(buttonId)) {
+        // An option the player cannot yet make is inert rather than selectable, so the result slot
+        // never fills with something the slots do not pay for.
+        if (this.isValidRecipeIndex(buttonId) && this.isOptionReady(buttonId)) {
             this.selectedRecipeIndex.set(buttonId);
             if (!this.level.isClientSide()) {
                 this.selectOption(buttonId);
@@ -196,20 +248,28 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
     }
 
     /**
-     * Rebuilds the option list if the input has become a different item since last time.
+     * What the option list was last built for. The list is rebuilt when this changes, so a station
+     * with more than one input can notice any of them changing.
+     */
+    protected Object inputSignature() {
+        return this.stationInput().getItem();
+    }
+
+    /**
+     * Rebuilds the option list if the inputs have changed since last time.
      *
      * <p>A station whose container tells the menu when it changed gets this through
      * {@link #slotsChanged}; one backed by a block entity, which does not, calls it itself.</p>
      */
     protected void refreshOptions() {
-        ItemStack stack = this.stationInput();
-        if (!stack.is(this.input.getItem())) {
-            this.input = stack.copy();
-            this.setupRecipeList(stack);
+        Object signature = this.inputSignature();
+        if (!signature.equals(this.inputSignature)) {
+            this.inputSignature = signature;
+            this.setupRecipeList();
         }
     }
 
-    protected void setupRecipeList(ItemStack stack) {
+    protected void setupRecipeList() {
         if (this.level.isClientSide()) {
             // Only the server can resolve modded recipes, and it pushes a fresh option list right
             // after this runs, so leave the current one on screen until that arrives.
@@ -218,13 +278,16 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
 
         this.selectedRecipeIndex.set(-1);
         this.clearSelection();
-        this.options = this.buildOptions(stack);
+        this.options = this.buildOptions();
 
         List<ItemStack> icons = new ArrayList<>(this.options.size());
+        List<ItemStack> requirements = new ArrayList<>(this.options.size());
         for (Option option : this.options) {
             icons.add(option.preview());
+            requirements.add(option.requirement().copy());
         }
         this.optionIcons = List.copyOf(icons);
+        this.optionRequirements = List.copyOf(requirements);
 
         int restored = this.preferredSelection(this.options);
         if (restored >= 0 && restored < this.options.size()) {
@@ -232,7 +295,8 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
         }
 
         if (this.owner != null) {
-            StationNetwork.send(this.owner, new StationOptionsPayload(this.containerId, this.optionIcons));
+            StationNetwork.send(this.owner,
+                    new StationOptionsPayload(this.containerId, this.optionIcons, this.optionRequirements));
         }
     }
 
@@ -251,28 +315,56 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
     }
 
     /**
-     * What the picker shows for {@code stack}: either the station's own recipes for it, or the rest
-     * of its block family. One or the other, never both, so the two lists stay legible.
+     * The recipes this station will offer for what is in its slots.
+     *
+     * <p>By default only the ones that fully match. A station that wants to show more than it can
+     * currently make - a painter's kit listing what a base could become before any paint is in -
+     * widens this and reports the shortfall through {@link #missingFor}.</p>
      */
-    private List<Option> buildOptions(ItemStack stack) {
-        SingleRecipeInput recipeInput = new SingleRecipeInput(stack);
-        List<RecipeHolder<R>> direct = StationRecipes.recipesFor(this.level, this.recipeType(), this::accepts, stack);
+    protected List<RecipeHolder<R>> offeredRecipes() {
+        return StationRecipes.recipesFor(this.level, this.recipeType(), this::accepts, this.recipeInput());
+    }
+
+    /**
+     * What {@code recipe} still needs before it can be crafted, or an empty stack if it is ready.
+     *
+     * <p>Anything non-empty is drawn as a hint on the option and stops it being selectable.</p>
+     */
+    protected ItemStack missingFor(R recipe) {
+        return ItemStack.EMPTY;
+    }
+
+    /** The stack whose block family the variant toggle offers. The main input, unless widened. */
+    protected ItemStack variantSource() {
+        return this.stationInput();
+    }
+
+    /**
+     * What the picker shows: either the station's own recipes for the current input, or the rest of
+     * its block family. One or the other, never both, so the two lists stay legible.
+     */
+    private List<Option> buildOptions() {
+        I input = this.recipeInput();
 
         if (!this.supportsVariants() || !this.showingVariants()) {
+            List<RecipeHolder<R>> direct = this.offeredRecipes();
             List<Option> built = new ArrayList<>(direct.size());
             for (RecipeHolder<R> holder : direct) {
-                built.add(new Option(holder.value().assemble(recipeInput), holder, false));
+                built.add(new Option(holder.value().assemble(input), holder, false,
+                        this.missingFor(holder.value())));
             }
             return dedupe(built);
         }
 
-        if (!this.worksWith(stack, direct)) {
+        ItemStack source = this.variantSource();
+        if (source.isEmpty() || !this.worksWith(source)) {
             return List.of();
         }
 
         List<Option> built = new ArrayList<>();
-        for (StationRecipes.Cut cut : StationRecipes.cutsFrom(this.level, List.of(stack))) {
-            built.add(new Option(cut.recipe().assemble(recipeInput), cut.holder(), true));
+        for (StationRecipes.Cut cut : StationRecipes.cutsFrom(this.level, List.of(source))) {
+            built.add(new Option(cut.recipe().assemble(new net.minecraft.world.item.crafting.SingleRecipeInput(source)),
+                    cut.holder(), true, ItemStack.EMPTY));
         }
         return dedupe(built);
     }
@@ -282,12 +374,10 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
      *
      * <p>Family shapes come from the stonecutting graph, which knows nothing about which station is
      * open, so without this a set of woodworking tools would happily cut granite. A station works a
-     * material it has a recipe for; subclasses widen that where they should.</p>
-     *
-     * @param direct the station's own recipes for this input, already resolved
+     * material it has a recipe for; subclasses widen or narrow that where they should.</p>
      */
-    protected boolean worksWith(ItemStack input, List<RecipeHolder<R>> direct) {
-        return !direct.isEmpty();
+    protected boolean worksWith(ItemStack input) {
+        return !StationRecipes.recipesFor(this.level, this.recipeType(), this::accepts, this.recipeInput()).isEmpty();
     }
 
     /** Keeps the first option offering each distinct result, so base blocks win over cuts of them. */
@@ -315,11 +405,12 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
      * output depends on the station's own result rather than on what is in the input slot, so there
      * is nothing left to recompute.</p>
      *
-     * @param result  what a craft yields, and what the picker draws
-     * @param used    the recipe to credit the player with, for the recipe book and statistics
-     * @param variant whether this was reached by cutting one of the station's own results
+     * @param result      what a craft yields, and what the picker draws
+     * @param used        the recipe to credit the player with, for the recipe book and statistics
+     * @param variant     whether this was reached by cutting one of the station's own results
+     * @param requirement what the slots are still missing for this, or empty if it can be made now
      */
-    protected record Option(ItemStack result, RecipeHolder<?> used, boolean variant) {
+    protected record Option(ItemStack result, RecipeHolder<?> used, boolean variant, ItemStack requirement) {
 
         ItemStack preview() {
             return this.result.copy();
@@ -354,6 +445,19 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
         return target != this.slots.get(RESULT_SLOT) && super.canTakeItemForPickAll(carried, target);
     }
 
+    /**
+     * Tries to shift-click {@code stack} into one of the station's own slots.
+     *
+     * @return whether it went somewhere
+     */
+    protected boolean moveIntoStation(ItemStack stack) {
+        return StationRecipes.isValidInput(this.level, this.recipeType(), this::accepts,
+                this.inputWith(stack)) && this.moveItemStackTo(stack, INPUT_SLOT, INPUT_SLOT + 1, false);
+    }
+
+    /** The input this station would have if {@code stack} were dropped into its main slot. */
+    protected abstract I inputWith(ItemStack stack);
+
     @Override
     public ItemStack quickMoveStack(Player player, int slotIndex) {
         ItemStack clicked = ItemStack.EMPTY;
@@ -362,31 +466,30 @@ public abstract class StationMenu<R extends Recipe<SingleRecipeInput>> extends A
             ItemStack stack = slot.getItem();
             Item item = stack.getItem();
             clicked = stack.copy();
+            boolean stationSlot = slotIndex < this.invSlotStart;
             if (slotIndex == RESULT_SLOT) {
                 item.onCraftedBy(stack, player);
-                if (!this.moveItemStackTo(stack, INV_SLOT_START, USE_ROW_SLOT_END, true)) {
+                if (!this.moveItemStackTo(stack, this.invSlotStart, this.useRowEnd(), true)) {
                     return ItemStack.EMPTY;
                 }
 
                 slot.onQuickCraft(stack, clicked);
-            } else if (slotIndex == INPUT_SLOT) {
-                if (!this.moveItemStackTo(stack, INV_SLOT_START, USE_ROW_SLOT_END, false)) {
+            } else if (stationSlot) {
+                if (!this.moveItemStackTo(stack, this.invSlotStart, this.useRowEnd(), false)) {
                     return ItemStack.EMPTY;
                 }
             } else if (this.level.isClientSide()) {
                 // Whether this item is a valid input is only knowable on the server, so don't
                 // predict a move the server may well undo - wait for its authoritative update.
                 return ItemStack.EMPTY;
-            } else if (StationRecipes.isValidInput(this.level, this.recipeType(), this::accepts, stack)) {
-                if (!this.moveItemStackTo(stack, INPUT_SLOT, INPUT_SLOT + 1, false)) {
+            } else if (this.moveIntoStation(stack)) {
+                // Landed in one of the station's slots.
+            } else if (slotIndex >= this.invSlotStart && slotIndex < this.invSlotEnd()) {
+                if (!this.moveItemStackTo(stack, this.invSlotEnd(), this.useRowEnd(), false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (slotIndex >= INV_SLOT_START && slotIndex < INV_SLOT_END) {
-                if (!this.moveItemStackTo(stack, USE_ROW_SLOT_START, USE_ROW_SLOT_END, false)) {
-                    return ItemStack.EMPTY;
-                }
-            } else if (slotIndex >= USE_ROW_SLOT_START && slotIndex < USE_ROW_SLOT_END
-                    && !this.moveItemStackTo(stack, INV_SLOT_START, INV_SLOT_END, false)) {
+            } else if (slotIndex >= this.invSlotEnd() && slotIndex < this.useRowEnd()
+                    && !this.moveItemStackTo(stack, this.invSlotStart, this.invSlotEnd(), false)) {
                 return ItemStack.EMPTY;
             }
 

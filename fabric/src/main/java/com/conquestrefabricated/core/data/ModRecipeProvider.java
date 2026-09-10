@@ -6,6 +6,7 @@ import com.conquestrefabricated.content.blocks.block.*;
 import com.conquestrefabricated.content.blocks.block.directional.LayerDirectional;
 import com.conquestrefabricated.content.arms.ArmsStationRecipeBuilder;
 import com.conquestrefabricated.content.loom.WeavingRecipeBuilder;
+import com.conquestrefabricated.content.painting.PaintingRecipeBuilder;
 import com.conquestrefabricated.content.tools.ToolCraftingRecipeBuilder;
 import com.conquestrefabricated.core.block.data.BlockData;
 import com.conquestrefabricated.core.util.log.Log;
@@ -57,6 +58,8 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                                 ToolCraftingRecipeBuilder.from(spec, items, blockData.getBlock()).save(output));
                         blockData.getProps().getWeavingRecipe().ifPresent(spec ->
                                 WeavingRecipeBuilder.from(spec, items, blockData.getBlock()).save(output));
+                        blockData.getProps().getPaintingRecipe().ifPresent(spec ->
+                                PaintingRecipeBuilder.from(spec, items, blockData.getBlock()).save(output));
                     }
 
                     if (blockData.getProps().hasParent()) {

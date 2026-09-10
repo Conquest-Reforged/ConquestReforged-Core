@@ -17,15 +17,21 @@ import java.util.List;
  * <p>Vanilla gets away without this for the stonecutter because stonecutting recipes are part of the
  * data the server syncs to every client. Modded recipe types are not synced at all, so the stations
  * ship their own already-assembled preview stacks for the recipe picker to draw.</p>
+ *
+ * <p>{@code requirements} runs parallel to {@code options}: an empty stack where an option can be
+ * made with what is in the slots, and otherwise what it is still waiting for - the paint a painter's
+ * kit has not been given yet. Empty stacks are common here, hence the optional stack codec.</p>
  */
-public record StationOptionsPayload(int containerId, List<ItemStack> options) implements CustomPacketPayload {
+public record StationOptionsPayload(int containerId, List<ItemStack> options,
+                                    List<ItemStack> requirements) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<StationOptionsPayload> ID =
             new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(Namespaces.DEFAULT, "station_options"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, StationOptionsPayload> CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT, StationOptionsPayload::containerId,
-            ItemStack.STREAM_CODEC.apply(ByteBufCodecs.list()), StationOptionsPayload::options,
+            ItemStack.OPTIONAL_STREAM_CODEC.apply(ByteBufCodecs.list()), StationOptionsPayload::options,
+            ItemStack.OPTIONAL_STREAM_CODEC.apply(ByteBufCodecs.list()), StationOptionsPayload::requirements,
             StationOptionsPayload::new
     );
 

@@ -22,8 +22,8 @@ public final class StationClient {
         if (client.player == null) {
             return;
         }
-        if (client.player.containerMenu instanceof StationMenu<?> menu && menu.containerId == payload.containerId()) {
-            menu.setClientOptions(payload.options());
+        if (client.player.containerMenu instanceof StationMenu<?, ?> menu && menu.containerId == payload.containerId()) {
+            menu.setClientOptions(payload.options(), payload.requirements());
         }
     }
 }

@@ -334,6 +334,112 @@ back into the output slot, which leaves the weave identical while making it some
 take out again. If that cloth is not a registered item — a rug from a module that is not loaded — the
 loom keeps drawing what it always drew rather than being stripped.
 
+## Painting with a painter's kit
+
+The painter's kit is a held item like the crafting tools, with one difference that runs all the way
+down: it takes **two** inputs. A base material in the upper slot, and something to colour it with in
+the lower one.
+
+```java
+VanillaProps.stone()
+        .name("red_stucco")
+        .painted(Blocks.COBBLESTONE, Items.RED_DYE)
+        .register(types);
+```
+
+The base is usually a whole family of materials, so there is an overload for that:
+
+```java
+        .painted(ModTags.PLASTER, Items.LIME, 4)
+```
+
+Only `(ItemLike, ItemLike)` and `(TagKey, ItemLike)` have overloads of their own — a full grid of
+them would be sixteen methods. Wrap anything else with `RecipeIngredient.of(..)`, which covers tags,
+ids and bare strings alike:
+
+```java
+        .painted(RecipeIngredient.basesOf(ModTags.PLASTER), RecipeIngredient.of("lime_wash"))
+```
+
+Recipes land under `<result namespace>:<result path>_from_painting`:
+
+```json
+{
+  "type": "conquest:painting",
+  "base": "minecraft:cobblestone",
+  "paint": "minecraft:red_dye",
+  "result": { "id": "conquest:red_stucco", "count": 1 }
+}
+```
+
+For one-off recipes outside a block family, `PaintingRecipeBuilder.painting(base, paint, result)`.
+
+### What the picker shows
+
+Put a base in on its own and the kit lists **everything that base could become**, with each option
+marked by the paint it is waiting for — so you can see that cobblestone takes lime or a dye without
+having to guess. Those options are drawn on vanilla's disabled-slot background, their tooltip reads
+`Needs: Red Dye`, and clicking them does nothing. Add the paint and they come alive.
+
+That is the one place the kit departs from the other stations, which only ever list what they can make
+right now. Two ingredients make a picker that hides everything until both are in far too quiet.
+
+### Reshaping costs no paint
+
+The family toggle behaves differently here, deliberately. A kit offers family shapes **only for blocks
+it painted itself**:
+
+- red stucco in the base slot → its slabs, stairs and walls, and **no paint is spent** cutting them.
+- cobblestone in the base slot → nothing. Being able to paint cobblestone should not turn a painter's
+  kit into a stonecutter.
+
+That is `PaintersKitMenu.worksWith(..)` narrowed to "did this kit produce it", where the crafting
+tools also accept anything they have a recipe for.
+
+## The lime cycle
+
+Three items in Core, and one tag that decides what feeds them.
+
+| Item | Made by | From |
+|---|---|---|
+| Quicklime | smelting | `#conquest:lime_sources` |
+| Slaked Lime | shapeless crafting | quicklime + a water bucket (the bucket comes back) |
+| Slaked Lime | dropping it in water | quicklime, wherever it lands |
+| Lime Plaster | shapeless crafting | slaked lime + `#minecraft:sand`, yielding 2 |
+
+`#conquest:lime_sources` is an **item** tag built as the union of four block tags, plus vanilla
+calcite:
+
+```json
+{ "values": [
+    { "id": "#conquest:natural_marble",    "required": false },
+    { "id": "#conquest:natural_limestone", "required": false },
+    { "id": "#conquest:natural_chalk",     "required": false },
+    { "id": "#conquest:natural_calcite",   "required": false },
+    "minecraft:calcite" ] }
+```
+
+So **a module joins the lime cycle by tagging a block and nothing else** — add
+`ModTags.NATURAL_CHALK` to your chalk in `Props.tags(..)` and it burns to quicklime. The sub-tags are
+`required: false`, so a pack without a given module still loads.
+
+Those four are listed in `ModTags.MIRRORED_TO_ITEMS`, the block tags Core publishes as item tags of
+the same id whether or not a recipe asks for one — ordinary block tags are only mirrored when
+something is crafted from them (see [How a block tag reaches a recipe](#how-a-block-tag-reaches-a-recipe)),
+but a tag that other tags are *built from* has to exist regardless, since a tag can only include tags
+from its own registry.
+
+**Each module mirrors its own blocks.** Core registers almost none, so the item tags it writes are
+empty files that the content modules merge into — which only happens in a module whose data
+generator runs `ModItemTagProvider`.
+
+### Slaking in the world
+
+Quicklime turns to slaked lime the moment its dropped stack touches water, with a hiss and a puff of
+steam. There is no loader-neutral hook for "this item entity is in water", so each loader carries a
+one-line `ItemEntityMixin` that calls `Lime.slakeInWater(..)`; all the deciding is in that one shared
+method.
+
 ## Naming an ingredient
 
 `craftedWith(..)` and `woven(..)` both take their input as a `RecipeIngredient`, and there is an
