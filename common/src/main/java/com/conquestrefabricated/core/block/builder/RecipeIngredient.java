@@ -1,10 +1,14 @@
 package com.conquestrefabricated.core.block.builder;
 
 import com.conquestrefabricated.core.Namespaces;
+import com.conquestrefabricated.core.util.log.Log;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -32,7 +36,7 @@ import java.util.Optional;
  * {@link #toIngredient} is called at data generation time.</p>
  *
  * @see ToolRecipeSpec
- * @see WeavingRecipeSpec
+ * @see TimedRecipeSpec
  */
 public sealed interface RecipeIngredient {
 
@@ -40,7 +44,6 @@ public sealed interface RecipeIngredient {
      * Resolves this into a real ingredient.
      *
      * @param items the generator's item lookup, for resolving a tag
-     * @throws IllegalStateException if it names something that does not exist
      */
     Ingredient toIngredient(HolderGetter<Item> items);
 
@@ -183,16 +186,31 @@ public sealed interface RecipeIngredient {
         }
     }
 
-    /** A single block or item named by id, for the many that have no static reference. */
+    /**
+     * A single block or item named by id, for the many that have no static reference.
+     *
+     * <p>The id does not have to resolve where the data is generated. Modules generate their data
+     * separately but are read together, so a Classical block being crafted from a Main one is
+     * ordinary - and a module should not have to depend on every other module just to name a block.
+     * An unresolvable id is written out as it stands and warned about, rather than stopping the
+     * build.</p>
+     */
     record OfId(Identifier id) implements RecipeIngredient {
         @Override
         public Ingredient toIngredient(HolderGetter<Item> items) {
-            // Loud rather than silent: an id that resolves to nothing would otherwise be written out
-            // as a recipe that can never match, and nothing would say why.
-            Item item = BuiltInRegistries.ITEM.getOptional(this.id).orElseThrow(() -> new IllegalStateException(
-                    "No item '" + this.id + "' to craft from. Check the id, and that whatever registers"
-                            + " it is on the classpath of the module running data generation."));
-            return Ingredient.of(item);
+            Optional<Item> registered = BuiltInRegistries.ITEM.getOptional(this.id);
+            if (registered.isPresent()) {
+                return Ingredient.of(registered.get());
+            }
+
+            // Nothing here can tell a sibling module's block apart from a typo, so this is a warning
+            // rather than a failure: the common case is legitimate, and the rare one still shows up
+            // in the generator's output.
+            Log.warn("Recipe ingredient '{}' is not registered in the module generating this data."
+                    + " Writing it as-is - correct if that id is a typo, expected if it belongs to"
+                    + " another module.", this.id);
+            return Ingredient.of(HolderSet.direct(Holder.Reference.createStandAlone(
+                    BuiltInRegistries.ITEM, ResourceKey.create(Registries.ITEM, this.id))));
         }
     }
 }

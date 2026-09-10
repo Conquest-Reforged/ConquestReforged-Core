@@ -166,9 +166,16 @@ public class ModLangManualProvider extends FabricLanguageProvider {
         translationBuilder.add("item.conquest.lime_plaster", "Lime Plaster");
 
         /* === Loom === */
-        translationBuilder.add("container.conquest.loom.weaving", "Weaving: %s%%");
+        translationBuilder.add("container.conquest.loom.progress", "Weaving: %s%%");
         translationBuilder.add("container.conquest.loom.confirm", "Begin weaving");
         translationBuilder.add("container.conquest.loom.stop", "Stop weaving");
+
+        /* === Pottery wheel === */
+        translationBuilder.add("container.conquest.pottery_wheel", "Pottery Wheel");
+        translationBuilder.add("container.conquest.pottery_wheel.progress", "Shaping: %s%%");
+        translationBuilder.add("container.conquest.pottery_wheel.confirm", "Begin shaping");
+        translationBuilder.add("container.conquest.pottery_wheel.stop", "Stop shaping");
+        translationBuilder.add("container.conquest.pottery_wheel.no_selection", "Choose something to shape");
         translationBuilder.add("container.conquest.loom.no_selection", "Choose something to weave");
 
         translationBuilder.add("item.conquest.mallet_item", "Mallet (Conquest Toggle Tool)");

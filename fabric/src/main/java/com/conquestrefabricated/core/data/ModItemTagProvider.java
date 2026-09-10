@@ -109,6 +109,8 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider {
                     .ifPresent(spec -> spec.ingredient().mirror().ifPresent(mirrors::add));
             data.getProps().getWeavingRecipe()
                     .ifPresent(spec -> spec.ingredient().mirror().ifPresent(mirrors::add));
+            data.getProps().getPotteryRecipe()
+                    .ifPresent(spec -> spec.ingredient().mirror().ifPresent(mirrors::add));
             data.getProps().getPaintingRecipe().ifPresent(spec -> {
                 spec.base().mirror().ifPresent(mirrors::add);
                 spec.paint().mirror().ifPresent(mirrors::add);

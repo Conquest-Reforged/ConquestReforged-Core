@@ -11,6 +11,7 @@ import com.conquestrefabricated.content.arms.fabric.ArmsStationInit;
 import com.conquestrefabricated.content.loom.fabric.LoomStationInit;
 import com.conquestrefabricated.content.painting.fabric.PaintersKitInit;
 import com.conquestrefabricated.content.lime.fabric.LimeInit;
+import com.conquestrefabricated.content.pottery.fabric.PotteryWheelInit;
 import com.conquestrefabricated.content.station.fabric.StationInit;
 import com.conquestrefabricated.content.tools.fabric.CraftingToolsInit;
 import com.conquestrefabricated.content.blocks.init.BlockRegistrar;
@@ -54,6 +55,7 @@ public class RefabricatedMod implements ModInitializer {
         ArmsStationInit.register();
         CraftingToolsInit.register();
         LoomStationInit.register();
+        PotteryWheelInit.register();
         PaintersKitInit.register();
         LimeInit.register();
         TileRegistrar.entities();

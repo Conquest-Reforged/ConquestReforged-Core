@@ -1,6 +1,8 @@
 package com.conquestrefabricated.content.blocks.block.decor;
 
 import com.conquestrefabricated.content.blocks.BlockSettingsAccessor;
+import com.conquestrefabricated.content.blocks.tileentity.TileEntityTypes;
+import com.conquestrefabricated.content.pottery.PotteryWheelBlockEntity;
 import com.conquestrefabricated.content.blocks.CustomOffsetType;
 import com.conquestrefabricated.content.blocks.util.PlacementHelper;
 import com.conquestrefabricated.core.asset.annotation.SpecialOffset;
@@ -12,13 +14,19 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BedPart;
@@ -26,13 +34,14 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 @SpecialOffset(offsetType = SpecialOffsetType.XYZ)
-public class PotteryWheel extends HorizontalDirectionalBlock {
+public class PotteryWheel extends HorizontalDirectionalBlock implements EntityBlock {
 
     public static final MapCodec<PotteryWheel> CODEC = simpleCodec(PotteryWheel::new);
 
@@ -142,5 +151,45 @@ public class PotteryWheel extends HorizontalDirectionalBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, PART, OFFSET_TOGGLE);
+    }
+
+    // ------------------------------------------------------------------------------ workstation
+
+    /**
+     * Only the foot carries the block entity. A wheel is two blocks and one machine, so the head is
+     * a plain half that sends the player to the foot - see {@link #mainPos}.
+     */
+    @Override
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return state.getValue(PART) == BedPart.FOOT ? new PotteryWheelBlockEntity(pos, state) : null;
+    }
+
+    @Override
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
+                                                                            BlockEntityType<T> type) {
+        return type == TileEntityTypes.POTTERY_WHEEL
+                ? (world, pos, state1, blockEntity) -> ((PotteryWheelBlockEntity) blockEntity).tick(world, pos)
+                : null;
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
+                                               BlockHitResult hitResult) {
+        if (!player.getAbilities().mayBuild) {
+            return InteractionResult.FAIL;
+        }
+
+        if (!level.isClientSide()
+                && level.getBlockEntity(mainPos(state, pos)) instanceof MenuProvider provider) {
+            player.openMenu(provider);
+        }
+        return InteractionResult.SUCCESS;
+    }
+
+    /** Where the machine actually lives: the foot, whichever half was clicked. */
+    private static BlockPos mainPos(BlockState state, BlockPos pos) {
+        return state.getValue(PART) == BedPart.FOOT
+                ? pos
+                : pos.relative(state.getValue(FACING).getOpposite());
     }
 }

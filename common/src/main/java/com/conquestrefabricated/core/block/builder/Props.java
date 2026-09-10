@@ -65,7 +65,8 @@ public class Props extends BlockProps<Props> implements BlockFactory {
     private String nameSingular = null;
 
     private ToolRecipeSpec toolRecipe = null;
-    private WeavingRecipeSpec weavingRecipe = null;
+    private TimedRecipeSpec weavingRecipe = null;
+    private TimedRecipeSpec potteryRecipe = null;
     private PaintingRecipeSpec paintingRecipe = null;
 
     private List<TagKey<Block>> tags = Collections.emptyList();
@@ -95,6 +96,7 @@ public class Props extends BlockProps<Props> implements BlockFactory {
         this.lore = props.lore;
         this.toolRecipe = props.toolRecipe;
         this.weavingRecipe = props.weavingRecipe;
+        this.potteryRecipe = props.potteryRecipe;
         this.paintingRecipe = props.paintingRecipe;
     }
 
@@ -576,7 +578,7 @@ public class Props extends BlockProps<Props> implements BlockFactory {
      * @see #woven(RecipeIngredient)
      */
     public Props woven(RecipeIngredient ingredient, int count, int time) {
-        this.weavingRecipe = WeavingRecipeSpec.of(ingredient, count, time);
+        this.weavingRecipe = TimedRecipeSpec.of(ingredient, count, time);
         return this;
     }
 
@@ -681,8 +683,155 @@ public class Props extends BlockProps<Props> implements BlockFactory {
     /**
      * @return the weaving recipe declared for this family, if any
      */
-    public Optional<WeavingRecipeSpec> getWeavingRecipe() {
+    public Optional<TimedRecipeSpec> getWeavingRecipe() {
         return Optional.ofNullable(weavingRecipe);
+    }
+
+    /**
+     * Declares that this block is thrown on a pottery wheel, from {@code ingredient}.
+     * <p>
+     * The same family rule as {@link #craftedWith} applies: only the parent gets the recipe, and
+     * every other member is reached from it - here through the wheel picker's family toggle, which
+     * cuts a finished pot into its shapes for nothing.
+     * <p>
+     * Throwing takes time, which is what separates a wheel from a set of crafting tools. Leave the
+     * time out for the default of {@value com.conquestrefabricated.content.loom.WeavingRecipe#DEFAULT_TIME}
+     * ticks.
+     *
+     * <pre>{@code
+     * VanillaProps.stone()
+     *         .name("terracotta_amphora")
+     *         .thrown(Items.CLAY_BALL)
+     *         .register(types);
+     * }</pre>
+     *
+     * @param ingredient what goes into the wheel's input slot
+     * @see RecipeIngredient
+     */
+    public Props thrown(RecipeIngredient ingredient) {
+        return thrown(ingredient, 1);
+    }
+
+    /**
+     * @param count how many the recipe yields
+     * @see #thrown(RecipeIngredient)
+     */
+    public Props thrown(RecipeIngredient ingredient, int count) {
+        return thrown(ingredient, count, WeavingRecipe.DEFAULT_TIME);
+    }
+
+    /**
+     * @param time how many ticks one craft takes
+     * @see #thrown(RecipeIngredient)
+     */
+    public Props thrown(RecipeIngredient ingredient, int count, int time) {
+        this.potteryRecipe = TimedRecipeSpec.of(ingredient, count, time);
+        return this;
+    }
+
+    /** @see #thrown(RecipeIngredient) */
+    public Props thrown(ItemLike ingredient) {
+        return thrown(RecipeIngredient.of(ingredient), 1);
+    }
+
+    /**
+     * @param count how many the recipe yields
+     * @see #thrown(RecipeIngredient)
+     */
+    public Props thrown(ItemLike ingredient, int count) {
+        return thrown(RecipeIngredient.of(ingredient), count);
+    }
+
+    /**
+     * @param time how many ticks one craft takes
+     * @see #thrown(RecipeIngredient)
+     */
+    public Props thrown(ItemLike ingredient, int count, int time) {
+        return thrown(RecipeIngredient.of(ingredient), count, time);
+    }
+
+    /**
+     * Accepts anything in {@code ingredient}, for cloths that can be thrown from a whole family of
+     * inputs - any wool, any plant fibre. Takes a tag of either items or blocks.
+     *
+     * @see #thrown(RecipeIngredient)
+     */
+    public Props thrown(TagKey<?> ingredient) {
+        return thrown(RecipeIngredient.of(ingredient), 1);
+    }
+
+    /**
+     * @param count how many the recipe yields
+     * @see #thrown(TagKey)
+     */
+    public Props thrown(TagKey<?> ingredient, int count) {
+        return thrown(RecipeIngredient.of(ingredient), count);
+    }
+
+    /**
+     * @param time how many ticks one craft takes
+     * @see #thrown(TagKey)
+     */
+    public Props thrown(TagKey<?> ingredient, int count, int time) {
+        return thrown(RecipeIngredient.of(ingredient), count, time);
+    }
+
+    /**
+     * Names the ingredient by id, for the many Conquest blocks that have no static field to point
+     * at.
+     *
+     * @see #thrown(RecipeIngredient)
+     */
+    public Props thrown(Identifier ingredient) {
+        return thrown(RecipeIngredient.of(ingredient), 1);
+    }
+
+    /**
+     * @param count how many the recipe yields
+     * @see #thrown(Identifier)
+     */
+    public Props thrown(Identifier ingredient, int count) {
+        return thrown(RecipeIngredient.of(ingredient), count);
+    }
+
+    /**
+     * @param time how many ticks one craft takes
+     * @see #thrown(Identifier)
+     */
+    public Props thrown(Identifier ingredient, int count, int time) {
+        return thrown(RecipeIngredient.of(ingredient), count, time);
+    }
+
+    /**
+     * Names the ingredient by id. A bare path resolves against {@link Namespaces#DEFAULT}.
+     *
+     * @see #thrown(RecipeIngredient)
+     */
+    public Props thrown(String ingredient) {
+        return thrown(RecipeIngredient.of(ingredient), 1);
+    }
+
+    /**
+     * @param count how many the recipe yields
+     * @see #thrown(String)
+     */
+    public Props thrown(String ingredient, int count) {
+        return thrown(RecipeIngredient.of(ingredient), count);
+    }
+
+    /**
+     * @param time how many ticks one craft takes
+     * @see #thrown(String)
+     */
+    public Props thrown(String ingredient, int count, int time) {
+        return thrown(RecipeIngredient.of(ingredient), count, time);
+    }
+
+    /**
+     * @return the pottery recipe declared for this family, if any
+     */
+    public Optional<TimedRecipeSpec> getPotteryRecipe() {
+        return Optional.ofNullable(potteryRecipe);
     }
 
     /**

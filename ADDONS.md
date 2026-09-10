@@ -260,10 +260,10 @@ A weapon registered through plain `register(..)` has no recorded kind and is sil
 `Generated.skipped()` counts those, and Core logs the number, so a mismatch shows up in the datagen
 output rather than as a missing recipe in game.
 
-## Weaving at the loom
+## Workstations: the loom and the pottery wheel
 
-A loom is the third kind of station, and the only one that is a block you stand at with slots of its
-own. It works like the crafting tools — input slot, picker, family toggle — with two differences:
+A workstation is a block you stand at with slots of its own — unlike the handheld kits, it keeps its
+material and keeps working with nobody watching. It works like the crafting tools — input slot, picker, family toggle — with two differences:
 
 - **Weaving takes time.** Picking a cloth starts a craft that ticks down in the block, and the loom
   keeps going with the screen shut. The bar beside the result slot shows how far along it is.
@@ -316,6 +316,51 @@ defaults — so a plain five-second recipe writes just the `ingredient` and the 
 
 A `time` of `0` makes a recipe of your own instant, in the same way family shapes are. Use it
 sparingly — it is what separates a loom from a set of tools.
+
+### Adding another workstation
+
+The loom and the pottery wheel are the same machine wearing different hats, and the shared parts are
+in `content.station`:
+
+| Piece | What it gives you |
+|---|---|
+| `TimedStationRecipe` | the on-disk shape — ingredient, result, optional `time` |
+| `WorkstationBlockEntity` | two slots, the remembered job, the ticking craft, hopper faces |
+| `WorkstationMenu` | the picker, the confirm/stop control, the family toggle |
+| `WorkstationScreen` | the progress bar and that control, drawn |
+
+A new one is four thin classes and a holder. The pottery wheel is the worked example — its recipe,
+menu and block entity are about thirty lines each, and its screen is six:
+
+```java
+public class PotteryWheelScreen extends WorkstationScreen<PotteryWheelMenu> {
+    @Override protected String langPrefix() { return PotteryWheelStation.LANG_PREFIX; }
+}
+```
+
+`langPrefix()` is how each station names its own work: the screen appends `.confirm`, `.stop`,
+`.no_selection` and `.progress`, so a loom says *Weaving: 40%* where a wheel says *Shaping: 40%*.
+
+**Each station keeps its own recipe type.** A wheel should not offer a loom's cloths, and a recipe
+type is the cheapest way to say so — they share everything except the two lines naming the type and
+serializer.
+
+### Throwing on the wheel
+
+Blocks opt in exactly as they do for the loom:
+
+```java
+VanillaProps.stone()
+        .name("terracotta_amphora")
+        .thrown(Items.CLAY_BALL)
+        .register(types);
+```
+
+Recipes land under `<result namespace>:<result path>_from_wheel` as `conquest:pottery`. The same
+family rule applies, and the same yield and time arguments.
+
+The wheel is **two blocks**, foot and head, like a bed. Only the foot carries the block entity; the
+head sends the player to it, so either half opens the same wheel.
 
 ### What the loom draws
 
@@ -457,9 +502,23 @@ overload for every way you might have of naming one:
 Most Conquest blocks are built from templates rather than declared one by one, so there is no static
 field to point at. The last two rows are for those: a bare string path resolves against the Conquest
 namespace, exactly as `ModTags.blockTag(..)` does, so `"granite_ashlar"` and
-`"conquest:granite_ashlar"` mean the same thing while `"minecraft:stone"` reaches outside. An id that
-resolves to nothing fails data generation with a message naming it, rather than quietly writing a
-recipe that can never match.
+`"conquest:granite_ashlar"` mean the same thing while `"minecraft:stone"` reaches outside.
+
+**The id does not have to resolve where the data is generated.** Modules generate separately but are
+read together, so a Classical block crafted from a Main one is ordinary, and no module should have to
+depend on every other just to name a block. An id that is not registered in the generating module is
+written out as it stands, with a warning in the generator's log:
+
+```
+Recipe ingredient 'conquest:pale_limestone' is not registered in the module generating this data.
+Writing it as-is - correct if that id is a typo, expected if it belongs to another module.
+```
+
+Nothing can tell a sibling module's block from a typo, so that is a warning rather than a failure.
+The cost is at the other end: if the module owning that id is *not* installed, the recipe fails to
+load and Minecraft logs a parse error for it. Where that matters — an ingredient that should simply
+be absent rather than broken when a module is missing — name a **tag** instead, which resolves to
+nothing quietly.
 
 **Block tags are usually the useful one**, since that is already how a whole family is grouped. Tags
 of either kind go through the same `TagKey<?>` overload — `TagKey<Item>` and `TagKey<Block>` erase to

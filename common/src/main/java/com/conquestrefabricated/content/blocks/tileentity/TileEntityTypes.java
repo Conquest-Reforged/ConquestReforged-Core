@@ -4,6 +4,7 @@ import com.conquestrefabricated.content.blocks.tileentity.campfire.ModdedCampfir
 import com.conquestrefabricated.content.blocks.tileentity.enchantment.ModdedEnchantingTableTileEntity;
 import com.conquestrefabricated.content.blocks.tileentity.furnace.ModdedFurnaceTileEntity;
 import com.conquestrefabricated.content.blocks.tileentity.loom.LoomBlockEntity;
+import com.conquestrefabricated.content.pottery.PotteryWheelBlockEntity;
 import com.conquestrefabricated.content.blocks.tileentity.seat.SeatTileEntity;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -25,6 +26,11 @@ public class TileEntityTypes {
     public static final BlockEntityType<LoomBlockEntity> LOOM = create(
             LoomBlockEntity::new,
             "conquest:loom"
+    );
+
+    public static final BlockEntityType<PotteryWheelBlockEntity> POTTERY_WHEEL = create(
+            PotteryWheelBlockEntity::new,
+            "conquest:pottery_wheel"
     );
 
     public static final BlockEntityType<ModdedEnchantingTableTileEntity> ENCHANTING_TABLE = create(
