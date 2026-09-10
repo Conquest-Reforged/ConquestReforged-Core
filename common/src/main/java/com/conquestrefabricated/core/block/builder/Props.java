@@ -1,6 +1,7 @@
 package com.conquestrefabricated.core.block.builder;
 
 import com.conquestrefabricated.content.loom.WeavingRecipe;
+import com.conquestrefabricated.core.Modules;
 import com.conquestrefabricated.core.Namespaces;
 import com.conquestrefabricated.core.block.data.BlockData;
 import com.conquestrefabricated.core.block.data.BlockTemplate;
@@ -61,6 +62,7 @@ public class Props extends BlockProps<Props> implements BlockFactory {
     private WoodType woodType = WoodType.OAK;
     private Identifier registryId = null;
     private String namespace = defaultNamespace;
+    private String module;
     private String namePlural = null;
     private String nameSingular = null;
 
@@ -76,6 +78,8 @@ public class Props extends BlockProps<Props> implements BlockFactory {
 
     private Props(Block block) {
         super(block);
+        // walked once per builder (ie per family), not once per shape
+        this.module = Modules.current();
     }
 
     private Props(Props props) {
@@ -200,6 +204,24 @@ public class Props extends BlockProps<Props> implements BlockFactory {
 
     public String getNamespace() {
         return namespace;
+    }
+
+    /**
+     * Overrides which Conquest module this builder's blocks are credited to on the advanced
+     * tooltip. Builders normally inherit this from {@link Modules#scope}, so this is only needed
+     * for a block registered outside its module's scope.
+     */
+    public Props module(String moduleId) {
+        this.module = moduleId;
+        Modules.register(moduleId);
+        return this;
+    }
+
+    /**
+     * @return the module id this builder's blocks are credited to
+     */
+    public String getModule() {
+        return module;
     }
 
     public Optional<Identifier> getFamily() {

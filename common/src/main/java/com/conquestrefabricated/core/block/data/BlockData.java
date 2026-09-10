@@ -1,5 +1,6 @@
 package com.conquestrefabricated.core.block.data;
 
+import com.conquestrefabricated.core.Modules;
 import com.conquestrefabricated.core.asset.annotation.ItemDescription;
 import com.conquestrefabricated.core.asset.lang.Lore;
 import com.conquestrefabricated.core.block.builder.BlockName;
@@ -32,6 +33,7 @@ public class BlockData {
     private final BlockTemplate template;
     public final Identifier registryName;
     private final Identifier loreId;
+    private final String moduleId;
 
     private final List<TagKey<Block>> tags = new ArrayList<>();
 
@@ -44,6 +46,8 @@ public class BlockData {
         this.block = block;
         this.props = props;
         this.loreId = Lore.familyId(props.getFamily(), blockName);
+        String module = props.getModule();
+        this.moduleId = module == null ? Modules.CORE : module;
         Lore.declare(loreId, props.getLore());
         registerBlock(this);
     }
@@ -53,6 +57,13 @@ public class BlockData {
      */
     public Identifier getLoreId() {
         return loreId;
+    }
+
+    /**
+     * @return the Conquest module this block was registered by
+     */
+    public String getModuleId() {
+        return moduleId;
     }
 
     @ExpectPlatform
@@ -71,6 +82,7 @@ public class BlockData {
 
             try {
                 Identifier lore = loreId;
+                String module = moduleId;
 
                 item = new BlockItem(getBlock(), properties) {
                     @Override
@@ -83,6 +95,11 @@ public class BlockData {
                         // and stays collapsed until the expand key is held. Resolved here rather
                         // than at registration so it doesn't matter which member declared it.
                         Lore.append(lore, builder);
+
+                        // which module shipped this block, on F3+H only
+                        if (tooltipFlag.isAdvanced()) {
+                            Modules.appendTooltip(module, builder);
+                        }
                     }
                 };
 

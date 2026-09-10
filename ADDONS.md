@@ -504,6 +504,19 @@ field to point at. The last two rows are for those: a bare string path resolves 
 namespace, exactly as `ModTags.blockTag(..)` does, so `"granite_ashlar"` and
 `"conquest:granite_ashlar"` mean the same thing while `"minecraft:stone"` reaches outside.
 
+**Name Conquest's own content by id, not by static field.** Blocks and items are created during
+registration, and blocks are declared first, so a static holding one of Core's items is still null
+while a module declares its blocks — capturing it there stores that null. Use the id constant beside
+it instead:
+
+```java
+.painted(RecipeIngredient.basesOf(ModTags.BRICKS), RecipeIngredient.of(Lime.LIME_PLASTER))     // null
+.painted(RecipeIngredient.basesOf(ModTags.BRICKS), RecipeIngredient.of(Lime.LIME_PLASTER_ID))  // works
+```
+
+A null ingredient is rejected where it is declared, with a message saying exactly that, rather than
+surfacing as an NPE inside data generation much later.
+
 **The id does not have to resolve where the data is generated.** Modules generate separately but are
 read together, so a Classical block crafted from a Main one is ordinary, and no module should have to
 depend on every other just to name a block. An id that is not registered in the generating module is
@@ -557,6 +570,50 @@ ingredient gets an item tag of the same id, filled with the items of the blocks 
 That mirroring is why declaring `craftedWith(MASON.id(), ModTags.STONE)` just works. It only covers
 tags actually used as an ingredient, so it stays empty until you craft from one, and picks up new
 ones on its own — but it does mean the recipe and tag datagen have to be run together, which they are.
+
+## Module credit on advanced tooltips
+
+With advanced tooltips on (F3+H), a block's item shows which Conquest module it came from, in blue
+italics under the lore.
+
+A module is **not** the same thing as a namespace. Every first-party submodule registers its blocks
+into the one `conquest` namespace while shipping under its own mod id, so a registry name can't say
+which module built a block.
+
+**Usually you don't have to do anything.** Core infers the module from the call stack: the first
+frame outside Core is your init class, and the mod id is read out of its package root — so
+`com.myaddon.content.blocks.init.StoneInit` is credited to `myaddon`. The guess is only accepted if
+a mod with that id is actually loaded, so a package that doesn't follow the `com.<modid>` convention
+falls through to Core rather than inventing a module.
+
+Declare it explicitly when your package root isn't your mod id, or when you want a specific
+display name:
+
+```java
+Modules.register("myaddon", "My Addon");            // id -> display name
+Modules.scope("myaddon", BlockRegistrar::blocks);   // everything inside is tagged
+```
+
+`scope` restores the previous module afterwards, so it nests safely and modules registering before
+or after are unaffected. It also overrides inference, which makes it worth using if you register
+blocks from a helper that lives in someone else's package. A single builder can be tagged with
+`Props.module("myaddon")`.
+
+The display name resolves in this order:
+
+1. the name passed to `Modules.register(id, name)`
+2. the name your mod metadata declares (`fabric.mod.json` `name` / `neoforge.mods.toml`
+   `displayName`), via architectury
+3. the module id itself
+
+Core registers short names for its own family — `Classical`, `Medieval`, `Modern`, `Early Modern`,
+`Asian`, `Main` — because their metadata names disagree with each other and read poorly in a
+tooltip.
+
+Translators can override the resolved name with the lang key `module.<id>.name`. Nothing breaks if
+it is absent; the resolved name is used as the fallback.
+
+Blocks Core can neither infer nor be told about fall back to `conquest` / "Conquest Reforged".
 
 ## Tags
 

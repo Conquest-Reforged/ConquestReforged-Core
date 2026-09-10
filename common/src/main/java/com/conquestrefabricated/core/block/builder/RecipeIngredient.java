@@ -69,8 +69,25 @@ public sealed interface RecipeIngredient {
     }
 
     static RecipeIngredient of(ItemLike item) {
+        if (item == null) {
+            throw new IllegalArgumentException(NULL_INGREDIENT);
+        }
         return new OfItem(item);
     }
+
+    /**
+     * Why a null ingredient is nearly always the same mistake, and what to write instead.
+     *
+     * <p>Blocks and items are created during registration, and blocks are declared first. A static
+     * field holding one of Core's own items is therefore still null while a module is declaring its
+     * blocks, and capturing it there stores that null - which only surfaces much later, as a
+     * bare NPE inside data generation.</p>
+     */
+    String NULL_INGREDIENT =
+            "A crafting ingredient was null. Conquest items and blocks are created during registration"
+                    + " and blocks are declared first, so a static like Lime.LIME_PLASTER is still null"
+                    + " here. Name it by id instead - RecipeIngredient.of(Lime.LIME_PLASTER_ID), or"
+                    + " RecipeIngredient.of(\"lime_plaster\") - which is resolved at data generation.";
 
     /**
      * A tag of either items or blocks.
@@ -82,6 +99,9 @@ public sealed interface RecipeIngredient {
      * @throws IllegalArgumentException if the tag belongs to some other registry
      */
     static RecipeIngredient of(TagKey<?> tag) {
+        if (tag == null) {
+            throw new IllegalArgumentException(NULL_INGREDIENT);
+        }
         if (tag.isFor(Registries.ITEM)) {
             return new OfItemTag(tag.cast(Registries.ITEM).orElseThrow());
         }
@@ -93,6 +113,9 @@ public sealed interface RecipeIngredient {
     }
 
     static RecipeIngredient of(Identifier id) {
+        if (id == null) {
+            throw new IllegalArgumentException(NULL_INGREDIENT);
+        }
         return new OfId(id);
     }
 
@@ -112,6 +135,9 @@ public sealed interface RecipeIngredient {
      * block tag can be used by different recipes.</p>
      */
     static RecipeIngredient basesOf(TagKey<Block> blockTag) {
+        if (blockTag == null) {
+            throw new IllegalArgumentException(NULL_INGREDIENT);
+        }
         return new OfBlockTag(blockTag, true);
     }
 
@@ -141,6 +167,9 @@ public sealed interface RecipeIngredient {
      * {@code "minecraft:stone"} reaches outside.
      */
     static RecipeIngredient of(String id) {
+        if (id == null) {
+            throw new IllegalArgumentException(NULL_INGREDIENT);
+        }
         return of(Namespaces.id(id));
     }
 
