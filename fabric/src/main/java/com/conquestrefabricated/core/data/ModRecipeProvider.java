@@ -65,52 +65,52 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                                 PotteryRecipeBuilder.from(spec, items, blockData.getBlock()).save(output));
                     }
 
-                    if (blockData.getProps().hasParent()) {
-                        Block rootBlock = blockData.getProps().getParent().getBlock();
-                        Block productBlock = blockData.getBlock();
-
-                        if (rootBlock != productBlock) {
-                            if (productBlock instanceof VerticalSlab) {
-                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 4);
-                            } else if (productBlock instanceof VerticalSlabLessLayers) {
-                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 3);
-                            } else if (productBlock instanceof Layer || productBlock instanceof Slab || productBlock instanceof LayerDirectional) {
-                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 8);
-                            } else if (productBlock instanceof VerticalCorner) {
-                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 4);
-                            } else if (productBlock instanceof VerticalCornerLessLayers) {
-                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 3);
-                            } else if (productBlock instanceof VerticalQuarter) {
-                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 4);
-                            } else if (productBlock instanceof VerticalQuarterLessLayers) {
-                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 3);
-                            } else if (productBlock instanceof Pillar) {
-                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 3);
-                            } else if (productBlock instanceof SlabLessLayers) {
-                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 4);
-                            } else if (productBlock instanceof SlabQuarter) {
-                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 3);
-                            } else {
-                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 1);
-                            }
-                        }
-                    }
+//                    if (blockData.getProps().hasParent()) {
+//                        Block rootBlock = blockData.getProps().getParent().getBlock();
+//                        Block productBlock = blockData.getBlock();
+//
+//                        if (rootBlock != productBlock) {
+//                            if (productBlock instanceof VerticalSlab) {
+//                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 4);
+//                            } else if (productBlock instanceof VerticalSlabLessLayers) {
+//                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 3);
+//                            } else if (productBlock instanceof Layer || productBlock instanceof Slab || productBlock instanceof LayerDirectional) {
+//                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 8);
+//                            } else if (productBlock instanceof VerticalCorner) {
+//                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 4);
+//                            } else if (productBlock instanceof VerticalCornerLessLayers) {
+//                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 3);
+//                            } else if (productBlock instanceof VerticalQuarter) {
+//                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 4);
+//                            } else if (productBlock instanceof VerticalQuarterLessLayers) {
+//                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 3);
+//                            } else if (productBlock instanceof Pillar) {
+//                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 3);
+//                            } else if (productBlock instanceof SlabLessLayers) {
+//                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 4);
+//                            } else if (productBlock instanceof SlabQuarter) {
+//                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 3);
+//                            } else {
+//                                offerSCRecipe(output, RecipeCategory.BUILDING_BLOCKS, productBlock, rootBlock, 1);
+//                            }
+//                        }
+//                    }
                 });
             }
         };
     }
 
-    public void offerSCRecipe(RecipeOutput exporter, RecipeCategory category, ItemLike output, ItemLike input, int count) {
-        ResourceKey<Recipe<?>> recipeId = ResourceKey.create(Registries.RECIPE,
-                Identifier.fromNamespaceAndPath("conquest", RecipeProvider.getItemName(output) + "_sc"));
-
-        NoAdvancementStonecuttingRecipe recipe = new NoAdvancementStonecuttingRecipe(
-                Ingredient.of(input),
-                new ItemStackTemplate(output.asItem(), count)
-        );
-
-        exporter.accept(recipeId, recipe, null);
-    }
+//    public void offerSCRecipe(RecipeOutput exporter, RecipeCategory category, ItemLike output, ItemLike input, int count) {
+//        ResourceKey<Recipe<?>> recipeId = ResourceKey.create(Registries.RECIPE,
+//                Identifier.fromNamespaceAndPath("conquest", RecipeProvider.getItemName(output) + "_sc"));
+//
+//        NoAdvancementStonecuttingRecipe recipe = new NoAdvancementStonecuttingRecipe(
+//                Ingredient.of(input),
+//                new ItemStackTemplate(output.asItem(), count)
+//        );
+//
+//        exporter.accept(recipeId, recipe, null);
+//    }
 
     @Override
     public String getName() {
