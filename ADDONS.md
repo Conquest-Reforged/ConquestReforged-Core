@@ -140,9 +140,9 @@ key too — datagen keeps the first and logs a warning naming the key.
 ## Crafting tools
 
 A set of crafting tools is a held item that opens a stonecutter-style picker: put an ingredient in
-the input slot, pick a shape from the grid, take the block out. Core ships three —
-`CraftingTools.WOODWORKING`, `CraftingTools.MASON` and `CraftingTools.METALWORKING` — and blocks
-opt in through `Props`:
+the input slot, pick a shape from the grid, take the block out. Core ships four —
+`CraftingTools.WOODWORKING`, `CraftingTools.MASON`, `CraftingTools.METALWORKING` and
+`CraftingTools.LANDSCAPING` — and blocks opt in through `Props`:
 
 ```java
 VanillaProps.stone()
@@ -210,6 +210,7 @@ Each station reads an item tag of extra materials it will shape anyway:
 | Mason's tools | `conquest:mason_tools/shapes` |
 | Woodworking tools | `conquest:woodworking_tools/shapes` |
 | Metalworking tools | `conquest:metalworking_tools/shapes` |
+| Landscaping tools | `conquest:landscaping_tools/shapes` |
 | Loom | `conquest:loom/shapes` |
 | Pottery wheel | `conquest:pottery_wheel/shapes` |
 | Painter's kit | `conquest:painters_kit/shapes` |

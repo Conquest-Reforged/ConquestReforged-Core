@@ -46,6 +46,10 @@ public final class CraftingTools {
     public static final CraftingTool METALWORKING = register(CraftingTool.of(
             Identifier.fromNamespaceAndPath(Namespaces.DEFAULT, "metalworking_tools")));
 
+    /** Spade, rake and turfing iron: soil, turf, gravel, anything worked from the ground. */
+    public static final CraftingTool LANDSCAPING = register(CraftingTool.of(
+            Identifier.fromNamespaceAndPath(Namespaces.DEFAULT, "landscaping_tools")));
+
     private CraftingTools() {
     }
 

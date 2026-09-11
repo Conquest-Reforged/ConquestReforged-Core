@@ -153,12 +153,15 @@ public class ModLangManualProvider extends FabricLanguageProvider {
         translationBuilder.add("item.conquest.woodworking_tools", "Woodworking Tools");
         translationBuilder.add("item.conquest.mason_tools", "Mason's Tools");
         translationBuilder.add("item.conquest.metalworking_tools", "Metalworking Tools");
+        translationBuilder.add("item.conquest.landscaping_tools", "Landscaping Tools");
         translationBuilder.add("container.conquest.woodworking_tools", "Woodworking");
         translationBuilder.add("container.conquest.mason_tools", "Masonry");
         translationBuilder.add("container.conquest.metalworking_tools", "Metalworking");
+        translationBuilder.add("container.conquest.landscaping_tools", "Landscaping");
         translationBuilder.add("tooltip.conquest.item.woodworking_tools", "§eRight-click to shape planks, beams and panelling§r");
         translationBuilder.add("tooltip.conquest.item.mason_tools", "§eRight-click to shape ashlar, brick and tile§r");
         translationBuilder.add("tooltip.conquest.item.metalworking_tools", "§eRight-click to shape plate, bar and grillwork§r");
+        translationBuilder.add("tooltip.conquest.item.landscaping_tools", "§eRight-click to shape soil, turf and gravel§r");
 
         /* === Painter's kit === */
         translationBuilder.add("item.conquest.painters_kit", "Painter's Kit");
