@@ -33,7 +33,6 @@ import net.minecraft.world.level.material.Fluids;
 
 @Assets(
         state = @State(name = "%s", template = "parent_pane_old"),
-        render = @Render(RenderLayer.CUTOUT),
         item = @Model(name = "item/%s", parent = "block/%s_pane_ns", template = "item/parent_pane"),
         block = {
                 @Model(name = "block/%s_pane_n", template = "block/parent_flatpane_n"),

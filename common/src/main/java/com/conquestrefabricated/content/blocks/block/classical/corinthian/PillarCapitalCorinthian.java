@@ -11,7 +11,6 @@ import com.conquestrefabricated.core.util.RenderLayer;
 @Assets(
         state = @State(name = "%s_pillar", template = "parent_doric_capital_pillar"),
         item = @Model(name = "item/%s_pillar", parent = "block/%s_wall_post", template = "item/acacia_fence"),
-        render = @Render(RenderLayer.CUTOUT_MIPPED),
         block = {
                 @Model(name = "block/%s_wall_post", template = "block/parent_doric_capital_wall_post"),
                 @Model(name = "block/%s_pillar_2", template = "block/parent_doric_capital_pillar_2"),

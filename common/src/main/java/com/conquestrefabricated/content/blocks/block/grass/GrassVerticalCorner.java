@@ -12,7 +12,6 @@ import com.conquestrefabricated.core.util.RenderLayer;
 @Assets(
         state = @State(name = "%s_vertical_corner", template = "parent_vertical_corner_tudor"),
         item = @Model(name = "item/%s_vertical_corner", parent = "block/%s_vertical_corner_4", template = "item/parent_vertical_corner_tudor"),
-        render = @Render(RenderLayer.CUTOUT_MIPPED),
         block = {
                 @Model(name = "block/%s_vertical_corner_2", template = "block/parent_vertical_corner_grass_2"),
                 @Model(name = "block/%s_vertical_corner_4", template = "block/parent_vertical_corner_grass_4"),

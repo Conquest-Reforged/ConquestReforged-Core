@@ -22,7 +22,6 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 @Assets(
         state = @State(name = "%s_vertical_slab", template = "parent_doric_capital_vertical_slab"),
         item = @Model(name = "item/%s_vertical_slab", parent = "block/%s_vertical_slab_4", template = "item/parent_vertical_slab"),
-        render = @Render(RenderLayer.CUTOUT_MIPPED),
         block = {
                 @Model(name = "block/%s_vertical_slab_2", template = "block/parent_doric_capital_vertical_slab_2"),
                 @Model(name = "block/%s_vertical_slab_2_e", template = "block/parent_doric_capital_vertical_slab_2_e"),

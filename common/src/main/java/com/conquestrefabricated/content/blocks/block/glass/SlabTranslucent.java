@@ -11,7 +11,6 @@ import net.minecraft.world.level.block.state.BlockState;
 @Assets(
         state = @State(name = "%s_slab", template = "parent_slab_lesslayers"),
         item = @Model(name = "item/%s_slab", parent = "block/%s_slab_bottom_4", template = "item/acacia_slab"),
-        render = @Render(RenderLayer.TRANSLUCENT),
         block = {
                 @Model(name = "block/%s_slab_bottom_1", template = "block/parent_slab_bottom_1"),
                 @Model(name = "block/%s_slab_bottom_2", template = "block/parent_slab_bottom_2"),

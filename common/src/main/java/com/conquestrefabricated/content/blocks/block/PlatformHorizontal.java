@@ -21,7 +21,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 @Assets(
         state = @State(name = "%s_platform", template = "parent_platform_horizontal"),
         item = @Model(name = "item/%s_platform", parent = "block/%s_platform_horizontal_top", template = "item/acacia_stairs"),
-        render = @Render(RenderLayer.CUTOUT),
         block = {
                 @Model(name = "block/%s_platform_horizontal_bottom", template = "block/parent_platform_horizontal_bottom"),
                 @Model(name = "block/%s_platform_horizontal_bottom_outer", template = "block/parent_platform_horizontal_bottom_outer"),

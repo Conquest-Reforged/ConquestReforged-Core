@@ -27,7 +27,6 @@ import java.util.Map;
 @Assets(
         state = @State(name = "%s", template = "parent_doric_capital", plural = true),
         item = @Model(name = "item/%s", parent = "block/%s", template = "item/parent_cube", plural = true),
-        render = @Render(RenderLayer.CUTOUT_MIPPED),
         block = {
                 @Model(name = "block/%s", template = "block/parent_doric_capital_full", plural = true),
                 @Model(name = "block/%s_n", template = "block/parent_doric_capital_n", plural = true),

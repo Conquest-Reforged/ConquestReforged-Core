@@ -15,7 +15,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 @Assets(
         state = @State(name = "%s", template = "parent_cube_overlay_tinted", plural = true),
         item = @Model(name = "item/%s", parent = "block/%s", template = "item/parent_cube", plural = true),
-        render = @Render(RenderLayer.TRANSLUCENT),
         block = @Model(name = "block/%s", template = "block/parent_cube_overlay_tinted", plural = true)
 )
 public class TintedOverlayCube extends Block {

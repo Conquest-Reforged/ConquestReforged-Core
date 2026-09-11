@@ -16,7 +16,6 @@ import net.minecraft.world.level.block.state.BlockState;
 @Assets(
         state = @State(name = "%s_vertical_corner", template = "parent_vertical_corner_transparent"),
         item = @Model(name = "item/%s_vertical_corner", parent = "block/%s_vertical_corner_4", template = "item/parent_vertical_corner"),
-        render = @Render(RenderLayer.CUTOUT),
         block = {
                 @Model(name = "block/%s_vertical_corner_1", template = "block/parent_vertical_corner_transparent_1"),
                 @Model(name = "block/%s_vertical_corner_2", template = "block/parent_vertical_corner_transparent_2"),

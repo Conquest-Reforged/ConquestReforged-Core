@@ -17,7 +17,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 @Assets(
         state = @State(name = "%s", template = "parent_pane"),
         item = @Model(name = "item/%s", parent = "block/%s_pane_ns", template = "item/parent_pane"),
-        render = @Render(RenderLayer.CUTOUT),
         block = {
                 @Model(name = "block/%s_pane_n", template = "block/parent_flatpane_n"),
                 @Model(name = "block/%s_pane_ne", template = "block/parent_flatpane_ne"),

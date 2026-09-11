@@ -82,8 +82,15 @@ public class Props extends BlockProps<Props> implements BlockFactory {
         this.module = Modules.current();
     }
 
+    /**
+     * Copy constructor, used by {@link #template} to fork a builder for cutout shapes.
+     * <p>
+     * Every field has to be carried over here. A field missed in this list is silently lost on
+     * cutout blocks only, which is a miserable thing to track down.
+     */
     private Props(Props props) {
         super(props);
+        this.module = props.module;
         this.name = props.name;
         this.manual = props.manual;
         this.parent = props.parent;
@@ -95,6 +102,9 @@ public class Props extends BlockProps<Props> implements BlockFactory {
         this.familyFactory = props.familyFactory;
         this.family = props.family;
         this.namespace = props.namespace;
+        // registryId is deliberately not copied: register(..) sets it per shape afterwards
+        this.blockSetType = props.blockSetType;
+        this.woodType = props.woodType;
         this.namePlural = props.namePlural;
         this.nameSingular = props.nameSingular;
         this.lore = props.lore;

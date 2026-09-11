@@ -10,7 +10,6 @@ import com.conquestrefabricated.core.util.RenderLayer;
 @Assets(
         state = @State(name = "%s", template = "parent_shrub"),
         item = @Model(name = "item/%s", parent = "block/%s_pane_ns", template = "item/parent_round_arch"),
-        render = @Render(RenderLayer.CUTOUT),
         block = {
                 @Model(name = "block/%s_shrub_model_1_a", template = "block/parent_shrub_model_1_a"),
                 @Model(name = "block/%s_shrub_model_1_b", template = "block/parent_shrub_model_1_b"),

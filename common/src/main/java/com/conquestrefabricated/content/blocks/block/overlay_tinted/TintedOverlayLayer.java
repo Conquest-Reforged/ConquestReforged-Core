@@ -11,7 +11,6 @@ import com.conquestrefabricated.core.util.RenderLayer;
 @Assets(
         state = @State(name = "%s_layer", template = "parent_layer_overlay_tinted"),
         item = @Model(name = "item/%s_layer", parent = "block/%s_slab_bottom_4", template = "item/acacia_slab"),
-        render = @Render(RenderLayer.TRANSLUCENT),
         block = {
                 @Model(name = "block/%s_slab_bottom_1", template = "block/parent_slab_bottom_1_overlay_tinted"),
                 @Model(name = "block/%s_slab_bottom_2", template = "block/parent_slab_bottom_2_overlay_tinted"),

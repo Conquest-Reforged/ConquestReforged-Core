@@ -19,7 +19,6 @@ import static com.conquestrefabricated.core.block.properties.ModBlockProperties.
 @Assets(
         state = @State(name = "%s_stairs", template = "parent_stairs_cutout"),
         item = @Model(name = "item/%s_stairs", parent = "block/%s_stairs", template = "item/acacia_stairs"),
-        render = @Render(RenderLayer.CUTOUT),
         block = {
                 @Model(name = "block/%s_stairs", template = "block/parent_stairs_cutout"),
                 @Model(name = "block/%s_stairs_outer", template = "block/parent_stairs_outer_cutout"),

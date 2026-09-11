@@ -18,7 +18,6 @@ import net.minecraft.world.level.block.state.BlockState;
 @Assets(
         state = @State(name = "%s_stairs", template = "parent_stairs_cutout"),
         item = @Model(name = "item/%s_stairs", parent = "block/%s_stairs", template = "item/acacia_stairs"),
-        render = @Render(RenderLayer.TRANSLUCENT),
         block = {
                 @Model(name = "block/%s_stairs", template = "block/parent_stairs_cutout"),
                 @Model(name = "block/%s_stairs_outer", template = "block/parent_stairs_outer_cutout"),

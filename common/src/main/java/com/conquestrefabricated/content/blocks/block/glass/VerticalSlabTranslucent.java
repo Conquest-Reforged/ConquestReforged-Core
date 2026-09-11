@@ -10,7 +10,6 @@ import com.conquestrefabricated.core.util.RenderLayer;
 @Assets(
         state = @State(name = "%s_vertical_slab", template = "parent_vertical_slab"),
         item = @Model(name = "item/%s_vertical_slab", parent = "block/%s_vertical_slab_4", template = "item/parent_vertical_slab"),
-        render = @Render(RenderLayer.TRANSLUCENT),
         block = {
                 @Model(name = "block/%s_vertical_slab_1", template = "block/parent_vertical_slab_1"),
                 @Model(name = "block/%s_vertical_slab_2", template = "block/parent_vertical_slab_2"),

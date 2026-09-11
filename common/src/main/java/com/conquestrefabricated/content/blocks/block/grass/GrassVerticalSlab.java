@@ -12,7 +12,6 @@ import com.conquestrefabricated.core.util.RenderLayer;
 @Assets(
         state = @State(name = "%s_vertical_slab", template = "parent_vertical_slab_tudor"),
         item = @Model(name = "item/%s_vertical_slab", parent = "block/%s_vertical_slab_4", template = "item/parent_vertical_slab_tudor"),
-        render = @Render(RenderLayer.CUTOUT_MIPPED),
         block = {
                 @Model(name = "block/%s_vertical_slab_2", template = "block/parent_vertical_slab_grass_2"),
                 @Model(name = "block/%s_vertical_slab_4", template = "block/parent_vertical_slab_grass_4"),

@@ -23,7 +23,6 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 @Assets(
         state = @State(name = "%s_vertical_quarter", template = "parent_doric_capital_vertical_quarter"),
         item = @Model(name = "item/%s_vertical_quarter", parent = "block/%s_vertical_quarter_4", template = "item/parent_vertical_quarter"),
-        render = @Render(RenderLayer.CUTOUT_MIPPED),
         block = {
                 @Model(name = "block/%s_vertical_quarter_2", template = "block/parent_doric_capital_vertical_quarter_2"),
                 @Model(name = "block/%s_vertical_quarter_2_e", template = "block/parent_doric_capital_vertical_quarter_2_e"),

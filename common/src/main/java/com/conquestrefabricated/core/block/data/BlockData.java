@@ -1,6 +1,7 @@
 package com.conquestrefabricated.core.block.data;
 
 import com.conquestrefabricated.core.Modules;
+import com.conquestrefabricated.core.util.log.Log;
 import com.conquestrefabricated.core.asset.annotation.ItemDescription;
 import com.conquestrefabricated.core.asset.lang.Lore;
 import com.conquestrefabricated.core.block.builder.BlockName;
@@ -47,7 +48,13 @@ public class BlockData {
         this.props = props;
         this.loreId = Lore.familyId(props.getFamily(), blockName);
         String module = props.getModule();
-        this.moduleId = module == null ? Modules.CORE : module;
+        if (module == null) {
+            // only reachable if a Props constructor stops setting it; say so rather than
+            // quietly crediting the block to Core
+            Log.warn("Block {} has no module set; crediting it to {}", registryName, Modules.CORE);
+            module = Modules.CORE;
+        }
+        this.moduleId = module;
         Lore.declare(loreId, props.getLore());
         registerBlock(this);
     }

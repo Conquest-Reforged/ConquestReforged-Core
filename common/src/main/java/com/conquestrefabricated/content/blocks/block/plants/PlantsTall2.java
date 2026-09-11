@@ -44,7 +44,6 @@ import static com.conquestrefabricated.api.tags.ModTags.GARDENING_TOOLS;
 @Assets(
         state = @State(name = "%s", template = "parent_plant_dense_stackable"),
         item = @Model(name = "item/%s", parent = "block/%s_pane_ns", template = "item/parent_round_arch"),
-        render = @Render(RenderLayer.CUTOUT),
         block = {
                 @Model(name = "block/%s_plant_dense_model_1_a", template = "block/parent_plant_dense_model_1_a"),
                 @Model(name = "block/%s_plant_dense_model_1_b", template = "block/parent_plant_dense_model_1_b"),
