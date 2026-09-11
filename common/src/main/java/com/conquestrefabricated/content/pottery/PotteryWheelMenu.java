@@ -1,10 +1,14 @@
 package com.conquestrefabricated.content.pottery;
 
+import com.conquestrefabricated.content.station.StationMenu;
 import com.conquestrefabricated.content.station.WorkstationMenu;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeType;
+import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -25,5 +29,10 @@ public class PotteryWheelMenu extends WorkstationMenu<PotteryRecipe> {
     @Override
     protected RecipeType<PotteryRecipe> recipeType() {
         return PotteryWheelStation.RECIPE_TYPE;
+    }
+
+    @Override
+    protected Optional<TagKey<Item>> shapesTag() {
+        return Optional.of(StationMenu.shapesTagFor(PotteryWheelStation.MENU_ID));
     }
 }

@@ -2,6 +2,8 @@ package com.conquestrefabricated.content.tools;
 
 import com.conquestrefabricated.content.station.PreviewStationMenu;
 import com.conquestrefabricated.content.station.StationRecipes;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
@@ -10,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 
+import java.util.Optional;
 import java.util.List;
 
 /**
@@ -54,6 +57,12 @@ public class ToolCraftingMenu extends PreviewStationMenu<ToolCraftingRecipe> {
         return super.worksWith(input)
                 || StationRecipes.produces(this.level, this.recipeType(), this::accepts, input,
                         this.emptyRecipeInput());
+    }
+
+    /** Extra materials this set may shape, on top of what its recipes touch. */
+    @Override
+    protected Optional<TagKey<Item>> shapesTag() {
+        return Optional.of(this.tool.shapesTag());
     }
 
     @Override

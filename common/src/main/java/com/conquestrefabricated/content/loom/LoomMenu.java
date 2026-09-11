@@ -1,12 +1,16 @@
 package com.conquestrefabricated.content.loom;
 
+import com.conquestrefabricated.content.station.StationMenu;
 import com.conquestrefabricated.content.station.WorkstationMenu;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeType;
+import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -27,6 +31,11 @@ public class LoomMenu extends WorkstationMenu<WeavingRecipe> {
     @Override
     protected RecipeType<WeavingRecipe> recipeType() {
         return LoomStation.RECIPE_TYPE;
+    }
+
+    @Override
+    protected Optional<TagKey<Item>> shapesTag() {
+        return Optional.of(StationMenu.shapesTagFor(LoomStation.MENU_ID));
     }
 
     @Override

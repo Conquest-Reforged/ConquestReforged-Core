@@ -2,6 +2,7 @@ package com.conquestrefabricated.content.painting;
 
 import com.conquestrefabricated.content.station.StationMenu;
 import com.conquestrefabricated.content.station.StationRecipes;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -11,12 +12,14 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.List;
 
 /**
@@ -152,7 +155,14 @@ public class PaintersKitMenu extends StationMenu<PaintingRecipe, PaintingInput> 
     @Override
     protected boolean worksWith(ItemStack input) {
         return StationRecipes.produces(this.level, this.recipeType(), this::accepts, input,
-                this.emptyRecipeInput());
+                this.emptyRecipeInput())
+                || this.isShapeWhitelisted(input);
+    }
+
+    /** Extra materials this kit may shape, on top of what it painted itself. */
+    @Override
+    protected Optional<TagKey<Item>> shapesTag() {
+        return Optional.of(StationMenu.shapesTagFor(PaintersKit.ID));
     }
 
     @Override

@@ -1,6 +1,9 @@
 package com.conquestrefabricated.content.station;
 
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.TagKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -23,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * The recipe picker shared by Conquest's crafting stations: a list of everything one recipe type can
@@ -374,10 +378,41 @@ public abstract class StationMenu<R extends Recipe<I>, I extends RecipeInput> ex
      *
      * <p>Family shapes come from the stonecutting graph, which knows nothing about which station is
      * open, so without this a set of woodworking tools would happily cut granite. A station works a
-     * material it has a recipe for; subclasses widen or narrow that where they should.</p>
+     * material it has a recipe for, plus anything named in its {@link #shapesTag()}; subclasses
+     * widen or narrow that where they should.</p>
      */
     protected boolean worksWith(ItemStack input) {
-        return !StationRecipes.recipesFor(this.level, this.recipeType(), this::accepts, this.recipeInput()).isEmpty();
+        return !StationRecipes.recipesFor(this.level, this.recipeType(), this::accepts, this.recipeInput()).isEmpty()
+                || this.isShapeWhitelisted(input);
+    }
+
+    /**
+     * An item tag of materials this station will shape even though no recipe of its own touches them.
+     *
+     * <p>The recipe graph is how a station normally knows what it may work, but that leaves out
+     * anything it neither makes nor consumes - vanilla stone bricks, say, which already have a
+     * family of slabs and stairs that a mason ought to be able to cut. Listing those in a tag opts
+     * them in without inventing a recipe that does nothing.</p>
+     *
+     * <p>Empty by default. Conquest's own stations derive theirs from their id with
+     * {@link #shapesTagFor}, so a set of mason's tools reads {@code conquest:mason_tools/shapes}.</p>
+     */
+    protected Optional<TagKey<Item>> shapesTag() {
+        return Optional.empty();
+    }
+
+    /** Whether {@code input} is opted in by this station's {@link #shapesTag()}. */
+    protected boolean isShapeWhitelisted(ItemStack input) {
+        return this.shapesTag().map(input::is).orElse(false);
+    }
+
+    /** Appended to a station's id for the tag of extra materials it may shape. */
+    public static final String SHAPES_SUFFIX = "/shapes";
+
+    /** The tag a station of {@code stationId} takes its extra shapeable materials from. */
+    public static TagKey<Item> shapesTagFor(Identifier stationId) {
+        return TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(
+                stationId.getNamespace(), stationId.getPath() + SHAPES_SUFFIX));
     }
 
     /** Keeps the first option offering each distinct result, so base blocks win over cuts of them. */

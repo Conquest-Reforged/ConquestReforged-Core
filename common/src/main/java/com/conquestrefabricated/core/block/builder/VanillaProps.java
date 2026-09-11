@@ -60,11 +60,11 @@ public class VanillaProps {
     }
 
     public static Props grass() {
-        return Props.create(Blocks.GRASS_BLOCK).group((ModGroups.UTILITY)).grassColor().tags(BlockTags.MINEABLE_WITH_SHOVEL);
+        return Props.create(Blocks.GRASS_BLOCK).group((ModGroups.UTILITY)).grassColor().tags(BlockTags.MINEABLE_WITH_SHOVEL, BlockTags.ANIMALS_SPAWNABLE_ON);
     }
 
     public static Props grassLike() {
-        return Props.create(Blocks.DIRT).group((ModGroups.UTILITY)).strength(0.6F, 0.6F).sound(SoundType.GRASS).grassColor().offset(BlockBehaviour.OffsetType.NONE).tags(BlockTags.MINEABLE_WITH_SHOVEL);
+        return Props.create(Blocks.DIRT).group((ModGroups.UTILITY)).strength(0.6F, 0.6F).sound(SoundType.GRASS).grassColor().offset(BlockBehaviour.OffsetType.NONE).tags(BlockTags.MINEABLE_WITH_SHOVEL, BlockTags.ANIMALS_SPAWNABLE_ON);
     }
 
     public static Props glass() {

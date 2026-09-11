@@ -1,6 +1,8 @@
 package com.conquestrefabricated.content.tools;
 
+import com.conquestrefabricated.content.station.StationMenu;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.TagKey;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -60,6 +62,14 @@ public final class CraftingTool {
 
     public Component title() {
         return Component.translatable(this.titleKey());
+    }
+
+    /**
+     * Item tag of extra materials this set will shape, beyond what its own recipes touch - e.g.
+     * {@code conquest:mason_tools/shapes}. See {@code StationMenu.shapesTag()}.
+     */
+    public TagKey<Item> shapesTag() {
+        return StationMenu.shapesTagFor(this.itemId());
     }
 
     /** Lang key for the item's tooltip line. */

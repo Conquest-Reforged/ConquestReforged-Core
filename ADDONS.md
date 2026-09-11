@@ -197,6 +197,50 @@ ToolCraftingRecipeBuilder.toolCrafting(CraftingTools.MASON.id(), Blocks.CLAY, Mo
         .save(this.output);
 ```
 
+### Shaping something with no recipe
+
+The recipe graph is how a station knows what it may work, which leaves out anything it neither makes
+nor consumes. Vanilla stone bricks already have a family of slabs, stairs and walls, but no mason
+recipe touches them, so the family toggle offers nothing for them.
+
+Each station reads an item tag of extra materials it will shape anyway:
+
+| Station | Tag |
+|---|---|
+| Mason's tools | `conquest:mason_tools/shapes` |
+| Woodworking tools | `conquest:woodworking_tools/shapes` |
+| Metalworking tools | `conquest:metalworking_tools/shapes` |
+| Loom | `conquest:loom/shapes` |
+| Pottery wheel | `conquest:pottery_wheel/shapes` |
+| Painter's kit | `conquest:painters_kit/shapes` |
+
+Put one in `src/main/resources/data/conquest/tags/item/mason_tools/shapes.json`:
+
+```json
+{
+  "values": [
+    "minecraft:stone_bricks",
+    "minecraft:deepslate_bricks",
+    "#minecraft:stone_bricks"
+  ]
+}
+```
+
+Anything listed can be put in the input slot and cut into its family with the `+` toggle, at whatever
+yield the stonecutting recipes already give. Nothing appears on the base list — that is still driven
+by real recipes — so the flow is: material in, toggle on, take the shape.
+
+**Write these by hand under `resources`, not `generated`.** Core does not generate them, precisely so
+that a datagen run cannot overwrite your whitelist. Tags merge, so every module can contribute to the
+same one; a module that would rather do it programmatically can append to the same tag from its own
+item tag provider:
+
+```java
+this.valueLookupBuilder(CraftingTools.MASON.shapesTag()).add(Items.STONE_BRICKS);
+```
+
+An undefined tag is simply empty, so a station with no whitelist behaves exactly as before.
+
 ### Adding your own tool set
 
 Tool sets are told apart by id on a shared `conquest:tool_crafting` recipe type, so a new one needs
