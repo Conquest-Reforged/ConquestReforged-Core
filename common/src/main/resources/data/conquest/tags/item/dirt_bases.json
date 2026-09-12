@@ -1,0 +1,9 @@
+{
+  "values": [
+    "#minecraft:dirt",
+    {
+      "id": "#minecraft:dirt/bases",
+      "required": false
+    }
+  ]
+}

@@ -21,6 +21,14 @@ public record TimedRecipeSpec(RecipeIngredient ingredient, int count, int time) 
         if (count < 1) {
             throw new IllegalArgumentException("Workstation recipe count must be at least 1, got " + count);
         }
+        if (count > Item.ABSOLUTE_MAX_STACK_SIZE) {
+            // Nearly always a time written into the count: the two-argument form is (ingredient,
+            // count), and a time large enough to be worth writing is larger than any stack.
+            throw new IllegalArgumentException("Workstation recipe count " + count + " is above the"
+                    + " largest stack of " + Item.ABSOLUTE_MAX_STACK_SIZE + ". If that was meant as a"
+                    + " time in ticks, it is the third argument - woven(ingredient, count, time) - and"
+                    + " the two-argument form sets the count.");
+        }
         if (time < 0) {
             throw new IllegalArgumentException("Workstation recipe time cannot be negative, got " + time);
         }

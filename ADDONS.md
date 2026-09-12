@@ -604,6 +604,41 @@ which is what you want for an ingredient like "any log shape I have lying around
 if it has no parent, or is its own family's parent. It is the identical test that decides which member
 of a family gets the tool recipe in the first place.
 
+### Vanilla tags hold every Conquest shape
+
+`basesOf(..)` is for a **Conquest** block tag. On a vanilla one it does the wrong thing, for a reason
+worth knowing: Conquest adds every member of a family to the vanilla block tag, so a Conquest log slab
+is a member of `#minecraft:logs` — 1120 of that tag's 1906 entries are slabs, stairs and walls. That
+is right for mining and burning and wrong for an ingredient.
+
+So neither plain form gives "any log, whole blocks only":
+
+| Written | Resolves to | Problem |
+|---|---|---|
+| `of(BlockTags.LOGS)` | `#minecraft:logs` (item) | vanilla logs only — no Conquest logs at all |
+| `basesOf(BlockTags.LOGS)` | `#minecraft:logs/bases` | Conquest bases only — no vanilla logs |
+
+Core ships union tags that put the two halves together:
+
+```java
+.craftedWith(CraftingTools.WOODWORKING.id(), RecipeIngredient.of(ModTags.LOG_BASES))
+```
+
+`ModTags.LOG_BASES`, `PLANK_BASES` and `DIRT_BASES` are each two references:
+
+```json
+{ "values": [ "#minecraft:logs",
+              { "id": "#minecraft:logs/bases", "required": false } ] }
+```
+
+The first half works because Conquest writes only *block* tags — the vanilla **item** tags are
+untouched, so `#minecraft:logs` as an item tag is exactly the vanilla logs. The second is what Core's
+mirror generates from the block tag, shapes excluded, and is optional since it only exists where a
+module generated it.
+
+These live in `resources`, not `generated`, so a data generation run cannot overwrite them. Add
+another material the same way.
+
 ### How a block tag reaches a recipe
 
 A recipe can only ever match on an **item** tag, so a block tag ingredient is written out as the item

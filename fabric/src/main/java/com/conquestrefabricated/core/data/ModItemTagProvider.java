@@ -55,6 +55,14 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider {
             return;
         }
 
+        // Every mirror gets its file, whether or not this module has anything to put in it. A recipe
+        // naming a tag with no file at all fails to load outright; an empty file loads and simply
+        // matches nothing until the module that owns those blocks merges its own entries in. Modules
+        // are generated apart and read together, so the empty case is the normal one.
+        for (RecipeIngredient.BlockTagMirror mirror : mirrors) {
+            this.valueLookupBuilder(mirror.target());
+        }
+
         int entries = 0;
         for (BlockData data : blockData().toList()) {
             Item item = data.getBlock().asItem();

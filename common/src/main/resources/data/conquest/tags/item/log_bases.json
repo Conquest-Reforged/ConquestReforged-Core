@@ -1,0 +1,9 @@
+{
+  "values": [
+    "#minecraft:logs",
+    {
+      "id": "#minecraft:logs/bases",
+      "required": false
+    }
+  ]
+}

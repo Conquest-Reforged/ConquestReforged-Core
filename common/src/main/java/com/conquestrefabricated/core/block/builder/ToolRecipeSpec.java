@@ -17,6 +17,10 @@ public record ToolRecipeSpec(Identifier tool, RecipeIngredient ingredient, int c
         if (count < 1) {
             throw new IllegalArgumentException("Tool recipe count must be at least 1, got " + count);
         }
+        if (count > Item.ABSOLUTE_MAX_STACK_SIZE) {
+            throw new IllegalArgumentException("Tool recipe count " + count + " is above the largest"
+                    + " stack of " + Item.ABSOLUTE_MAX_STACK_SIZE + ".");
+        }
     }
 
     public static ToolRecipeSpec of(Identifier tool, RecipeIngredient ingredient, int count) {

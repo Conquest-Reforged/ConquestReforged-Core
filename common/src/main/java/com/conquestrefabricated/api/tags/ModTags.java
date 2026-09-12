@@ -45,6 +45,30 @@ public class ModTags {
      */
     public static final TagKey<Item> LIME_SOURCES = itemTag("lime_sources");
 
+    /**
+     * A material's full blocks, from vanilla and from Conquest alike.
+     *
+     * <p>Conquest adds every shape of a family to the vanilla <i>block</i> tag, so a Conquest log
+     * slab is a member of {@code #minecraft:logs}. That is right for mining and burning and wrong for
+     * an ingredient - feeding a slab back in is a way to lose material. These unions put the two
+     * halves together without either problem:</p>
+     *
+     * <ul>
+     *   <li>{@code #minecraft:logs} - the vanilla <i>item</i> tag, which Conquest never writes to,
+     *       so it is exactly the vanilla logs.</li>
+     *   <li>{@code #minecraft:logs/bases} - the family parents Core mirrors out of the block tag,
+     *       shapes excluded. Optional, since it only exists where a module generated it.</li>
+     * </ul>
+     *
+     * <p>Hand-written under {@code resources}, not generated, so a data generation run cannot
+     * overwrite them.</p>
+     */
+    public static final TagKey<Item> LOG_BASES = itemTag("log_bases");
+    /** @see #LOG_BASES */
+    public static final TagKey<Item> PLANK_BASES = itemTag("plank_bases");
+    /** @see #LOG_BASES */
+    public static final TagKey<Item> DIRT_BASES = itemTag("dirt_bases");
+
     //public static final TagKey<Block> PLANT_SLOWNESS = blockTag("plant_slowness");
     public static final TagKey<Item> GARDENING_TOOLS = itemTag("gardening_tools");
     public static final TagKey<Item> CYCLING_TOOLS = itemTag("cycling_tools");
