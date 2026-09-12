@@ -39,8 +39,8 @@ import java.util.Optional;
  * itself, it only renders what it was told.</p>
  *
  * <p>A station may also offer <i>variants</i>: the rest of the block family the input belongs to,
- * found by walking one stonecutting step from the input itself. The toggle under the input slot
- * switches between the two - base results or family shapes, never both at once - see
+ * read straight off the family the palette wheel shows. The toggle under the input slot switches
+ * between the two - base results or family shapes, never both at once - see
  * {@link #supportsVariants()}.</p>
  *
  * <p>This class deliberately owns no slots. What a station does with a selection differs too much
@@ -152,10 +152,10 @@ public abstract class StationMenu<R extends Recipe<I>, I extends RecipeInput> ex
     /**
      * Whether this station can also shape the input into the rest of its own block family.
      *
-     * <p>Core generates stonecutting recipes from a family's parent to its slabs, stairs and walls,
-     * so a station can offer those by walking one step along the same graph from whatever is in the
-     * input slot - no recipe file per shape. Off by default: the arms station turns iron into a
-     * breastplate, and nothing is cut from iron.</p>
+     * <p>The parent of a block family simply makes the rest of it - its slabs, stairs and walls -
+     * so a station can offer those by reading the family of whatever is in the input slot. No recipe
+     * files are involved. Off by default: the arms station turns iron into a breastplate, and iron
+     * has no family of shapes.</p>
      */
     public boolean supportsVariants() {
         return false;
@@ -366,9 +366,8 @@ public abstract class StationMenu<R extends Recipe<I>, I extends RecipeInput> ex
         }
 
         List<Option> built = new ArrayList<>();
-        for (StationRecipes.Cut cut : StationRecipes.cutsFrom(this.level, List.of(source))) {
-            built.add(new Option(cut.recipe().assemble(new net.minecraft.world.item.crafting.SingleRecipeInput(source)),
-                    cut.holder(), true, ItemStack.EMPTY));
+        for (ItemStack shape : StationFamilies.shapesOf(source)) {
+            built.add(new Option(shape, null, true, ItemStack.EMPTY));
         }
         return dedupe(built);
     }
@@ -376,10 +375,10 @@ public abstract class StationMenu<R extends Recipe<I>, I extends RecipeInput> ex
     /**
      * Whether this station is willing to shape {@code input} at all.
      *
-     * <p>Family shapes come from the stonecutting graph, which knows nothing about which station is
-     * open, so without this a set of woodworking tools would happily cut granite. A station works a
-     * material it has a recipe for, plus anything named in its {@link #shapesTag()}; subclasses
-     * widen or narrow that where they should.</p>
+     * <p>Block families know nothing about which station is open, so without this a set of
+     * woodworking tools would happily shape granite. A station works a material it has a recipe for,
+     * plus anything named in its {@link #shapesTag()}; subclasses widen or narrow that where they
+     * should.</p>
      */
     protected boolean worksWith(ItemStack input) {
         return !StationRecipes.recipesFor(this.level, this.recipeType(), this::accepts, this.recipeInput()).isEmpty()
@@ -437,18 +436,26 @@ public abstract class StationMenu<R extends Recipe<I>, I extends RecipeInput> ex
      * One entry in the picker.
      *
      * <p>The result is worked out once when the list is built rather than on each craft: a variant's
-     * output depends on the station's own result rather than on what is in the input slot, so there
-     * is nothing left to recompute.</p>
+     * output is a fixed member of the input's family, so there is nothing left to recompute.</p>
      *
      * @param result      what a craft yields, and what the picker draws
      * @param used        the recipe to credit the player with, for the recipe book and statistics
-     * @param variant     whether this was reached by cutting one of the station's own results
+     * @param variant     whether this is a family shape rather than one of the station's recipes
      * @param requirement what the slots are still missing for this, or empty if it can be made now
      */
-    protected record Option(ItemStack result, RecipeHolder<?> used, boolean variant, ItemStack requirement) {
+    protected record Option(ItemStack result, @Nullable RecipeHolder<?> used, boolean variant,
+                            ItemStack requirement) {
 
         ItemStack preview() {
             return this.result.copy();
+        }
+
+        /**
+         * How a station names this option when it has to remember it. A recipe is named by its key;
+         * a family shape has no recipe, so it is named by the shape itself.
+         */
+        StationJob job() {
+            return this.used != null ? StationJob.of(this.used.id()) : StationJob.ofShape(this.result);
         }
     }
 

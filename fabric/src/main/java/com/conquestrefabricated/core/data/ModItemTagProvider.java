@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.Block;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -28,9 +29,10 @@ import java.util.stream.Stream;
  * Conquest declares that as a <i>block</i> tag. Without the item tag beside it the recipe would load
  * happily and then match nothing, which is the sort of failure that takes an afternoon to find.</p>
  *
- * <p>Only tags actually used as an ingredient are mirrored, so this stays empty until someone crafts
- * from one, and picks up new ones on its own. Vanilla block tags mostly have an item counterpart
- * already; where one does not, this fills it in the same way.</p>
+ * <p>Every block tag a module's own blocks carry is mirrored, in both its full and its
+ * family-parents-only reading, because a recipe hand-written in a module's resources can name any of
+ * them and data generation never reads those files. Ingredients declared in Java add any further
+ * tags they name. Vanilla block tags mostly have an item counterpart already and are left alone.</p>
  */
 public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider {
 
@@ -49,6 +51,22 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider {
             // Touch the builder so the file exists even where this module has no blocks in the tag -
             // the union below refers to it, and the modules that do have blocks merge into it.
             this.valueLookupBuilder(RecipeIngredient.itemTagFor(always));
+        }
+
+        // A recipe written by hand in a module's own resources can name any of our block tags, and
+        // data generation never reads those files - so every block tag this module's blocks carry is
+        // mirrored, in both readings, rather than only the ones a Props declares an ingredient from.
+        // Vanilla tags are deliberately left out: writing our shapes into #minecraft:logs as an item
+        // tag is the very pollution the union tags exist to avoid.
+        Set<String> ours = Namespaces.stream().collect(Collectors.toSet());
+        for (BlockData data : blockData().toList()) {
+            for (TagKey<Block> tag : data.getTags()) {
+                if (!ours.contains(tag.location().getNamespace())) {
+                    continue;
+                }
+                mirrors.add(new RecipeIngredient.BlockTagMirror(tag, RecipeIngredient.itemTagFor(tag), false));
+                mirrors.add(new RecipeIngredient.BlockTagMirror(tag, RecipeIngredient.baseItemTagFor(tag), true));
+            }
         }
 
         if (mirrors.isEmpty()) {

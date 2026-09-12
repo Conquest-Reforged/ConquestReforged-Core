@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -65,7 +66,7 @@ public abstract class WorkstationBlockEntity extends BaseContainerBlockEntity im
 
     private NonNullList<ItemStack> items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
 
-    private @Nullable ResourceKey<Recipe<?>> selectedRecipe;
+    private @Nullable StationJob selectedJob;
     private int progress;
     private int duration;
 
@@ -108,31 +109,28 @@ public abstract class WorkstationBlockEntity extends BaseContainerBlockEntity im
 
         this.beforeCraftTick();
 
-        SingleItemRecipe recipe = this.resolveSelected(world);
-        ItemStack input = this.items.get(INPUT_SLOT);
-        if (recipe == null || input.isEmpty() || !recipe.matches(new SingleRecipeInput(input), world)) {
+        Work work = this.resolve(world, this.items.get(INPUT_SLOT));
+        if (work == null) {
             this.stall();
             return;
         }
 
-        int time = durationOf(recipe);
-        this.duration = time;
+        this.duration = work.time();
 
-        ItemStack result = recipe.assemble(new SingleRecipeInput(input));
-        if (!this.canAccept(result)) {
+        if (!this.canAccept(work.result())) {
             // Output full. Hold the progress made so far rather than throwing it away.
             return;
         }
 
-        if (time <= 0) {
-            this.craftInstantly(world, recipe);
+        if (work.time() <= 0) {
+            this.craftInstantly(world);
             return;
         }
 
         this.progress++;
-        if (this.progress >= time) {
+        if (this.progress >= work.time()) {
             this.progress = 0;
-            this.craftOnce(result);
+            this.craftOnce(work.result());
             this.setChanged();
         }
     }
@@ -141,15 +139,67 @@ public abstract class WorkstationBlockEntity extends BaseContainerBlockEntity im
     protected void beforeCraftTick() {
     }
 
+    /** What the current job makes from the current input, and how long it takes. */
+    private record Work(ItemStack result, int time) {
+    }
+
     /**
-     * How long a craft takes. A station's own recipes say; the stonecutting recipes behind the
-     * picker's family shapes do not, and are instant.
+     * What the block can make right now, or null if it cannot: nothing picked, an empty or wrong
+     * input, or a job that no longer exists.
+     */
+    private @Nullable Work resolve(Level world, ItemStack input) {
+        if (this.selectedJob == null || input.isEmpty()) {
+            return null;
+        }
+
+        if (this.selectedJob instanceof StationJob.OfRecipe job) {
+            SingleItemRecipe recipe = resolveRecipe(world, job);
+            if (recipe == null) {
+                return null;
+            }
+            SingleRecipeInput probe = new SingleRecipeInput(input);
+            if (!recipe.matches(probe, world)) {
+                return null;
+            }
+            return new Work(recipe.assemble(probe), durationOf(recipe));
+        }
+
+        if (this.selectedJob instanceof StationJob.OfShape job) {
+            Item shape = job.item();
+            // Re-checked against the input every tick rather than trusted from when it was picked:
+            // swapping the input for something of another family must not keep making the old shape.
+            if (shape == null || !StationFamilies.isShapeOf(input, shape)) {
+                return null;
+            }
+            return new Work(new ItemStack(shape, StationFamilies.yieldOf(shape)), 0);
+        }
+
+        return null;
+    }
+
+    /**
+     * The recipe behind a recipe job, if it is still one this block can work.
+     *
+     * <p>Station recipes are all single-item recipes, which is all this needs them to be. One that
+     * has since been removed from the datapack simply resolves to nothing.</p>
+     */
+    private static @Nullable SingleItemRecipe resolveRecipe(Level world, StationJob.OfRecipe job) {
+        if (!(world.recipeAccess() instanceof RecipeManager recipes)) {
+            return null;
+        }
+        RecipeHolder<?> holder = recipes.byKey(job.recipe()).orElse(null);
+        return holder != null && holder.value() instanceof SingleItemRecipe recipe ? recipe : null;
+    }
+
+    /**
+     * How long a craft takes. A station's own recipes say; the family shapes behind the picker's
+     * toggle do not, and are instant - reshaping something is not making it.
      */
     protected static int durationOf(SingleItemRecipe recipe) {
         return recipe instanceof TimedStationRecipe timed ? timed.time() : 0;
     }
 
-    /** Nothing to work on: forget any part-done craft, but keep the recipe in case the input returns. */
+    /** Nothing to work on: forget any part-done craft, but keep the job in case the input returns. */
     private void stall() {
         this.duration = 0;
         if (this.progress != 0) {
@@ -158,18 +208,14 @@ public abstract class WorkstationBlockEntity extends BaseContainerBlockEntity im
         }
     }
 
-    private void craftInstantly(Level world, SingleItemRecipe recipe) {
+    private void craftInstantly(Level world) {
         int crafted = 0;
         while (crafted < INSTANT_CRAFT_LIMIT) {
-            ItemStack input = this.items.get(INPUT_SLOT);
-            if (input.isEmpty() || !recipe.matches(new SingleRecipeInput(input), world)) {
+            Work work = this.resolve(world, this.items.get(INPUT_SLOT));
+            if (work == null || !this.canAccept(work.result())) {
                 break;
             }
-            ItemStack result = recipe.assemble(new SingleRecipeInput(input));
-            if (!this.canAccept(result)) {
-                break;
-            }
-            this.craftOnce(result);
+            this.craftOnce(work.result());
             crafted++;
         }
         if (crafted > 0) {
@@ -208,32 +254,17 @@ public abstract class WorkstationBlockEntity extends BaseContainerBlockEntity im
         return output.getCount() + result.getCount() <= limit;
     }
 
-    /**
-     * The recipe this block is working on, if it is still one it can work.
-     *
-     * <p>Both a station's own recipes and the stonecutting recipes behind the picker's family shapes
-     * are single-item recipes, which is all this needs them to be. A recipe that has since been
-     * removed from the datapack simply resolves to nothing.</p>
-     */
-    private @Nullable SingleItemRecipe resolveSelected(Level world) {
-        if (this.selectedRecipe == null || !(world.recipeAccess() instanceof RecipeManager recipes)) {
-            return null;
-        }
-        RecipeHolder<?> holder = recipes.byKey(this.selectedRecipe).orElse(null);
-        return holder != null && holder.value() instanceof SingleItemRecipe recipe ? recipe : null;
-    }
-
     /** What this is working on, or null if nothing has been picked. */
-    public @Nullable ResourceKey<Recipe<?>> getSelectedRecipe() {
-        return this.selectedRecipe;
+    public @Nullable StationJob getSelectedJob() {
+        return this.selectedJob;
     }
 
-    /** Points it at a recipe, starting its progress over. */
-    public void setSelectedRecipe(@Nullable ResourceKey<Recipe<?>> recipe) {
-        if (Objects.equals(this.selectedRecipe, recipe)) {
+    /** Points it at a job, starting its progress over. */
+    public void setSelectedJob(@Nullable StationJob job) {
+        if (Objects.equals(this.selectedJob, job)) {
             return;
         }
-        this.selectedRecipe = recipe;
+        this.selectedJob = job;
         this.progress = 0;
         this.duration = 0;
         this.setChanged();
@@ -303,10 +334,7 @@ public abstract class WorkstationBlockEntity extends BaseContainerBlockEntity im
         ContainerHelper.loadAllItems(input, this.items);
         this.progress = input.getIntOr("progress", 0);
         this.duration = input.getIntOr("duration", 0);
-        this.selectedRecipe = input.getString("recipe")
-                .map(Identifier::tryParse)
-                .map(id -> ResourceKey.create(Registries.RECIPE, id))
-                .orElse(null);
+        this.selectedJob = readJob(input);
 
         this.loadExtra(input, legacy);
     }
@@ -318,10 +346,25 @@ public abstract class WorkstationBlockEntity extends BaseContainerBlockEntity im
         ContainerHelper.saveAllItems(output, this.items);
         output.putInt("progress", this.progress);
         output.putInt("duration", this.duration);
-        if (this.selectedRecipe != null) {
-            output.putString("recipe", this.selectedRecipe.identifier().toString());
+        if (this.selectedJob instanceof StationJob.OfRecipe job) {
+            output.putString("recipe", job.recipe().identifier().toString());
+        } else if (this.selectedJob instanceof StationJob.OfShape job) {
+            output.putString("shape", job.shape().toString());
         }
         this.saveExtra(output);
+    }
+
+    /**
+     * The job a saved block was working on. Blocks saved before the shape toggle stopped going
+     * through recipes only ever have a "recipe", so they load unchanged.
+     */
+    private static @Nullable StationJob readJob(ValueInput input) {
+        Identifier recipe = input.getString("recipe").map(Identifier::tryParse).orElse(null);
+        if (recipe != null) {
+            return StationJob.of(ResourceKey.create(Registries.RECIPE, recipe));
+        }
+        Identifier shape = input.getString("shape").map(Identifier::tryParse).orElse(null);
+        return shape == null ? null : new StationJob.OfShape(shape);
     }
 
     /**

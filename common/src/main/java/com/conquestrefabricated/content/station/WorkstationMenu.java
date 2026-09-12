@@ -11,10 +11,8 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -186,8 +184,8 @@ public abstract class WorkstationMenu<R extends TimedStationRecipe> extends Stat
         if (index < 0 || index >= options.size() || !(this.station instanceof WorkstationBlockEntity blockEntity)) {
             return;
         }
-        ResourceKey<Recipe<?>> picked = options.get(index).used().id();
-        blockEntity.setSelectedRecipe(picked.equals(blockEntity.getSelectedRecipe()) ? null : picked);
+        StationJob picked = options.get(index).job();
+        blockEntity.setSelectedJob(picked.equals(blockEntity.getSelectedJob()) ? null : picked);
     }
 
     /** Server side: whether the block entity is working on the option the picker has highlighted. */
@@ -195,13 +193,13 @@ public abstract class WorkstationMenu<R extends TimedStationRecipe> extends Stat
         if (!(this.station instanceof WorkstationBlockEntity blockEntity)) {
             return false;
         }
-        ResourceKey<Recipe<?>> running = blockEntity.getSelectedRecipe();
+        StationJob running = blockEntity.getSelectedJob();
         if (running == null) {
             return false;
         }
         List<Option> options = this.options();
         int index = this.getSelectedRecipeIndex();
-        return index >= 0 && index < options.size() && options.get(index).used().id().equals(running);
+        return index >= 0 && index < options.size() && options.get(index).job().equals(running);
     }
 
     /** Reopening one should show what it is part way through, not an empty picker. */
@@ -210,12 +208,12 @@ public abstract class WorkstationMenu<R extends TimedStationRecipe> extends Stat
         if (!(this.station instanceof WorkstationBlockEntity blockEntity)) {
             return -1;
         }
-        ResourceKey<Recipe<?>> selected = blockEntity.getSelectedRecipe();
+        StationJob selected = blockEntity.getSelectedJob();
         if (selected == null) {
             return -1;
         }
         for (int index = 0; index < options.size(); index++) {
-            if (options.get(index).used().id().equals(selected)) {
+            if (options.get(index).job().equals(selected)) {
                 return index;
             }
         }

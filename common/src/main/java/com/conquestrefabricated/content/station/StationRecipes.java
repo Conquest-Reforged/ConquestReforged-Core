@@ -6,8 +6,6 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.SingleItemRecipe;
-import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
@@ -119,64 +117,5 @@ public final class StationRecipes {
             }
         }
         return false;
-    }
-
-    /**
-     * One stonecutting step away from a station's own output: which of the parents a recipe accepts,
-     * and the recipe that cuts it.
-     */
-    public record Cut(int parentIndex, RecipeHolder<?> holder, SingleItemRecipe recipe) {
-    }
-
-    /**
-     * Every stonecutting recipe that accepts one of {@code parents}.
-     *
-     * <p>This is how a station reaches a whole block family without a recipe file per shape. Core
-     * already generates stonecutting recipes from each family's parent to its slabs, stairs and
-     * walls, so a station that can make the parent can offer everything cut from it by walking one
-     * step further along the same graph. Datapacks that add or remove those cuts are picked up for
-     * free, and vanilla families work without any Conquest data at all.</p>
-     */
-    public static List<Cut> cutsFrom(Level level, List<ItemStack> parents) {
-        if (parents.isEmpty() || !(level.recipeAccess() instanceof RecipeManager recipes)) {
-            return List.of();
-        }
-        return cutsFrom(recipes.getRecipes(), parents, level);
-    }
-
-    /**
-     * The world-free half of {@link #cutsFrom(Level, List)}, so the expansion can be exercised
-     * against a hand-built recipe list.
-     *
-     * <p>Walked in a single pass rather than one pass per parent, since a station with a dozen
-     * options would otherwise re-scan every recipe in the game a dozen times.</p>
-     *
-     * @param level only handed to {@code matches}, which single-item recipes ignore
-     */
-    public static List<Cut> cutsFrom(Collection<RecipeHolder<?>> recipes, List<ItemStack> parents, Level level) {
-        if (parents.isEmpty()) {
-            return List.of();
-        }
-
-        List<SingleRecipeInput> inputs = new ArrayList<>(parents.size());
-        for (ItemStack parent : parents) {
-            inputs.add(new SingleRecipeInput(parent));
-        }
-
-        List<Cut> cuts = new ArrayList<>();
-        for (RecipeHolder<?> holder : recipes) {
-            // Anything registered as stonecutting counts, but only single-item recipes can be read
-            // back the way this needs - which every stonecutting recipe in practice is.
-            if (holder.value().getType() != RecipeType.STONECUTTING
-                    || !(holder.value() instanceof SingleItemRecipe cut)) {
-                continue;
-            }
-            for (int i = 0; i < inputs.size(); i++) {
-                if (cut.matches(inputs.get(i), level)) {
-                    cuts.add(new Cut(i, holder, cut));
-                }
-            }
-        }
-        return cuts;
     }
 }
