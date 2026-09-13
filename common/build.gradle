@@ -11,6 +11,7 @@ repositories {
     maven {
         url = "https://api.modrinth.com/maven"
     }
+    maven { url = "https://maven.shedaniel.me/" }
     exclusiveContent {
         forRepository {
             maven {
@@ -35,6 +36,10 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     api "dev.architectury:architectury:${rootProject.architectury_version}"
     compileOnly "com.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}"
+
+    // Recipe viewer support. Compile-only everywhere: the plugin classes are only ever loaded when
+    // REI is actually present, so Conquest runs the same with or without it.
+    compileOnly "me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}"
 }
 
 loom {

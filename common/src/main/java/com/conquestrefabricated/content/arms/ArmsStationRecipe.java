@@ -1,5 +1,9 @@
 package com.conquestrefabricated.content.arms;
 
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.Items;
+import com.conquestrefabricated.content.station.StationRecipeDisplay;
+import com.conquestrefabricated.content.station.Stations;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -137,13 +141,16 @@ public class ArmsStationRecipe extends SingleItemRecipe {
 
     @Override
     public boolean isSpecial() {
-        // Kept out of the recipe book: the arms station has its own recipe picker.
-        return true;
+        // Not special, though nothing crafts these at a bench. A special recipe is skipped by
+        // ServerRecipeBook.addRecipes, which is the only thing that sends a recipe's display to the
+        // client - so marking these special made them invisible to every recipe viewer. They are
+        // kept out of the recipe book by their category instead, see Stations.
+        return false;
     }
 
     @Override
     public RecipeBookCategory recipeBookCategory() {
-        return RecipeBookCategories.STONECUTTER;
+        return Stations.RECIPE_BOOK_CATEGORY;
     }
 
     @Override
@@ -253,5 +260,16 @@ public class ArmsStationRecipe extends SingleItemRecipe {
         if (value != null) {
             to.set(type, value);
         }
+    }
+
+    /**
+     * What a recipe viewer and the recipe book are shown. Modded recipes never cross to the client,
+     * so this is the only description of it that gets there.
+     *
+     * @see com.conquestrefabricated.content.station.StationRecipeDisplay
+     */
+    @Override
+    public List<RecipeDisplay> display() {
+        return StationRecipeDisplay.of(this.input(), this.result(), Stations.ARMS);
     }
 }

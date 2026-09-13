@@ -28,6 +28,7 @@ public class RefabricatedMod {
         ConquestConfig.INSTANCE.getClass();
 
         modEventBus.addListener(this::registerPayloads);
+        com.conquestrefabricated.content.station.neoforge.StationInit.register();
         //modEventBus.register(ModGroupsEvent.class);
 
         NeoForge.EVENT_BUS.register(this);

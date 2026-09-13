@@ -34,6 +34,12 @@
     ],
     "modmenu": [
       "com.conquestrefabricated.ModMenuApiImpl"
+    ],
+    "rei_client": [
+      "com.conquestrefabricated.compat.rei.ConquestReiPlugin"
+    ],
+    "rei_common": [
+      "com.conquestrefabricated.compat.rei.ConquestReiCommonPlugin"
     ]
   },
   "mixins": [

@@ -1,5 +1,10 @@
 package com.conquestrefabricated.content.tools;
 
+import java.util.List;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.Items;
+import com.conquestrefabricated.content.station.StationRecipeDisplay;
+import com.conquestrefabricated.content.station.Stations;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -82,12 +87,28 @@ public class ToolCraftingRecipe extends SingleItemRecipe {
 
     @Override
     public boolean isSpecial() {
-        // Kept out of the recipe book: the tool's own picker is where these are found.
-        return true;
+        // Not special, though nothing crafts these at a bench. A special recipe is skipped by
+        // ServerRecipeBook.addRecipes, which is the only thing that sends a recipe's display to the
+        // client - so marking these special made them invisible to every recipe viewer. They are
+        // kept out of the recipe book by their category instead, see Stations.
+        return false;
     }
 
     @Override
     public RecipeBookCategory recipeBookCategory() {
-        return RecipeBookCategories.STONECUTTER;
+        return Stations.RECIPE_BOOK_CATEGORY;
+    }
+
+    /**
+     * What a recipe viewer and the recipe book are shown. Modded recipes never cross to the client,
+     * so this is the only description of it that gets there.
+     *
+     * @see com.conquestrefabricated.content.station.StationRecipeDisplay
+     */
+    @Override
+    public List<RecipeDisplay> display() {
+        return StationRecipeDisplay.of(this.input(), this.result(),
+                CraftingTools.get(this.tool).map(Stations::of).orElseGet(
+                        () -> new Stations.Station(this.tool, Items.STONECUTTER, true, false)));
     }
 }

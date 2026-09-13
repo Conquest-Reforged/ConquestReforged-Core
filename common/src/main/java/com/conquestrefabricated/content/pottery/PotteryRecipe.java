@@ -1,5 +1,10 @@
 package com.conquestrefabricated.content.pottery;
 
+import java.util.List;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.Items;
+import com.conquestrefabricated.content.station.StationRecipeDisplay;
+import com.conquestrefabricated.content.station.Stations;
 import com.conquestrefabricated.content.station.TimedStationRecipe;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -47,5 +52,16 @@ public class PotteryRecipe extends TimedStationRecipe {
     @Override
     public RecipeSerializer<PotteryRecipe> getSerializer() {
         return PotteryWheelStation.RECIPE_SERIALIZER;
+    }
+
+    /**
+     * What a recipe viewer and the recipe book are shown. Modded recipes never cross to the client,
+     * so this is the only description of it that gets there.
+     *
+     * @see com.conquestrefabricated.content.station.StationRecipeDisplay
+     */
+    @Override
+    public List<RecipeDisplay> display() {
+        return StationRecipeDisplay.of(this.input(), this.templateResult(), Stations.POTTERY_WHEEL);
     }
 }

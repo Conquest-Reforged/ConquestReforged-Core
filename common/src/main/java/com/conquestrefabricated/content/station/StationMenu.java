@@ -376,12 +376,19 @@ public abstract class StationMenu<R extends Recipe<I>, I extends RecipeInput> ex
      * Whether this station is willing to shape {@code input} at all.
      *
      * <p>Block families know nothing about which station is open, so without this a set of
-     * woodworking tools would happily shape granite. A station works a material it has a recipe for,
-     * plus anything named in its {@link #shapesTag()}; subclasses widen or narrow that where they
-     * should.</p>
+     * woodworking tools would happily shape granite. A station works a material it has a recipe for
+     * <i>or that it makes</i>, plus anything named in its {@link #shapesTag()}; subclasses widen or
+     * narrow that where they should.</p>
+     *
+     * <p>Making it count is the important half. Nearly every block a station produces is never an
+     * ingredient of anything, so on the ingredient test alone a block's shapes appeared only when it
+     * happened to belong to some tag another recipe consumed - bricks worked, marble did not, for no
+     * reason a player could see.</p>
      */
     protected boolean worksWith(ItemStack input) {
         return !StationRecipes.recipesFor(this.level, this.recipeType(), this::accepts, this.recipeInput()).isEmpty()
+                || StationRecipes.produces(this.level, this.recipeType(), this::accepts, input,
+                        this.emptyRecipeInput())
                 || this.isShapeWhitelisted(input);
     }
 

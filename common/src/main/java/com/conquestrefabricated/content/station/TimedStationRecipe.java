@@ -84,12 +84,15 @@ public abstract class TimedStationRecipe extends SingleItemRecipe {
 
     @Override
     public boolean isSpecial() {
-        // Kept out of the recipe book: the station's own picker is where these are found.
-        return true;
+        // Not special, though nothing crafts these at a bench. A special recipe is skipped by
+        // ServerRecipeBook.addRecipes, which is the only thing that sends a recipe's display to the
+        // client - so marking these special made them invisible to every recipe viewer. They are
+        // kept out of the recipe book by their category instead, see Stations.
+        return false;
     }
 
     @Override
     public RecipeBookCategory recipeBookCategory() {
-        return RecipeBookCategories.STONECUTTER;
+        return Stations.RECIPE_BOOK_CATEGORY;
     }
 }

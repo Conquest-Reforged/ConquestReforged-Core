@@ -83,6 +83,27 @@ public final class StationFamilies {
         return false;
     }
 
+    /**
+     * The parent of {@code member}'s family - what a station would shape to get it.
+     *
+     * <p>Empty when it has no family, or when it is itself the parent: a station makes those with a
+     * recipe rather than by shaping something else.</p>
+     */
+    public static ItemStack parentOf(ItemStack member) {
+        if (member.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+        Family<Block> family = familyOf(member);
+        if (family.isAbsent()) {
+            return ItemStack.EMPTY;
+        }
+        Block root = family.getRoot();
+        if (root == null || root.asItem() == member.getItem()) {
+            return ItemStack.EMPTY;
+        }
+        return new ItemStack(root);
+    }
+
     /** The family {@code stack} belongs to, or an absent one if it is not a block or has none. */
     private static Family<Block> familyOf(ItemStack stack) {
         if (!(stack.getItem() instanceof BlockItem blockItem)) {
