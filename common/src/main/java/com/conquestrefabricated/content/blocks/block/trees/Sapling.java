@@ -8,10 +8,10 @@ import com.conquestrefabricated.core.block.builder.Props;
 import com.conquestrefabricated.core.util.RenderLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
+import static com.conquestrefabricated.core.block.properties.ModBlockProperties.GROWTH_DISABLED;
 import static com.conquestrefabricated.core.block.properties.ModBlockProperties.TYPE_UPDOWN;
 
 @Render(RenderLayer.CUTOUT)
@@ -33,12 +34,27 @@ public class Sapling extends SaplingBlock {
 
     public Sapling(Props props) {
         super(props.get("tree", TreeGrower.class), props.toSettings());
-        this.registerDefaultState(this.stateDefinition.any().setValue(LAYERS, 8));
+        this.registerDefaultState(this.stateDefinition.any().setValue(LAYERS, 8).setValue(GROWTH_DISABLED, false));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(LAYERS, STAGE);
+        builder.add(LAYERS, STAGE, GROWTH_DISABLED);
+    }
+
+    // GROWTH_DISABLED is for preventing our saplings from growing in height or into fully-fledged trees
+    @Override
+    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (state.getValue(GROWTH_DISABLED)) {
+            return;
+        }
+        super.randomTick(state, level, pos, random);
+    }
+
+    //Disable bonemeal growth is we have GROWTH_DISABLED true
+    @Override
+    public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) {
+        return !state.getValue(GROWTH_DISABLED) && super.isValidBonemealTarget(level, pos, state);
     }
 
     @Override
