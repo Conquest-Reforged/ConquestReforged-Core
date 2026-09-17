@@ -55,6 +55,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.random.WeightedList;
+import net.minecraft.world.level.DryFoliageColor;
 import net.minecraft.world.level.FoliageColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RotatedPillarBlock;
@@ -280,6 +281,8 @@ public class ModModelProvider extends FabricModelProvider {
                 } else {
                     if (blockData.getProps().getColorType() == ColorType.FOLIAGE) {
                         registerManualItemTinted(blockStateModelGenerator, block, ItemModelUtils.constantTint(-12012264));
+                    } else if (blockData.getProps().getColorType() == ColorType.DRY_FOLIAGE) {
+                        registerManualItemTinted(blockStateModelGenerator, block, ItemModelUtils.constantTint(DryFoliageColor.FOLIAGE_DRY_DEFAULT));
                     } else if (blockData.getProps().getColorType() == ColorType.GRASS) {
                         registerManualItemTinted(blockStateModelGenerator, block, new GrassColorSource());
                     } else {
@@ -289,6 +292,8 @@ public class ModModelProvider extends FabricModelProvider {
             } else {
                 if (blockData.getProps().getColorType() == ColorType.FOLIAGE) {
                     registerManualItemTinted(blockStateModelGenerator, block, ItemModelUtils.constantTint(-12012264));
+                } else if (blockData.getProps().getColorType() == ColorType.DRY_FOLIAGE) {
+                    registerManualItemTinted(blockStateModelGenerator, block, ItemModelUtils.constantTint(DryFoliageColor.FOLIAGE_DRY_DEFAULT));
                 } else if (blockData.getProps().getColorType() == ColorType.GRASS) {
                     registerManualItemTinted(blockStateModelGenerator, block, new GrassColorSource());
                 } else {
@@ -301,6 +306,8 @@ public class ModModelProvider extends FabricModelProvider {
     private void registerTintedOrPlain(BlockModelGenerators generator, Block block, Identifier modelId, BlockData blockData) {
         if (blockData.getProps().getColorType() == ColorType.FOLIAGE) {
             generator.registerSimpleTintedItemModel(block, modelId, ItemModelUtils.constantTint(-12012264));
+        } else if (blockData.getProps().getColorType() == ColorType.DRY_FOLIAGE) {
+            generator.registerSimpleTintedItemModel(block, modelId, ItemModelUtils.constantTint(DryFoliageColor.FOLIAGE_DRY_DEFAULT));
         } else if (blockData.getProps().getColorType() == ColorType.GRASS) {
             generator.registerSimpleTintedItemModel(block, modelId, new GrassColorSource());
         } else {

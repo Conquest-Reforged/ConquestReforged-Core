@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.DryFoliageColor;
 import net.minecraft.world.level.FoliageColor;
 import net.minecraft.world.level.GrassColor;
 import net.minecraft.world.level.block.state.BlockState;
@@ -38,6 +39,18 @@ public class BlockColors {
         @Override
         public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
             return BiomeColors.getAverageFoliageColor(level, pos);
+        }
+    };
+
+    public static final BlockTintSource DRY_FOLIAGE = new BlockTintSource() {
+        @Override
+        public int color(BlockState state) {
+            return defaultDryFoliageColor();
+        }
+
+        @Override
+        public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+            return BiomeColors.getAverageDryFoliageColor(level, pos);
         }
     };
 
@@ -74,6 +87,10 @@ public class BlockColors {
 
     private static int defaultFoliageColor() {
         return FoliageColor.FOLIAGE_DEFAULT;
+    }
+
+    private static int defaultDryFoliageColor() {
+        return DryFoliageColor.FOLIAGE_DRY_DEFAULT;
     }
 
     private static int defaultWaterColor() {

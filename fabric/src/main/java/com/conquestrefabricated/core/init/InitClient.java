@@ -24,6 +24,8 @@ public class InitClient {
                 BlockColorRegistry.register(List.of(BlockColors.GRASS), data.getBlock());
             } else if (data.getProps().getColorType() == ColorType.FOLIAGE) {
                 BlockColorRegistry.register(List.of(BlockColors.FOLIAGE), data.getBlock());
+            } else if (data.getProps().getColorType() == ColorType.DRY_FOLIAGE) {
+                BlockColorRegistry.register(List.of(BlockColors.DRY_FOLIAGE), data.getBlock());
             } else if (data.getProps().getColorType() == ColorType.WATER) {
                 BlockColorRegistry.register(List.of(BlockColors.WATER), data.getBlock());
             }

@@ -17,5 +17,6 @@ minecraft:barrier
 conquest:invisible_light
 conquest:invisible_block_stairs
 conquest:invisible_block_pane
+conquest:leaf_support
 minecraft:debug_stick
 conquest:mallet_item

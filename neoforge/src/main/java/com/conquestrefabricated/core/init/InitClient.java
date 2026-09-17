@@ -55,6 +55,8 @@ public class InitClient {
                 event.register(List.of(BlockColors.GRASS), data.getBlock());
             } else if (data.getProps().getColorType() == ColorType.FOLIAGE) {
                 event.register(List.of(BlockColors.FOLIAGE), data.getBlock());
+            } else if (data.getProps().getColorType() == ColorType.DRY_FOLIAGE) {
+                event.register(List.of(BlockColors.DRY_FOLIAGE), data.getBlock());
             } else if (data.getProps().getColorType() == ColorType.WATER) {
                 event.register(List.of(BlockColors.WATER), data.getBlock());
             }
