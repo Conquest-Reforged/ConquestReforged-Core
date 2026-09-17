@@ -44,7 +44,13 @@ public class Layer extends WaterloggedShape {
     public static final VoxelShape SPECIAL_FULL_SHAPE_COLLISION = Block.box(0.0D, 2.0D, 0.0D, 16.0D, 16.0D, 16.0D);
 
     public Layer(Props props) {
-        super(props.toSettings().dynamicShape());
+        // forceSolidOn mirrors vanilla's SnowLayerBlock. dynamicShape leaves the state with no
+        // shape cache, and BlockStateBase#calculateSolid bails out to false whenever that cache is
+        // missing, so without this every layer reports blocksMotion() == false and is invisible to
+        // the MOTION_BLOCKING heightmaps. NaturalSpawner#getTopNonCollidingPos reads
+        // MOTION_BLOCKING_NO_LEAVES to find the surface, so the chunk-generation herd pass could not
+        // see layered ground at all.
+        super(props.toSettings().forceSolidOn().dynamicShape());
         this.registerDefaultState((this.stateDefinition.any()).setValue(LAYERS, 1).setValue(WATERLOGGED, false));
     }
 

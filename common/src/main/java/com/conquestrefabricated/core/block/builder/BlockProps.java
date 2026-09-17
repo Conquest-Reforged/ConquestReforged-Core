@@ -5,9 +5,14 @@ import com.conquestrefabricated.content.blocks.CustomOffsetType;
 import com.conquestrefabricated.core.block.factory.InitializationException;
 import java.util.function.Consumer;
 import java.util.function.ToIntFunction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -167,7 +172,32 @@ public abstract class BlockProps<T extends BlockProps<T>> {
         if (hardness != null && resistance != null) {
             builder.strength(hardness, resistance);
         }
+        builder.isValidSpawn(this::isValidGroundSpawn);
         return builder;
+    }
+
+    /**
+     * Spawn predicate for every block built through this builder.
+     *
+     * <p>Vanilla's default demands {@code isFaceSturdy(UP)}, which no partial shape can satisfy: a
+     * layer stops at {@code layers * 2/16} and a bottom slab at 8/16, so neither fills the y=1 plane
+     * that {@code Block#isFaceFull} tests. {@code SpawnPlacementTypes.ON_GROUND#isSpawnPositionOk}
+     * consults this predicate on {@code pos.below()} <em>before</em> {@code NaturalSpawner} reaches
+     * {@code checkSpawnRules}, so on layered terrain {@code Animal#checkAnimalSpawnRules} never ran
+     * and {@code #animals_spawnable_on} had no effect. Blocks carrying that tag are ground the pack
+     * means to be spawned on, so they drop the sturdy-face requirement.
+     *
+     * <p>The root block keeps a veto, so families copied from glass, ice or leaves stay exactly as
+     * restrictive as the vanilla block they were built from.
+     */
+    private boolean isValidGroundSpawn(BlockState state, BlockGetter level, BlockPos pos, EntityType<?> type) {
+        if (state.getLightEmission() >= 14) {
+            return false;
+        }
+        if (block != null && !block.defaultBlockState().isValidSpawn(level, pos, type)) {
+            return false;
+        }
+        return state.is(BlockTags.ANIMALS_SPAWNABLE_ON) || state.isFaceSturdy(level, pos, Direction.UP);
     }
 
 
