@@ -30,6 +30,9 @@ public class BlockRegistrarEvent {
             blockEntityTypeRegisterHelper.register(Identifier.fromNamespaceAndPath("conquest", "animal"), TileEntityTypes.ANIMAL);
             blockEntityTypeRegisterHelper.register(Identifier.fromNamespaceAndPath("conquest", "seat"), TileEntityTypes.SEAT);
             blockEntityTypeRegisterHelper.register(Identifier.fromNamespaceAndPath("conquest", "kiln"), TileEntityTypes.KILN);
+            blockEntityTypeRegisterHelper.register(Identifier.fromNamespaceAndPath("conquest", "pottery_wheel"), TileEntityTypes.POTTERY_WHEEL);
+            blockEntityTypeRegisterHelper.register(Identifier.fromNamespaceAndPath("conquest", "soaking_barrel"), TileEntityTypes.SOAKING_BARREL);
+            blockEntityTypeRegisterHelper.register(Identifier.fromNamespaceAndPath("conquest", "tanning_frame"), TileEntityTypes.TANNING_FRAME);
         });
     }
 

@@ -486,6 +486,98 @@ it painted itself**:
 That is `PaintersKitMenu.worksWith(..)` narrowed to "did this kit produce it", where the crafting
 tools also accept anything they have a recipe for.
 
+## Soaking barrels and tanning frames
+
+Two blocks for slow, hands-on crafting. Neither has a menu or a picker: you use an item on the block,
+and how far along it is shows on the action bar, in a comparator, and - for a barrel - in the bubbles
+rising from the water. Like the loom, the work carries on with nobody watching and survives a reload.
+Both are **data driven**: Core supplies the mechanism and never names an item, so the module that owns
+the items also owns the recipes.
+
+### The soaking barrel
+
+`SoakingBarrel` is a `Cauldron` - it fills and drains with buckets and bottles exactly as one does, and
+takes the same `hitBox` property and `level=0..3` blockstate - that can also have things left to soak
+in it. Register a block with it and bind its block entity:
+
+```java
+VanillaProps.planks()
+        .name("empty_barrel")
+        .manual()
+        .with("hitBox", BlockVoxelShapes.simpleCauldronShape)
+        .register(TypeList.of(SoakingBarrel.class));
+
+TileEntityTypes.add(TileEntityTypes.SOAKING_BARREL, "conquest:empty_barrel");
+```
+
+A `conquest:soaking` recipe says what can be soaked, optionally in what, how long, and what it becomes:
+
+```json
+{
+  "type": "conquest:soaking",
+  "ingredient": "conquest:raw_hide",
+  "additive": "conquest:slaked_lime",
+  "result": { "id": "conquest:limed_hide", "count": 1 },
+  "time": 12000
+}
+```
+
+- The barrel needs **water** (`level > 0`) and holds **one kind of thing at a time**, up to 16 of it, worked
+  as a single batch: the result count is multiplied by the batch size. Progress only advances while there
+  is water in it.
+- `additive` is optional. Use it on the barrel first and it is dissolved in the water; the next
+  ingredient with a recipe naming it is soaked in it, using the additive up. A recipe with no
+  `additive` soaks in plain water and leaves any dissolved additive alone. Draining the barrel washes it away.
+- Right-click with an ingredient to start it. An empty hand shows the progress, or collects the result
+  once it is done. **Sneaking with an empty hand** calls a soak off and hands the batch - and the
+  additive it used - back, or takes an undissolved additive out again.
+- `time` is in ticks and defaults to 100. A comparator reads the water (0-3) when idle, 4-13 while
+  soaking, and 15 when there is something to collect.
+
+### The tanning frame
+
+`TanningFrame` holds one thing stretched on it, and its `stretched` property says whether there is one,
+so the model can show it. Blockstate properties are `facing` and `stretched`.
+
+```java
+VanillaProps.wood()
+        .name("tanning_frame")
+        .manual()
+        .register(TypeList.of(TanningFrame.class));
+
+TileEntityTypes.add(TileEntityTypes.TANNING_FRAME, "conquest:tanning_frame");
+```
+
+Whatever is on it is worked by `conquest:stretching` recipes, which come in two kinds, told apart by
+whether they name a `tool`:
+
+```json
+{ "type": "conquest:stretching", "ingredient": "conquest:limed_hide",
+  "tool": "#conquest:hide_scrapers", "result": { "id": "conquest:scraped_hide" } }
+
+{ "type": "conquest:stretching", "ingredient": "conquest:scraped_hide",
+  "result": { "id": "conquest:parchment" }, "time": 12000 }
+```
+
+- A **manual** step (with a `tool`) is applied by using the tool on the frame. It is instant and the tool
+  takes one point of wear. `time` is ignored.
+- A **timed** step (no `tool`) starts by itself the moment its ingredient is on the frame.
+- Steps chain: what one makes is what the next one looks for. After a timed step the frame either
+  carries on, waits for a tool, or - with nothing more to do - chimes to say it is finished.
+- Use an ingredient on an empty frame to mount it; an empty hand shows progress or collects the
+  finished piece; **sneaking with an empty hand** takes whatever is on it back off, whatever its state.
+  That last one is how one skin is kept for something else instead of being left to finish.
+- A comparator reads 0 when empty, 1 waiting for a tool, 2-13 while a step runs, and 15 when done.
+
+### Both
+
+Both recipe types show up in recipe viewers under the block's own name (Core's `Stations.SOAKING` and
+`Stations.STRETCHING` are named after `conquest:empty_barrel` and `conquest:tanning_frame` where those
+exist). A recipe names an item from another module the same way any other recipe does - by id - so it
+fails to load, quietly, if that module is not installed.
+
+Core ships `message.conquest.soaking.*` and `message.conquest.stretching.*` for the action-bar text.
+
 ## The lime cycle
 
 Three items in Core, and one tag that decides what feeds them.

@@ -4,6 +4,8 @@ import com.conquestrefabricated.content.blocks.tileentity.campfire.ModdedCampfir
 import com.conquestrefabricated.content.blocks.tileentity.enchantment.ModdedEnchantingTableTileEntity;
 import com.conquestrefabricated.content.blocks.tileentity.furnace.ModdedFurnaceTileEntity;
 import com.conquestrefabricated.content.blocks.tileentity.loom.LoomBlockEntity;
+import com.conquestrefabricated.content.leatherworking.SoakingBarrelBlockEntity;
+import com.conquestrefabricated.content.leatherworking.TanningFrameBlockEntity;
 import com.conquestrefabricated.content.pottery.PotteryWheelBlockEntity;
 import com.conquestrefabricated.content.blocks.tileentity.seat.SeatTileEntity;
 import dev.architectury.injectables.annotations.ExpectPlatform;
@@ -31,6 +33,16 @@ public class TileEntityTypes {
     public static final BlockEntityType<PotteryWheelBlockEntity> POTTERY_WHEEL = create(
             PotteryWheelBlockEntity::new,
             "conquest:pottery_wheel"
+    );
+
+    public static final BlockEntityType<SoakingBarrelBlockEntity> SOAKING_BARREL = create(
+            SoakingBarrelBlockEntity::new,
+            "conquest:soaking_barrel"
+    );
+
+    public static final BlockEntityType<TanningFrameBlockEntity> TANNING_FRAME = create(
+            TanningFrameBlockEntity::new,
+            "conquest:tanning_frame"
     );
 
     public static final BlockEntityType<ModdedEnchantingTableTileEntity> ENCHANTING_TABLE = create(

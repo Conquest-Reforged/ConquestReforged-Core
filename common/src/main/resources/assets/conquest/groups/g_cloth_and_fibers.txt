@@ -116,6 +116,7 @@ conquest:hanging_bear_skin
 conquest:bear_hide
 conquest:tanning_rack
 conquest:old_tanning_rack
+conquest:tanning_frame
 conquest:bear_skin_rug
 conquest:sheep_skin_rug
 conquest:wolf_pelt_rug

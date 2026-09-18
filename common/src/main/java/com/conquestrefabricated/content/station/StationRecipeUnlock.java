@@ -1,6 +1,7 @@
 package com.conquestrefabricated.content.station;
 
 import com.conquestrefabricated.content.arms.ArmsStation;
+import com.conquestrefabricated.content.leatherworking.LeatherworkingStations;
 import com.conquestrefabricated.content.loom.LoomStation;
 import com.conquestrefabricated.content.painting.PaintersKit;
 import com.conquestrefabricated.content.pottery.PotteryWheelStation;
@@ -43,6 +44,8 @@ public final class StationRecipeUnlock {
                 CraftingTools.RECIPE_TYPE,
                 LoomStation.RECIPE_TYPE,
                 PotteryWheelStation.RECIPE_TYPE,
+                LeatherworkingStations.SOAKING_TYPE,
+                LeatherworkingStations.STRETCHING_TYPE,
                 PaintersKit.RECIPE_TYPE,
                 ArmsStation.RECIPE_TYPE);
     }

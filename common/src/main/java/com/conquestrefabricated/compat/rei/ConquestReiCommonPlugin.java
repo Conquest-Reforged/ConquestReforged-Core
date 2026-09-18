@@ -2,6 +2,9 @@ package com.conquestrefabricated.compat.rei;
 
 import com.conquestrefabricated.content.arms.ArmsStation;
 import com.conquestrefabricated.content.arms.ArmsStationRecipe;
+import com.conquestrefabricated.content.leatherworking.LeatherworkingStations;
+import com.conquestrefabricated.content.leatherworking.SoakingRecipe;
+import com.conquestrefabricated.content.leatherworking.StretchingRecipe;
 import com.conquestrefabricated.content.loom.LoomStation;
 import com.conquestrefabricated.content.loom.WeavingRecipe;
 import com.conquestrefabricated.content.painting.PaintersKit;
@@ -53,6 +56,18 @@ public class ConquestReiCommonPlugin implements REICommonPlugin {
                 .filterType(PotteryWheelStation.RECIPE_TYPE)
                 .fill(holder -> StationDisplay.of(holder, holder.value().input(),
                         holder.value().assemble(emptyInput()), Stations.POTTERY_WHEEL));
+
+        // Soaking and stretching take a second thing beside the ingredient - an additive, a tool - when
+        // the recipe names one, so they list however many it has.
+        registry.<SoakingRecipe, StationDisplay>beginRecipeFiller(SoakingRecipe.class)
+                .filterType(LeatherworkingStations.SOAKING_TYPE)
+                .fill(holder -> StationDisplay.of(holder, holder.value().ingredients(),
+                        holder.value().assemble(emptyInput()), Stations.SOAKING));
+
+        registry.<StretchingRecipe, StationDisplay>beginRecipeFiller(StretchingRecipe.class)
+                .filterType(LeatherworkingStations.STRETCHING_TYPE)
+                .fill(holder -> StationDisplay.of(holder, holder.value().ingredients(),
+                        holder.value().assemble(emptyInput()), Stations.STRETCHING));
 
         registry.<ArmsStationRecipe, StationDisplay>beginRecipeFiller(ArmsStationRecipe.class)
                 .filterType(ArmsStation.RECIPE_TYPE)

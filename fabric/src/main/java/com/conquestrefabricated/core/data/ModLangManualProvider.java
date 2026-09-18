@@ -186,6 +186,16 @@ public class ModLangManualProvider extends FabricLanguageProvider {
         translationBuilder.add("container.conquest.pottery_wheel.no_selection", "Choose something to shape");
         translationBuilder.add("container.conquest.loom.no_selection", "Choose something to weave");
 
+        /* === Soaking barrel and tanning frame === */
+        translationBuilder.add("message.conquest.soaking.progress", "Soaking: %s%%");
+        translationBuilder.add("message.conquest.soaking.busy", "The barrel is already in use");
+        translationBuilder.add("message.conquest.soaking.needs_water", "The barrel needs water first");
+        translationBuilder.add("message.conquest.soaking.needs_additive", "It needs something added to the water first");
+        translationBuilder.add("message.conquest.soaking.treated", "The water is treated with %s");
+        translationBuilder.add("message.conquest.soaking.already_treated", "The water is already treated with %s");
+        translationBuilder.add("message.conquest.stretching.progress", "Working: %s%%");
+        translationBuilder.add("message.conquest.stretching.needs_tool", "It needs a tool to work it");
+
         translationBuilder.add("item.conquest.mallet_item", "Mallet (Conquest Toggle Tool)");
         translationBuilder.add("tooltip.conquest.mallet_item", "§6Use this (right-click) on toggleable blocks to change their shape");
 

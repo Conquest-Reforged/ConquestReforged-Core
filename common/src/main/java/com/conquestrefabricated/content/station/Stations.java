@@ -6,6 +6,7 @@ import com.conquestrefabricated.content.painting.PaintersKit;
 import com.conquestrefabricated.content.pottery.PotteryWheelStation;
 import com.conquestrefabricated.content.tools.CraftingTool;
 import com.conquestrefabricated.content.tools.CraftingTools;
+import com.conquestrefabricated.core.Namespaces;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
@@ -73,6 +74,12 @@ public final class Stations {
     public static final Station PAINTERS_KIT = new Station(PaintersKit.ID, Items.BRUSH, true, true);
     /** No shapes: the arms station turns iron into a breastplate, and iron has no family. */
     public static final Station ARMS = new Station(ArmsStation.ID, Items.ANVIL, false, false);
+    /** A water barrel worked by soaking. Drawn as Medieval's barrel where that is installed. */
+    public static final Station SOAKING =
+            new Station(Namespaces.id("empty_barrel"), Items.BARREL, false, false);
+    /** A frame to stretch a skin on. Drawn as Medieval's tanning frame where that is installed. */
+    public static final Station STRETCHING =
+            new Station(Namespaces.id("tanning_frame"), Items.LEATHER, false, false);
 
     private Stations() {
     }
@@ -91,6 +98,8 @@ public final class Stations {
         stations.add(LOOM);
         stations.add(POTTERY_WHEEL);
         stations.add(PAINTERS_KIT);
+        stations.add(SOAKING);
+        stations.add(STRETCHING);
         stations.add(ARMS);
         return List.copyOf(stations);
     }
