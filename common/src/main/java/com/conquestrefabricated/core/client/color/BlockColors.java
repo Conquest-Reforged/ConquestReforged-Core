@@ -42,6 +42,18 @@ public class BlockColors {
         }
     };
 
+    public static final BlockTintSource BIRCH = new BlockTintSource() {
+        @Override
+        public int color(BlockState state) {
+            return defaultBirchColor();
+        }
+
+        @Override
+        public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+            return FoliageColor.FOLIAGE_BIRCH;
+        }
+    };
+
     public static final BlockTintSource DRY_FOLIAGE = new BlockTintSource() {
         @Override
         public int color(BlockState state) {
@@ -87,6 +99,10 @@ public class BlockColors {
 
     private static int defaultFoliageColor() {
         return FoliageColor.FOLIAGE_DEFAULT;
+    }
+
+    private static int defaultBirchColor() {
+        return FoliageColor.FOLIAGE_BIRCH;
     }
 
     private static int defaultDryFoliageColor() {

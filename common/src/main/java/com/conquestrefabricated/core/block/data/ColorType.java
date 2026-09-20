@@ -4,6 +4,7 @@ public enum ColorType {
     NONE,
     GRASS,
     FOLIAGE,
+    BIRCH,
     DRY_FOLIAGE,
     WATER,
 }
