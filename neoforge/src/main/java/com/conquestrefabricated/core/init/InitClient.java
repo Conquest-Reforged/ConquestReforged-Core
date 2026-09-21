@@ -2,6 +2,7 @@ package com.conquestrefabricated.core.init;
 
 import com.conquestrefabricated.api.painting.PaintingHolder;
 import com.conquestrefabricated.api.painting.art.Art;
+import com.conquestrefabricated.content.blocks.block.decor.SoakingBarrel;
 import com.conquestrefabricated.content.entities.painting.ModPainting;
 import com.conquestrefabricated.content.entities.painting.art.ArtType;
 import com.conquestrefabricated.content.entities.painting.art.ModArt;
@@ -59,6 +60,8 @@ public class InitClient {
                 event.register(List.of(BlockColors.DRY_FOLIAGE), data.getBlock());
             } else if (data.getProps().getColorType() == ColorType.WATER) {
                 event.register(List.of(BlockColors.WATER), data.getBlock());
+            } else if (data.getBlock() instanceof SoakingBarrel) {
+                event.register(List.of(BlockColors.SOAKING_WATER), data.getBlock());
             }
         }
     }

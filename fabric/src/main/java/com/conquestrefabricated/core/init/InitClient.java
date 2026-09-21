@@ -1,5 +1,6 @@
 package com.conquestrefabricated.core.init;
 
+import com.conquestrefabricated.content.blocks.block.decor.SoakingBarrel;
 import com.conquestrefabricated.core.block.data.BlockData;
 import com.conquestrefabricated.core.block.data.BlockDataRegistry;
 import com.conquestrefabricated.core.block.data.ColorType;
@@ -28,6 +29,8 @@ public class InitClient {
                 BlockColorRegistry.register(List.of(BlockColors.DRY_FOLIAGE), data.getBlock());
             } else if (data.getProps().getColorType() == ColorType.WATER) {
                 BlockColorRegistry.register(List.of(BlockColors.WATER), data.getBlock());
+            } else if (data.getBlock() instanceof SoakingBarrel) {
+                BlockColorRegistry.register(List.of(BlockColors.SOAKING_WATER), data.getBlock());
             }
         }
     }

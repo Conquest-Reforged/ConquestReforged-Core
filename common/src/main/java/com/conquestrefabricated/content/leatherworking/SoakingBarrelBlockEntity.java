@@ -4,7 +4,12 @@ import com.conquestrefabricated.content.blocks.tileentity.TileEntityTypes;
 import com.conquestrefabricated.content.blocks.util.CauldronBehavior;
 import com.conquestrefabricated.content.station.StationRecipes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -15,6 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
@@ -32,7 +38,8 @@ import java.util.List;
  * until something to soak in it turns up, and washed away if the barrel is drained.</p>
  *
  * <p>There is deliberately no menu. The player is told how it is going on the action bar, by
- * bubbles rising from the water, and by a comparator; nothing here is sent to the client.</p>
+ * bubbles rising from the water, by a comparator, and by the colour of the water itself - see
+ * {@link #waterColor()}. That colour is the only thing sent to the client.</p>
  *
  * @see SoakingRecipe
  */
@@ -43,6 +50,8 @@ public class SoakingBarrelBlockEntity extends BlockEntity {
 
     /** {@link net.minecraft.world.item.ItemStack} counts stop at 99 when saved, so a batch's yield must too. */
     private static final int MAX_SAVED_COUNT = 99;
+
+    private static final int NO_COLOR = SoakingRecipe.NO_COLOR;
 
     /** The batch soaking - or, once it is finished, what it made, waiting to be collected. */
     private ItemStack content = ItemStack.EMPTY;
@@ -57,8 +66,23 @@ public class SoakingBarrelBlockEntity extends BlockEntity {
     private int progress;
     private int duration;
 
+    /** The colour the dissolved {@link #additive} gives the water, as {@code 0xRRGGBB}. */
+    private int additiveColor = NO_COLOR;
+    /** The colour the current batch gives the water while it is in there. */
+    private int jobColor = NO_COLOR;
+    /**
+     * What the water is drawn as, or {@link SoakingRecipe#NO_COLOR} for plain water. Worked out on the
+     * server from the two above and sent to clients; a client only ever holds this one.
+     */
+    private int waterColor = NO_COLOR;
+
     public SoakingBarrelBlockEntity(BlockPos pos, BlockState state) {
         super(TileEntityTypes.SOAKING_BARREL, pos, state);
+    }
+
+    /** The colour to draw the water, as {@code 0xRRGGBB}, or {@link SoakingRecipe#NO_COLOR} for plain water. */
+    public int waterColor() {
+        return this.waterColor;
     }
 
     // ---------------------------------------------------------------------------------- working
@@ -72,7 +96,9 @@ public class SoakingBarrelBlockEntity extends BlockEntity {
             // Nothing to soak in, and nothing left to hold an additive.
             if (!this.additive.isEmpty()) {
                 this.additive = ItemStack.EMPTY;
+                this.additiveColor = NO_COLOR;
                 this.setChanged();
+                this.refreshColor();
             }
             return;
         }
@@ -162,7 +188,7 @@ public class SoakingBarrelBlockEntity extends BlockEntity {
         }
 
         if (isAdditive && this.additive.isEmpty()) {
-            this.dissolve(level, player, held);
+            this.dissolve(level, player, held, recipes);
             return InteractionResult.SUCCESS;
         }
         if (isAdditive) {
@@ -192,8 +218,10 @@ public class SoakingBarrelBlockEntity extends BlockEntity {
         if (!this.content.isEmpty()) {
             LeatherworkingUtil.give(player, this.content);
             this.content = ItemStack.EMPTY;
+            this.jobColor = NO_COLOR;
             level.playSound(null, this.worldPosition, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.6F, 1.0F);
             this.setChanged();
+            this.refreshColor();
             LeatherworkingUtil.notifyComparators(level, this.worldPosition);
             return InteractionResult.SUCCESS;
         }
@@ -202,7 +230,9 @@ public class SoakingBarrelBlockEntity extends BlockEntity {
             if (player.isShiftKeyDown()) {
                 LeatherworkingUtil.give(player, this.additive);
                 this.additive = ItemStack.EMPTY;
+                this.additiveColor = NO_COLOR;
                 this.setChanged();
+                this.refreshColor();
             } else {
                 LeatherworkingUtil.message(player, "message.conquest.soaking.treated", this.additive.getHoverName());
             }
@@ -246,10 +276,18 @@ public class SoakingBarrelBlockEntity extends BlockEntity {
         this.content = held.copyWithCount(batch);
         this.result = recipe.resultFor(batch);
         this.reserved = ItemStack.EMPTY;
+
+        // A recipe's own colour wins; without one it keeps the colour of the additive it is using up.
+        this.jobColor = recipe.hasWaterColor() ? recipe.waterColor() : NO_COLOR;
         if (recipe.needsAdditive()) {
+            if (!recipe.hasWaterColor()) {
+                this.jobColor = this.additiveColor;
+            }
             this.reserved = this.additive;
             this.additive = ItemStack.EMPTY;
+            this.additiveColor = NO_COLOR;
         }
+
         this.duration = Math.max(1, recipe.time());
         this.progress = 0;
         this.soaking = true;
@@ -259,17 +297,30 @@ public class SoakingBarrelBlockEntity extends BlockEntity {
         }
         level.playSound(null, this.worldPosition, SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 0.5F, 1.2F);
         this.setChanged();
+        this.refreshColor();
         LeatherworkingUtil.notifyComparators(level, this.worldPosition);
     }
 
-    private void dissolve(Level level, Player player, ItemStack held) {
+    private void dissolve(Level level, Player player, ItemStack held, List<RecipeHolder<SoakingRecipe>> recipes) {
         this.additive = held.copyWithCount(1);
+        this.additiveColor = additiveColorFor(recipes, held);
         if (!player.getAbilities().instabuild) {
             held.shrink(1);
         }
         level.playSound(null, this.worldPosition, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 0.5F, 1.4F);
         LeatherworkingUtil.message(player, "message.conquest.soaking.treated", this.additive.getHoverName());
         this.setChanged();
+        this.refreshColor();
+    }
+
+    /** What colour dissolving {@code stack} makes the water: the first recipe naming it that has one. */
+    private static int additiveColorFor(List<RecipeHolder<SoakingRecipe>> recipes, ItemStack stack) {
+        for (RecipeHolder<SoakingRecipe> holder : recipes) {
+            if (holder.value().acceptsAdditive(stack) && holder.value().hasWaterColor()) {
+                return holder.value().waterColor();
+            }
+        }
+        return NO_COLOR;
     }
 
     /** Calls off a soak: the batch and the additive go back to the player, and the progress is lost. */
@@ -281,12 +332,32 @@ public class SoakingBarrelBlockEntity extends BlockEntity {
         this.content = ItemStack.EMPTY;
         this.result = ItemStack.EMPTY;
         this.reserved = ItemStack.EMPTY;
+        this.jobColor = NO_COLOR;
         this.soaking = false;
         this.progress = 0;
         this.duration = 0;
         level.playSound(null, this.worldPosition, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.6F, 1.0F);
         this.setChanged();
+        this.refreshColor();
         LeatherworkingUtil.notifyComparators(level, this.worldPosition);
+    }
+
+    /**
+     * Works out what colour the water should be drawn and, if that has changed, tells the clients. A batch
+     * in the barrel colours it with the batch's colour when it has one; otherwise it is the additive's.
+     */
+    private void refreshColor() {
+        int target = !this.content.isEmpty() && this.jobColor != NO_COLOR ? this.jobColor : this.additiveColor;
+        if (target == this.waterColor) {
+            return;
+        }
+        this.waterColor = target;
+        this.setChanged();
+        Level level = this.level;
+        if (level != null && !level.isClientSide()) {
+            BlockState state = this.getBlockState();
+            level.sendBlockUpdated(this.worldPosition, state, state, Block.UPDATE_CLIENTS);
+        }
     }
 
     @Override
@@ -295,6 +366,21 @@ public class SoakingBarrelBlockEntity extends BlockEntity {
         if (this.level != null && !this.level.isClientSide()) {
             LeatherworkingUtil.dropAll(this.level, pos, this.content, this.reserved, this.additive);
         }
+    }
+
+    // ------------------------------------------------------------------------------------ syncing
+
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    /** Just the water colour: what a barrel holds is nobody's business but the player using it. */
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag tag = new CompoundTag();
+        tag.putInt("water_color", this.waterColor);
+        return tag;
     }
 
     // ------------------------------------------------------------------------------------ saving
@@ -309,11 +395,16 @@ public class SoakingBarrelBlockEntity extends BlockEntity {
         output.putBoolean("soaking", this.soaking);
         output.putInt("progress", this.progress);
         output.putInt("duration", this.duration);
+        output.putInt("additive_color", this.additiveColor);
+        output.putInt("job_color", this.jobColor);
+        output.putInt("water_color", this.waterColor);
     }
 
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
+        int before = this.waterColor;
+
         this.content = input.read("content", ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY);
         this.result = input.read("result", ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY);
         this.additive = input.read("additive", ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY);
@@ -321,5 +412,15 @@ public class SoakingBarrelBlockEntity extends BlockEntity {
         this.soaking = input.getBooleanOr("soaking", false);
         this.progress = input.getIntOr("progress", 0);
         this.duration = input.getIntOr("duration", 0);
+        this.additiveColor = input.getIntOr("additive_color", NO_COLOR);
+        this.jobColor = input.getIntOr("job_color", NO_COLOR);
+        this.waterColor = input.getIntOr("water_color", NO_COLOR);
+
+        // On a client this is how a new colour arrives, and a chunk is not redrawn just because a
+        // block entity changed - so ask for it.
+        if (this.waterColor != before && this.level != null && this.level.isClientSide()) {
+            BlockState state = this.getBlockState();
+            this.level.sendBlockUpdated(this.worldPosition, state, state, Block.UPDATE_IMMEDIATE);
+        }
     }
 }

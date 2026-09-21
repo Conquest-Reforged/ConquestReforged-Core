@@ -518,7 +518,8 @@ A `conquest:soaking` recipe says what can be soaked, optionally in what, how lon
   "ingredient": "conquest:raw_hide",
   "additive": "conquest:slaked_lime",
   "result": { "id": "conquest:limed_hide", "count": 1 },
-  "time": 12000
+  "time": 12000,
+  "water_color": "#f2f1ea"
 }
 ```
 
@@ -533,6 +534,15 @@ A `conquest:soaking` recipe says what can be soaked, optionally in what, how lon
   additive it used - back, or takes an undissolved additive out again.
 - `time` is in ticks and defaults to 100. A comparator reads the water (0-3) when idle, 4-13 while
   soaking, and 15 when there is something to collect.
+- `water_color` is optional, a `"#rrggbb"` string (or an integer), and tints the barrel's water so you can
+  see what is in it. On a recipe **with** an `additive` it is the colour the water takes on the moment
+  that additive is dissolved, and it stays through the soak; on one **without** it is the colour the
+  soak itself gives the water while the batch is in there. Without one the water keeps the colour it had.
+  When the batch is collected, or the soak called off, the water goes back to how it was.
+  Plain water is drawn in the biome's water colour. The water texture is a light grey that a tint can
+  only darken, so pick light colours - lime is `#f2f1ea` and reads as milky against blue water.
+  For this to show, the barrel's model must put `"tintindex": 0` on its water face; a block using
+  `SoakingBarrel` is given the tint source for it automatically, on both loaders.
 
 ### The tanning frame
 

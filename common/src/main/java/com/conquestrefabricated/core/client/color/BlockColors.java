@@ -1,5 +1,7 @@
 package com.conquestrefabricated.core.client.color;
 
+import com.conquestrefabricated.content.leatherworking.SoakingBarrelBlockEntity;
+import com.conquestrefabricated.content.leatherworking.SoakingRecipe;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.color.block.BlockTintSource;
 import net.minecraft.client.color.item.ItemTintSource;
@@ -62,6 +64,27 @@ public class BlockColors {
 
         @Override
         public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+            return BiomeColors.getAverageWaterColor(level, pos);
+        }
+    };
+
+    /**
+     * The water in a soaking barrel: whatever colour the barrel says it is, and the biome's own water
+     * colour for plain water. The texture is a light grey that a tint can only darken, so plain water has
+     * to be tinted too or nothing dissolved in it could ever read as lighter.
+     */
+    public static final BlockTintSource SOAKING_WATER = new BlockTintSource() {
+        @Override
+        public int color(BlockState state) {
+            return defaultWaterColor();
+        }
+
+        @Override
+        public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+            if (level.getBlockEntity(pos) instanceof SoakingBarrelBlockEntity barrel
+                    && barrel.waterColor() != SoakingRecipe.NO_COLOR) {
+                return 0xFF000000 | barrel.waterColor();
+            }
             return BiomeColors.getAverageWaterColor(level, pos);
         }
     };
