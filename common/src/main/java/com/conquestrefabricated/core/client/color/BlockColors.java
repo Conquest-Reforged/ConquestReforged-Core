@@ -52,7 +52,7 @@ public class BlockColors {
 
         @Override
         public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
-            return BiomeColors.getAverageFoliageColor(level, pos);
+            return defaultBirchColor();
         }
     };
 
