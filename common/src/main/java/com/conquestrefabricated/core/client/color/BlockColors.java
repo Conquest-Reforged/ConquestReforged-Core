@@ -50,7 +50,7 @@ public class BlockColors {
 
         @Override
         public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
-            return FoliageColor.FOLIAGE_BIRCH;
+            return defaultBirchColor();
         }
     };
 
