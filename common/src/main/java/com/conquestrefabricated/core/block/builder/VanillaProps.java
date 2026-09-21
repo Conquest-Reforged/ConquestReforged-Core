@@ -125,6 +125,10 @@ public class VanillaProps {
         return Props.create(Blocks.OAK_LEAVES).group((ModGroups.UTILITY)).tags(BlockTags.LEAVES);
     }
 
+    public static Props birchLeaves() {
+        return Props.create(Blocks.BIRCH_LEAVES).group((ModGroups.UTILITY)).tags(BlockTags.LEAVES);
+    }
+
     public static Props leafLike() {
         return Props.create(Blocks.SHORT_GRASS).group((ModGroups.UTILITY)).tags(BlockTags.LEAVES);
     }
