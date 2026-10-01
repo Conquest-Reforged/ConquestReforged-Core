@@ -27,6 +27,8 @@ public class InitClient {
                 BlockColorRegistry.register(List.of(BlockColors.FOLIAGE), data.getBlock());
             }  else if (data.getProps().getColorType() == ColorType.BIRCH) {
                 BlockColorRegistry.register(List.of(BlockColors.BIRCH), data.getBlock());
+            }  else if (data.getProps().getColorType() == ColorType.EVERGREEN) {
+                BlockColorRegistry.register(List.of(BlockColors.EVERGREEN), data.getBlock());
             } else if (data.getProps().getColorType() == ColorType.DRY_FOLIAGE) {
                 BlockColorRegistry.register(List.of(BlockColors.DRY_FOLIAGE), data.getBlock());
             } else if (data.getProps().getColorType() == ColorType.WATER) {

@@ -122,7 +122,7 @@ public class ModLangManualProvider extends FabricLanguageProvider {
         translationBuilder.add("itemGroup.conquest.l_sand_and_gravel", "Sand & Gravel");
         translationBuilder.add("itemGroup.conquest.jj_food_blocks", "Food Blocks");
         translationBuilder.add("itemGroup.conquest.gg_furniture", "Furniture");
-        translationBuilder.add("itemGroup.conquest.rr_utility", "All Blocks");
+        translationBuilder.add("itemGroup.conquest.rr_utility", "");
         translationBuilder.add("itemGroup.conquest.n_flowers", "Flowers");
         translationBuilder.add("itemGroup.conquest.q_food_and_consumables", "Food & Consumables");
         translationBuilder.add("itemGroup.conquest.hh_storage", "Storage");

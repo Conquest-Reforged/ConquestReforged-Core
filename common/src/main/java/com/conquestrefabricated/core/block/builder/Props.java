@@ -376,6 +376,11 @@ public class Props extends BlockProps<Props> implements BlockFactory {
         return this;
     }
 
+    public Props evergreenColor() {
+        colorType = ColorType.EVERGREEN;
+        return this;
+    }
+
     public Props dryFoliageColor() {
         colorType = ColorType.DRY_FOLIAGE;
         return this;

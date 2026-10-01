@@ -41,7 +41,7 @@ public final class Modules {
     public static final String KEY_SUFFIX = ".name";
 
     /** Styling of the module line on the advanced tooltip. */
-    public static final ChatFormatting[] TOOLTIP_STYLE = {ChatFormatting.BLUE, ChatFormatting.ITALIC};
+    public static final ChatFormatting[] TOOLTIP_STYLE = {ChatFormatting.GOLD, ChatFormatting.ITALIC};
 
     private static final Set<String> MODULES = new LinkedHashSet<>();
     private static final Map<String, String> DISPLAY_NAMES = new LinkedHashMap<>();
