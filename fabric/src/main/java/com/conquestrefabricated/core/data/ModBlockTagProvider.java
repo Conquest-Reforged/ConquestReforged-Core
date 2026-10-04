@@ -31,6 +31,7 @@ public class ModBlockTagProvider extends FabricTagsProvider.BlockTagsProvider {
         TagAppender<Block, Block> wallTagBuilder = valueLookupBuilder(BlockTags.WALLS);
         //TagAppender<Block, Block> bedTagBuilder = valueLookupBuilder(BlockTags.BEDS);
         TagAppender<Block, Block> railTagBuilder = valueLookupBuilder(BlockTags.RAILS);
+        TagAppender<Block, Block> bedTagBuilder = valueLookupBuilder(BlockTags.BEDS);
         TagAppender<Block, Block> fenceTagBuilder = valueLookupBuilder(BlockTags.FENCES);
         //TagAppender<Block, Block> cropTagBuilder = valueLookupBuilder(BlockTags.CROPS);
         //TagAppender<Block, Block> logTagBuilder = valueLookupBuilder(BlockTags.LOGS);
@@ -54,6 +55,9 @@ public class ModBlockTagProvider extends FabricTagsProvider.BlockTagsProvider {
                         }
                         if (block instanceof Rail) {
                             railTagBuilder.add(block).setReplace(false);
+                        }
+                        if (block instanceof Bed) {
+                            bedTagBuilder.add(block).setReplace(false);
                         }
                         if (block instanceof Fence || block instanceof FenceVanilla || block instanceof FenceCross || block instanceof FenceToggle || block instanceof RusticFence || blockId.getPath().contains("fence")) {
                             fenceTagBuilder.add(block).setReplace(false);
