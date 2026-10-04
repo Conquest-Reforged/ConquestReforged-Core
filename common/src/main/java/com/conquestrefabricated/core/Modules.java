@@ -60,6 +60,7 @@ public final class Modules {
         register(CORE, "Conquest Reforged");
         register("conquest_classical", "Classical");
         register("conquest_medieval", "Medieval");
+        register("conquest_fantasy", "Fantasy");
         register("conquest_modern", "Modern");
         register("conquest_earlymodern", "Early Modern");
         register("conquest_asian", "Asian");
