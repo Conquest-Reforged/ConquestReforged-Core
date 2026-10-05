@@ -563,7 +563,7 @@ whether they name a `tool`:
 
 ```json
 { "type": "conquest:stretching", "ingredient": "conquest:limed_hide",
-  "tool": "#conquest:hide_scrapers", "result": { "id": "conquest:scraped_hide" } }
+  "tool": "#conquest:knives", "result": { "id": "conquest:scraped_hide" } }
 
 { "type": "conquest:stretching", "ingredient": "conquest:scraped_hide",
   "result": { "id": "conquest:parchment" }, "time": 12000 }
