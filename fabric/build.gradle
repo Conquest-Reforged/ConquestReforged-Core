@@ -135,6 +135,15 @@ shadowJar {
     archiveClassifier = null           // shadowJar becomes the main artifact
 }
 
+task fabricDataGenAndBuild(type: GradleBuild) { dependsOn runRefabricatedDataGenClient
+    group = "build"
+    println("Running runRefabricatedDataGenClient and build")
+    mustRunAfter "runRefabricatedDataGenClient"
+    tasks = [
+            'build'
+    ]
+}
+
 sourcesJar {
     def commonSources = project(":common").sourcesJar
     dependsOn commonSources
