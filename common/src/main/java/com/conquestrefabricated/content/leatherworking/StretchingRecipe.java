@@ -31,7 +31,7 @@ import java.util.Optional;
  * {
  *   "type": "conquest:stretching",
  *   "ingredient": "conquest:limed_hide",
- *   "tool": "#conquest:hide_scrapers",
+ *   "tool": "#conquest:knives",
  *   "result": { "id": "conquest:scraped_hide", "count": 1 }
  * }
  *
