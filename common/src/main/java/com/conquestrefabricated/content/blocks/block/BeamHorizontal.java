@@ -25,16 +25,12 @@ import static com.conquestrefabricated.core.block.properties.ModBlockProperties.
 
 @Assets(
         state = @State(name = "%s_horizontal", template = "parent_beam_horizontal"),
-        item = @Model(name = "item/%s_horizontal", parent = "block/%s_beam_horizontal_ns", template = "item/parent_beam_horizontal"),
+        item = @Model(name = "item/%s_horizontal", parent = "block/%s_beam_horizontal", template = "item/parent_beam_horizontal"),
         block = {
                 @Model(name = "block/%s_beam_horizontal_ne", template = "block/parent_beam_horizontal_ne"),
                 @Model(name = "block/%s_beam_horizontal_ns", template = "block/parent_beam_horizontal_ns"),
                 @Model(name = "block/%s_beam_horizontal_nse", template = "block/parent_beam_horizontal_nse"),
-                @Model(name = "block/%s_beam_horizontal_nsew", template = "block/parent_beam_horizontal_nsew"),
-                @Model(name = "block/%s_beam_horizontal_ne_bottom", template = "block/parent_beam_horizontal_ne_bottom"),
-                @Model(name = "block/%s_beam_horizontal_ns_bottom", template = "block/parent_beam_horizontal_ns_bottom"),
-                @Model(name = "block/%s_beam_horizontal_nse_bottom", template = "block/parent_beam_horizontal_nse_bottom"),
-                @Model(name = "block/%s_beam_horizontal_nsew_bottom", template = "block/parent_beam_horizontal_nsew_bottom")
+                @Model(name = "block/%s_beam_horizontal", template = "block/parent_beam_horizontal")
         }
 )
 public class BeamHorizontal extends HorizontalDirectionalShape {
