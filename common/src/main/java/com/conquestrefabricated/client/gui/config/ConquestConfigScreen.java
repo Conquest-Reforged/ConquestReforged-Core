@@ -31,7 +31,10 @@ public class ConquestConfigScreen extends Screen {
         Value<Boolean> plantSlowness = Value.of(config.plantSlowness, Value.Flag.RELOAD_WORLD_RENDERER);
         Value<Boolean> passThroughLeaves = Value.of(config.passThroughLeaves, Value.Flag.RELOAD_WORLD_RENDERER);
 
-        values = List.of(plantBreaking, plantSlowness, passThroughLeaves);
+        Value<Boolean> spoilage = Value.of(config.spoilage);
+        Value<Boolean> saltProduction = Value.of(config.saltProduction);
+
+        values = List.of(plantBreaking, plantSlowness, passThroughLeaves, spoilage, saltProduction);
 
         boolean serverControlled = Minecraft.getInstance().level != null && !Minecraft.getInstance().isLocalServer();
 
@@ -55,6 +58,20 @@ public class ConquestConfigScreen extends Screen {
                 .build();
         passThroughLeavesBtn.active = !serverControlled;
         addRenderableWidget(passThroughLeavesBtn);
+
+        // Food Spoilage button
+        Button spoilageBtn = startBooleanValueButton(spoilage, serverControlled)
+                .bounds(width / 2 - 100 + 110, height / 2 - 10 + 12, 200, 20)
+                .build();
+        spoilageBtn.active = !serverControlled;
+        addRenderableWidget(spoilageBtn);
+
+        // Salt Production button
+        Button saltProductionBtn = startBooleanValueButton(saltProduction, serverControlled)
+                .bounds(width / 2 - 100 - 110, height / 2 - 10 + 36, 200, 20)
+                .build();
+        saltProductionBtn.active = !serverControlled;
+        addRenderableWidget(saltProductionBtn);
 
         addRenderableWidget(Button.builder(CommonComponents.GUI_DONE,
                         button -> {

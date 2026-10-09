@@ -60,6 +60,9 @@ public class RefabricatedMod implements ModInitializer {
         LeatherworkingInit.register();
         PaintersKitInit.register();
         LimeInit.register();
+        com.conquestrefabricated.content.salt.SaltEvents.register();
+        com.conquestrefabricated.content.fuel.fabric.WoodFuel.register();
+        com.conquestrefabricated.content.spoilage.fabric.SpoilageInit.register();
         TileRegistrar.entities();
         EntityCommonInit.entities();
         ParticleRegistrarEvent.onIParticleTypeRegistration();
@@ -132,7 +135,9 @@ public class RefabricatedMod implements ModInitializer {
             ServerPlayNetworking.send(player, new ConfigSyncPacket(
                     ConquestConfig.INSTANCE.plantSlowness.get(),
                     ConquestConfig.INSTANCE.plantBreaking.get(),
-                    ConquestConfig.INSTANCE.passThroughLeaves.get()
+                    ConquestConfig.INSTANCE.passThroughLeaves.get(),
+                    ConquestConfig.INSTANCE.spoilage.get(),
+                    ConquestConfig.INSTANCE.saltProduction.get()
             ));
         });
 

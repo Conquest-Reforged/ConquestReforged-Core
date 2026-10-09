@@ -2,6 +2,7 @@ package com.conquestrefabricated.content.leatherworking;
 
 import com.conquestrefabricated.content.blocks.tileentity.TileEntityTypes;
 import com.conquestrefabricated.content.blocks.util.CauldronBehavior;
+import com.conquestrefabricated.content.spoilage.Spoilage;
 import com.conquestrefabricated.content.station.StationRecipes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -61,6 +62,12 @@ public class SoakingBarrelBlockEntity extends BlockEntity {
     private ItemStack additive = ItemStack.EMPTY;
     /** The additive the running soak used up, given back if it is called off. */
     private ItemStack reserved = ItemStack.EMPTY;
+
+    /**
+     * How far gone the batch was, as a spoilage percentage, when it went in. Food does not come out of the
+     * barrel fresher than it went in: a cured or pickled batch starts life as stale as the raw one was.
+     */
+    private int batchSpoilage;
 
     private boolean soaking;
     private int progress;
@@ -125,6 +132,10 @@ public class SoakingBarrelBlockEntity extends BlockEntity {
 
     private void finish(Level level, BlockPos pos) {
         this.content = this.result;
+        if (this.batchSpoilage > 0 && Spoilage.enabled() && Spoilage.classOf(this.content) != null) {
+            Spoilage.setStage(this.content, this.batchSpoilage);
+        }
+        this.batchSpoilage = 0;
         this.result = ItemStack.EMPTY;
         this.reserved = ItemStack.EMPTY;
         this.soaking = false;
@@ -183,6 +194,11 @@ public class SoakingBarrelBlockEntity extends BlockEntity {
 
         RecipeHolder<SoakingRecipe> match = this.match(recipes, held);
         if (match != null) {
+            if (Spoilage.enabled() && Spoilage.stage(held) > Spoilage.CURABLE_UP_TO
+                    && Spoilage.classOf(match.value().resultFor(1)) != null) {
+                LeatherworkingUtil.message(player, "message.conquest.soaking.too_far_gone");
+                return InteractionResult.SUCCESS;
+            }
             this.start(level, player, held, match.value());
             return InteractionResult.SUCCESS;
         }
@@ -275,6 +291,7 @@ public class SoakingBarrelBlockEntity extends BlockEntity {
 
         this.content = held.copyWithCount(batch);
         this.result = recipe.resultFor(batch);
+        this.batchSpoilage = Spoilage.stage(held);
         this.reserved = ItemStack.EMPTY;
 
         // A recipe's own colour wins; without one it keeps the colour of the additive it is using up.
@@ -333,6 +350,7 @@ public class SoakingBarrelBlockEntity extends BlockEntity {
         this.result = ItemStack.EMPTY;
         this.reserved = ItemStack.EMPTY;
         this.jobColor = NO_COLOR;
+        this.batchSpoilage = 0;
         this.soaking = false;
         this.progress = 0;
         this.duration = 0;
@@ -393,6 +411,7 @@ public class SoakingBarrelBlockEntity extends BlockEntity {
         output.store("additive", ItemStack.OPTIONAL_CODEC, this.additive);
         output.store("reserved", ItemStack.OPTIONAL_CODEC, this.reserved);
         output.putBoolean("soaking", this.soaking);
+        output.putInt("batch_spoilage", this.batchSpoilage);
         output.putInt("progress", this.progress);
         output.putInt("duration", this.duration);
         output.putInt("additive_color", this.additiveColor);
@@ -410,6 +429,7 @@ public class SoakingBarrelBlockEntity extends BlockEntity {
         this.additive = input.read("additive", ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY);
         this.reserved = input.read("reserved", ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY);
         this.soaking = input.getBooleanOr("soaking", false);
+        this.batchSpoilage = input.getIntOr("batch_spoilage", 0);
         this.progress = input.getIntOr("progress", 0);
         this.duration = input.getIntOr("duration", 0);
         this.additiveColor = input.getIntOr("additive_color", NO_COLOR);

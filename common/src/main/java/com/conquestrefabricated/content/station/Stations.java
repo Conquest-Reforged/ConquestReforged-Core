@@ -81,6 +81,13 @@ public final class Stations {
     public static final Station STRETCHING =
             new Station(Namespaces.id("tanning_frame"), Items.LEATHER, false, false);
 
+    /** A cauldron over a fire. Drawn as vanilla's, which is what most of them are. */
+    public static final Station CAULDRON =
+            new Station(Namespaces.id("cauldron"), Items.CAULDRON, false, false);
+    /** A crate to pack food in - salt, usually - or put up in jars. Drawn as Medieval's large crate where installed. */
+    public static final Station PACKING_BOX =
+            new Station(Namespaces.id("large_wooden_crate"), Items.BARREL, false, false);
+
     private Stations() {
     }
 
@@ -100,6 +107,8 @@ public final class Stations {
         stations.add(PAINTERS_KIT);
         stations.add(SOAKING);
         stations.add(STRETCHING);
+        stations.add(CAULDRON);
+        stations.add(PACKING_BOX);
         stations.add(ARMS);
         return List.copyOf(stations);
     }

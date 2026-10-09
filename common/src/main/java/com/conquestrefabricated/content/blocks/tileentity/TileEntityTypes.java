@@ -40,6 +40,11 @@ public class TileEntityTypes {
             "conquest:soaking_barrel"
     );
 
+    public static final BlockEntityType<com.conquestrefabricated.content.curing.CuringVesselBlockEntity> CURING_VESSEL = create(
+            com.conquestrefabricated.content.curing.CuringVesselBlockEntity::new,
+            "conquest:curing_vessel"
+    );
+
     public static final BlockEntityType<TanningFrameBlockEntity> TANNING_FRAME = create(
             TanningFrameBlockEntity::new,
             "conquest:tanning_frame"

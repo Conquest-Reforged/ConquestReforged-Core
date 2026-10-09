@@ -79,11 +79,18 @@ public class RefabricatedModClient implements ClientModInitializer {
     private static Boolean localPlantSlowness;
     private static Boolean localPlantBreaking;
     private static Boolean localPassThroughLeaves;
+    private static Boolean localSpoilage;
+    private static Boolean localSaltProduction;
 
     private static boolean hasShownIntro = false;
 
     @Override
     public void onInitializeClient() {
+        com.conquestrefabricated.content.spoilage.SpoilageClient.register();
+        net.minecraft.client.gui.screens.MenuScreens.register(com.conquestrefabricated.content.cauldron.CauldronMenu.TYPE,
+                com.conquestrefabricated.client.gui.CauldronScreen::new);
+        net.minecraft.client.gui.screens.MenuScreens.register(com.conquestrefabricated.content.curing.PackingBoxMenu.TYPE,
+                com.conquestrefabricated.client.gui.PackingBoxScreen::new);
         System.out.println("Attempting to register resource pack: rp_crrp");
         ModContainer container = FabricLoader.getInstance()
                 .getModContainer("conquest")
@@ -120,6 +127,7 @@ public class RefabricatedModClient implements ClientModInitializer {
 
 
         StationInit.registerClient();
+        com.conquestrefabricated.content.spoilage.fabric.SpoilageInit.registerClient();
         ArmsStationInit.registerClient();
         CraftingToolsInit.registerClient();
         LoomStationInit.registerClient();
@@ -330,9 +338,9 @@ public class RefabricatedModClient implements ClientModInitializer {
         //InitClient.init();
         ClientTickEvents.START_CLIENT_TICK.register(Bindings::tick);
 
+        BlockPicker.init();
         PlayerPickItemEvents.BLOCK.register((player, pos, state, includeData) -> {
-            ItemStack stack = BlockPicker.onPick(player, pos, state);
-            return stack;
+            return BlockPicker.onPick(player, pos, state, includeData);
         });
 
         ScreenEvents.BEFORE_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
@@ -369,11 +377,15 @@ public class RefabricatedModClient implements ClientModInitializer {
                 localPlantSlowness = ConquestConfig.INSTANCE.plantSlowness.get();
                 localPlantBreaking = ConquestConfig.INSTANCE.plantBreaking.get();
                 localPassThroughLeaves = ConquestConfig.INSTANCE.passThroughLeaves.get();
+                localSpoilage = ConquestConfig.INSTANCE.spoilage.get();
+                localSaltProduction = ConquestConfig.INSTANCE.saltProduction.get();
 
                 // Apply server values for this multiplayer session only
                 ConquestConfig.INSTANCE.plantSlowness.set(payload.plantSlowness());
                 ConquestConfig.INSTANCE.plantBreaking.set(payload.plantBreaking());
                 ConquestConfig.INSTANCE.passThroughLeaves.set(payload.passThroughLeaves());
+                ConquestConfig.INSTANCE.spoilage.set(payload.spoilage());
+                ConquestConfig.INSTANCE.saltProduction.set(payload.saltProduction());
             });
         });
 
@@ -385,6 +397,8 @@ public class RefabricatedModClient implements ClientModInitializer {
                     ConquestConfig.INSTANCE.plantSlowness.set(localPlantSlowness);
                     ConquestConfig.INSTANCE.plantBreaking.set(localPlantBreaking);
                     ConquestConfig.INSTANCE.passThroughLeaves.set(localPassThroughLeaves);
+                    ConquestConfig.INSTANCE.spoilage.set(localSpoilage);
+                    ConquestConfig.INSTANCE.saltProduction.set(localSaltProduction);
 
                     // Re-save to disk so the json file is back to the player's preferences
                     // (this also undoes any accidental overwrite from clicking DONE in MP)
@@ -394,6 +408,8 @@ public class RefabricatedModClient implements ClientModInitializer {
                     localPlantSlowness = null;
                     localPlantBreaking = null;
                     localPassThroughLeaves = null;
+                    localSpoilage = null;
+                    localSaltProduction = null;
                 }
             });
         });

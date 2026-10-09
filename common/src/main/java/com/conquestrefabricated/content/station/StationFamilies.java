@@ -115,31 +115,16 @@ public final class StationFamilies {
     /**
      * How many of {@code item} one parent block yields.
      *
-     * <p>Carried over from the stonecutting recipes this replaced, so the trade is what it always
-     * was: eight slabs from a block, four vertical slabs, and so on. Anything whose shape is not
-     * recognised is a straight swap.</p>
+     * <p>Always one. Every shape drops the full parent block when broken, however many layers it has,
+     * so a station trades a block for a shape one to one and nothing can be multiplied by cutting and
+     * breaking.</p>
      */
     public static int yieldOf(Item item) {
-        if (!(item instanceof BlockItem blockItem)) {
-            return 1;
-        }
-        return yieldOf(blockItem.getBlock());
+        return 1;
     }
 
     /** @see #yieldOf(Item) */
     public static int yieldOf(Block block) {
-        if (block instanceof Layer || block instanceof Slab || block instanceof LayerDirectional) {
-            return 8;
-        }
-        if (block instanceof VerticalSlab || block instanceof VerticalCorner
-                || block instanceof VerticalQuarter || block instanceof SlabLessLayers) {
-            return 4;
-        }
-        if (block instanceof VerticalSlabLessLayers || block instanceof VerticalCornerLessLayers
-                || block instanceof VerticalQuarterLessLayers || block instanceof SlabQuarter
-                || block instanceof Pillar) {
-            return 3;
-        }
         return 1;
     }
 }

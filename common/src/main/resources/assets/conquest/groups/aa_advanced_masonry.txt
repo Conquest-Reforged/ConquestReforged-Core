@@ -32,7 +32,7 @@ conquest:dark_rough_marble_dwarven_design
 conquest:dark_rough_marble_dwarven_runes
 conquest:fancy_dark_rough_marble_dwarven_design
 conquest:nero_africano_black_marble
-conquest:fior_de_bosco_gray_marble
+conquest:fior_di_bosco_gray_marble
 minecraft:chiseled_quartz_block
 conquest:carrara_white_marble
 conquest:marble_embossment

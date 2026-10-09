@@ -32,6 +32,10 @@ public class ConquestConfig {
     public final Option.BooleanOption plantSlowness = addOption(new Option.BooleanOption("plant_slowness", true));
     public final Option.BooleanOption plantBreaking = addOption(new Option.BooleanOption("plant_breaking", true));
     public final Option.BooleanOption passThroughLeaves = addOption(new Option.BooleanOption("pass_through_leaves", true));
+    /** Sea water, salt pans and boiling kettles. Off leaves the blocks inert and sea water unscoopable. */
+    public final Option.BooleanOption saltProduction = addOption(new Option.BooleanOption("salt_production", true));
+    /** Food going off: perishable stacks age in inventories, containers and on the ground. */
+    public final Option.BooleanOption spoilage = addOption(new Option.BooleanOption("spoilage", true));
     public final Option.BooleanOption ignore_intro = addOption(new Option.BooleanOption("ignore_intro", false));
     public final Option.BooleanOption ignore_dependencies = addOption(new Option.BooleanOption("ignore_dependencies", false));
     public final Option.BooleanOption using_modpack = addOption(new Option.BooleanOption("using_modpack", false));

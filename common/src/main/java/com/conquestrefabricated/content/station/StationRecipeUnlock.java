@@ -46,6 +46,8 @@ public final class StationRecipeUnlock {
                 PotteryWheelStation.RECIPE_TYPE,
                 LeatherworkingStations.SOAKING_TYPE,
                 LeatherworkingStations.STRETCHING_TYPE,
+                com.conquestrefabricated.content.curing.CuringRecipe.TYPE,
+                com.conquestrefabricated.content.cauldron.CauldronRecipe.TYPE,
                 PaintersKit.RECIPE_TYPE,
                 ArmsStation.RECIPE_TYPE);
     }
