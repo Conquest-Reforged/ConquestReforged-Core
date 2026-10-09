@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.tags.TagAppender;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -43,6 +44,7 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider provider) {
         this.addLimeSources();
+        this.addPlanks();
 
         Set<RecipeIngredient.BlockTagMirror> mirrors = mirrorsInUse();
         // Some tags are mirrored whether or not a recipe asks, because other tags are built on them.
@@ -111,6 +113,29 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider {
         }
         Log.info("Crafting ingredients: mirrored {} block tag(s) into item tags, {} entries",
                 mirrors.size(), entries);
+    }
+
+    /**
+     * Our full planks, in vanilla's planks tag, so a crafting table, a chest, sticks and the wooden
+     * tools can all be made from them.
+     *
+     * <p>Only the planks themselves, found by name: the shapes cut from them carry a suffix and stay out,
+     * for the reason given above, and so do the platforms, paneling, rails and staves that are tagged as
+     * planks blocks but are not planks. Retextured vanilla planks count, so this is not limited to
+     * family parents.</p>
+     */
+    private void addPlanks() {
+        TagAppender<Item, Item> planks = this.valueLookupBuilder(ItemTags.PLANKS);
+        int added = 0;
+        for (BlockData data : blockData().toList()) {
+            Item item = data.getBlock().asItem();
+            String path = data.registryName.getPath();
+            if (item != Items.AIR && (path.endsWith("planks") || path.endsWith("plank"))) {
+                planks.add(item).setReplace(false);
+                added++;
+            }
+        }
+        Log.info("Planks: {} added to #minecraft:planks", added);
     }
 
     /**

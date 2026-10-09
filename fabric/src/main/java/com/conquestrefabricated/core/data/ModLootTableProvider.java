@@ -8,19 +8,26 @@ import com.conquestrefabricated.content.blocks.block.decor.DoubleHorizontalDirec
 import com.conquestrefabricated.content.blocks.block.decor.Plough;
 import com.conquestrefabricated.content.blocks.block.decor.PotteryWheel;
 import com.conquestrefabricated.content.blocks.block.directional.LayerDirectional;
+import com.conquestrefabricated.api.tags.ModTags;
+import com.conquestrefabricated.content.moss.Mossing;
+import com.conquestrefabricated.core.item.family.Family;
+import com.conquestrefabricated.core.item.family.FamilyRegistry;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootSubProvider;
 import net.minecraft.advancements.criterion.StatePropertiesPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
+import net.minecraft.world.level.storage.loot.entries.TagEntry;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
@@ -39,8 +46,24 @@ public class ModLootTableProvider extends FabricBlockLootSubProvider {
                 return; // no item form — nothing to generate a loot table for
             }
 
+            Block parent = shapeParent(block);
+            Block plainLog = Mossing.plainLogOf(parent != null ? parent : block).orElse(null);
+
             if (block instanceof Sphere) {
                 dropSelf(block);
+            }
+            else if (isBranch(block, parent)) {
+                // Branches are twigs, not timber: a few sticks whatever shape or family they are in.
+                add(block, branchDrops(block));
+            }
+            else if (plainLog != null && isLoot(block)) {
+                // A mossy log gives back the plain log and the moss that was growing on it.
+                add(block, mossyLogDrops(plainLog));
+            }
+            else if (parent != null) {
+                // Every shape of a family drops the full block, whatever its layer count, so layered
+                // shapes cannot be broken into several items and are thickened with a mallet instead.
+                dropOther(block, parent);
             }
             else if (block instanceof VerticalSlab) {
                 add(block, buildLayerDrops(block, VerticalSlab.LAYERS, 4));
@@ -82,6 +105,47 @@ public class ModLootTableProvider extends FabricBlockLootSubProvider {
                 dropSelf(block);
             }
         });
+    }
+
+    private static boolean isLoot(Block block) {
+        return !(block instanceof DoubleHorizontalDirectional || block instanceof Door
+                || block instanceof Bed || block instanceof Plough || block instanceof PotteryWheel);
+    }
+
+    private static boolean isBranch(Block block, Block parent) {
+        return BuiltInRegistries.BLOCK.getKey(block).getPath().contains("branch")
+                || (parent != null && BuiltInRegistries.BLOCK.getKey(parent).getPath().contains("branch"));
+    }
+
+    private LootTable.Builder branchDrops(Block block) {
+        return LootTable.lootTable().withPool(LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(1.0F))
+                .add(this.applyExplosionDecay(block, LootItem.lootTableItem(Items.STICK)
+                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F))))));
+    }
+
+    private LootTable.Builder mossyLogDrops(Block plainLog) {
+        return LootTable.lootTable()
+                .withPool(this.applyExplosionCondition(plainLog, LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1.0F))
+                        .add(LootItem.lootTableItem(plainLog))))
+                .withPool(this.applyExplosionCondition(plainLog, LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1.0F))
+                        .add(TagEntry.expandTag(ModTags.MOSS))));
+    }
+
+    /** The full block a shape of a family drops, or null for the parent itself and for blocks outside a family. */
+    private static Block shapeParent(Block block) {
+        if (block instanceof DoubleHorizontalDirectional || block instanceof Door
+                || block instanceof Bed || block instanceof Plough || block instanceof PotteryWheel) {
+            return null;
+        }
+        Family<Block> family = FamilyRegistry.BLOCKS.getFamily(block);
+        if (family.isAbsent()) {
+            return null;
+        }
+        Block root = family.getRoot();
+        return root == null || root == block ? null : root;
     }
 
     public LootTable.Builder buildLayerDrops(Block drop, IntegerProperty property, int amount) {

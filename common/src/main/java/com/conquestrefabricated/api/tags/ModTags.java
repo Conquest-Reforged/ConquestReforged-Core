@@ -73,6 +73,9 @@ public class ModTags {
     public static final TagKey<Item> GARDENING_TOOLS = itemTag("gardening_tools");
     public static final TagKey<Item> CYCLING_TOOLS = itemTag("cycling_tools");
 
+    /** Moss: turns a block into its mossy twin, and is what mossy logs give back when broken. */
+    public static final TagKey<Item> MOSS = itemTag("moss");
+
     /**
      * Creates a block tag. Accepts either a bare path, which resolves against
      * {@link Namespaces#DEFAULT}, or an explicit {@code namespace:path} for addon tags.
