@@ -8,6 +8,8 @@ import com.conquestrefabricated.core.block.data.BlockTemplate;
 import com.conquestrefabricated.core.block.data.BlockTemplateCache;
 import com.conquestrefabricated.core.item.family.Family;
 import com.conquestrefabricated.core.item.family.FamilyRegistry;
+import com.conquestrefabricated.core.util.RegistryAliases;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -30,11 +32,15 @@ public interface BlockFactory {
             BlockTemplate template = BlockTemplateCache.getInstance().get(type);
             BlockName name = getName();
             Props props = getProps().template(template);
-            props.registryId(template.getRegistryName(name));
+            Identifier id = template.getRegistryName(name);
+            props.registryId(id);
             Block block = blockType.create(props);
 
             BlockData data = new BlockData(block, template, name, props);
             registerItem(data);
+            for (BlockName former : getProps().getFormerNames()) {
+                RegistryAliases.block(template.getRegistryName(former), id);
+            }
             BlockDataRegistry.getInstance().register(data);
             if (!getProps().hasParent()) {
                 getProps().parent(data.getBlock().defaultBlockState());

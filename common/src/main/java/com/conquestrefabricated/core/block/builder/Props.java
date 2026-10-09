@@ -65,6 +65,8 @@ public class Props extends BlockProps<Props> implements BlockFactory {
     private String module;
     private String namePlural = null;
     private String nameSingular = null;
+    // {plural, singular} pairs, resolved against the namespace in getFormerNames()
+    private List<String[]> formerNames = Collections.emptyList();
 
     private ToolRecipeSpec toolRecipe = null;
     private TimedRecipeSpec weavingRecipe = null;
@@ -107,6 +109,7 @@ public class Props extends BlockProps<Props> implements BlockFactory {
         this.woodType = props.woodType;
         this.namePlural = props.namePlural;
         this.nameSingular = props.nameSingular;
+        this.formerNames = props.formerNames;
         this.lore = props.lore;
         this.toolRecipe = props.toolRecipe;
         this.weavingRecipe = props.weavingRecipe;
@@ -359,6 +362,45 @@ public class Props extends BlockProps<Props> implements BlockFactory {
         this.namePlural = null;
         this.nameSingular = null;
         return this;
+    }
+
+    /**
+     * Declares a name this builder's blocks were registered under before a rename, so worlds
+     * saved with the old name keep their blocks and items.
+     * <p>
+     * Every shape gets its own alias: renaming {@code old_marble} to {@code new_marble} on a
+     * TypeList of cube, slab and stairs also aliases {@code old_marble_slab} to
+     * {@code new_marble_slab} and so on, for the blocks and their items. Chunks are written under
+     * the new name the next time they save.
+     * <p>
+     * Only the id changes. A block whose state properties were renamed or renumbered in the same
+     * release falls back to their default values.
+     * <p>
+     * Keep the call indefinitely: a world that skipped the release with the rename still needs
+     * it. Calling this more than once adds another former name.
+     */
+    public Props formerly(String plural, String singular) {
+        if (formerNames.isEmpty()) {
+            formerNames = new ArrayList<>();
+        }
+        formerNames.add(new String[]{plural, singular});
+        return this;
+    }
+
+    public Props formerly(String name) {
+        return formerly(name, name);
+    }
+
+    public List<BlockName> getFormerNames() {
+        List<BlockName> names = new ArrayList<>(formerNames.size());
+        for (String[] former : formerNames) {
+            names.add(BlockName.of(
+                    Namespaces.namespaceOf(former[0], namespace),
+                    Namespaces.pathOf(former[0]),
+                    Namespaces.pathOf(former[1])
+            ));
+        }
+        return names;
     }
 
     public Props grassColor() {
