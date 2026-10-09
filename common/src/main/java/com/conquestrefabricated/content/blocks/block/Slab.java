@@ -1,5 +1,10 @@
 package com.conquestrefabricated.content.blocks.block;
 
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.InteractionResult;
+import com.conquestrefabricated.content.blocks.util.LayerCycling;
 import com.conquestrefabricated.core.asset.annotation.Assets;
 import com.conquestrefabricated.core.asset.annotation.Model;
 import com.conquestrefabricated.core.asset.annotation.State;
@@ -63,19 +68,27 @@ public class Slab extends WaterloggedShape {
 
     @Override
     public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
+        // Stacking by placing is creative-only; in survival the mallet thickens a block instead.
+        if (!LayerCycling.stacksOnPlace(context)) {
+            return false;
+        }
         Direction facing = context.getClickedFace();
-
         ItemStack item = context.getItemInHand();
         if (item.getItem() != this.asItem() || state.getValue(LAYERS) == 8) {
             return false;
         }
-
         if (state.getValue(TYPE_UPDOWN) == Half.BOTTOM) {
             return facing == Direction.UP;
         } else {
             return facing == Direction.DOWN;
         }
     }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        return LayerCycling.cycle(state, level, pos, player, LAYERS);
+    }
+
 
     @Override
     public boolean propagatesSkylightDown(BlockState state) {

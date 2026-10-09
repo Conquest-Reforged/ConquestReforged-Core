@@ -1,5 +1,11 @@
 package com.conquestrefabricated.content.blocks.block;
 
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.BlockPos;
+import com.conquestrefabricated.content.blocks.util.LayerCycling;
 import com.conquestrefabricated.content.blocks.util.PlacementHelper;
 import com.conquestrefabricated.core.asset.annotation.Assets;
 import com.conquestrefabricated.core.asset.annotation.Model;
@@ -44,20 +50,26 @@ public class Pillar extends WaterloggedShape {
 
     @Override
     public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
-        // This allows people to place pillars/columns on top of one another
+        // Stacking by placing is creative-only; in survival the mallet thickens a block instead.
+        if (!LayerCycling.stacksOnPlace(context)) {
+            return false;
+        }
         int i = state.getValue(LAYERS);
-        Direction facing = context.getClickedFace();
         if (context.getItemInHand().getItem() == this.asItem() && i <= 4) {
             if (PlacementHelper.replacingClickedOnBlock(context)) {
-                return facing != Direction.UP && facing != Direction.DOWN;
+                return context.getClickedFace() != Direction.UP && context.getClickedFace() != Direction.DOWN;
             } else {
                 return true;
             }
         }
-        else {
-            return false;
-        }
+        return false;
     }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        return LayerCycling.cycle(state, level, pos, player, LAYERS);
+    }
+
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
