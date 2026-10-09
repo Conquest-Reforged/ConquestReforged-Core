@@ -139,6 +139,8 @@ public class ThirdBlock extends Shape {
         public VoxelShape getShape(BlockState state) {
             if (state.getValue(TYPE_UPMIDDLEDOWN) == Third.BOTTOM) {
                 return BOTTOM_SHAPE;
+            } else if (state.getValue(TYPE_UPMIDDLEDOWN) == Third.MIDDLE) {
+                return MIDDLE_SHAPE;
             } else {
                 return TOP_SHAPE;
             }
