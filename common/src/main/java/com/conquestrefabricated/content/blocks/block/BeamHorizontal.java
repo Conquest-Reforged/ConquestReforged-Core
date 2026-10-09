@@ -59,10 +59,10 @@ public class BeamHorizontal extends HorizontalDirectionalShape {
     private static final VoxelShape HORIZONTAL_BEAM_NS_MIDDLE = Block.box(5, 6, 0, 11, 10, 16);
     private static final VoxelShape HORIZONTAL_BEAM_EW_MIDDLE = Block.box(0, 6, 5, 16, 10, 11);
 
-    private static final VoxelShape HORIZONTAL_BEAM_NE_MIDDLE = Shapes.join(Block.box(5, 6, 0, 11, 16, 11), Block.box(11, 6, 5, 16, 10, 11), BooleanOp.OR);
-    private static final VoxelShape HORIZONTAL_BEAM_ES_MIDDLE = Shapes.join(Block.box(5, 6, 5, 16, 16, 11), Block.box(5, 6, 11, 11, 10, 16), BooleanOp.OR);
-    private static final VoxelShape HORIZONTAL_BEAM_SW_MIDDLE = Shapes.join(Block.box(5, 6, 5, 11, 16, 16), Block.box(0, 6, 5, 5, 10, 11), BooleanOp.OR);
-    private static final VoxelShape HORIZONTAL_BEAM_WN_MIDDLE = Shapes.join(Block.box(0, 6, 5, 11, 16, 11), Block.box(5, 6, 0, 11, 10, 5), BooleanOp.OR);
+    private static final VoxelShape HORIZONTAL_BEAM_NE_MIDDLE = Shapes.join(Block.box(5, 6, 0, 11, 10, 11), Block.box(11, 6, 5, 16, 10, 11), BooleanOp.OR);
+    private static final VoxelShape HORIZONTAL_BEAM_ES_MIDDLE = Shapes.join(Block.box(5, 6, 5, 16, 10, 11), Block.box(5, 6, 11, 11, 10, 16), BooleanOp.OR);
+    private static final VoxelShape HORIZONTAL_BEAM_SW_MIDDLE = Shapes.join(Block.box(5, 6, 5, 11, 10, 16), Block.box(0, 6, 5, 5, 10, 11), BooleanOp.OR);
+    private static final VoxelShape HORIZONTAL_BEAM_WN_MIDDLE = Shapes.join(Block.box(0, 6, 5, 11, 10, 11), Block.box(5, 6, 0, 11, 10, 5), BooleanOp.OR);
 
     private static final VoxelShape HORIZONTAL_BEAM_NSE_MIDDLE = Shapes.join(Block.box(11, 6, 5, 16, 10, 11), Block.box(5, 6, 0, 11, 10, 16), BooleanOp.OR);
     private static final VoxelShape HORIZONTAL_BEAM_ESW_MIDDLE = Shapes.join(Block.box(5, 6, 11, 11, 10, 16), Block.box(0, 6, 5, 16, 10, 11), BooleanOp.OR);
