@@ -1,5 +1,6 @@
 package com.conquestrefabricated.content.blocks.block.plants;
 
+import com.conquestrefabricated.content.blocks.util.PlantSupport;
 import com.conquestrefabricated.client.gui.config.ConquestConfig;
 import com.conquestrefabricated.content.blocks.CustomOffsetType;
 import com.conquestrefabricated.content.blocks.block.Layer;
@@ -36,11 +37,13 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import static com.conquestrefabricated.api.tags.ModTags.CYCLING_TOOLS;
 import static com.conquestrefabricated.api.tags.ModTags.GARDENING_TOOLS;
 import static com.conquestrefabricated.core.block.properties.ModBlockProperties.TYPE_UPDOWN;
 
@@ -74,24 +77,65 @@ public class Bush extends AbstractBush implements Waterloggable {
                 .setValue(OFFSET_TOGGLE, false));
     }
 
+    /**
+     * Flat pick box shared by all bushes. When the plant is lowered onto a layer/slab its model is
+     * drawn shifted down by the offset, so a full-height box would float a block above the layer.
+     */
+    private static final VoxelShape LOWERED_SHAPE = com.conquestrefabricated.content.blocks.util.PlantHitboxes.FLAT_SHAPE;
+
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-        // If the context is a player and either they're in creative mode or holding an iron axe
         if (context instanceof EntityCollisionContext entityContext) {
             Entity entity = entityContext.getEntity();
             if (entity instanceof Player player) {
-                // Check if player is in creative mode or holding iron axe
-                if ((player.getAbilities().instabuild || player.getMainHandItem().is(GARDENING_TOOLS) && player.getAbilities().mayBuild)) {
-                    return super.getShape(state, worldIn, pos, context);
+                // Any held item shows the hitbox; only players who can't build (adventure) pass through
+                if ((player.getAbilities().instabuild || player.getAbilities().mayBuild)) {
+                    return plantShape(state, player, worldIn, pos, context);
                 } else {
                     return Shapes.empty();
                 }
             }
-            return super.getShape(state, worldIn, pos, context);
+            return plantShape(state, null, worldIn, pos, context);
         } else {
             // Fallback for non-entity contexts that are holding an axe
-            return super.getShape(state, worldIn, pos, context);
+            return plantShape(state, null, worldIn, pos, context);
         }
+    }
+
+    private VoxelShape plantShape(BlockState state, Player player, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+        // Plants with a height toggle need to be clickable along the whole stalk for whoever can cycle them
+        boolean cycler = player != null && (player.getAbilities().instabuild || player.getMainHandItem().is(CYCLING_TOOLS));
+        if (cycler && hasHeightProperty(state)) {
+            Vec3 o = state.getOffset(pos);
+            return TOGGLE_SHAPE.move(o.x, o.y, o.z);
+        }
+        // Ray hits are tested against the whole segment, so a shape sitting below this cell
+        // (plant lowered onto a layer) is still picked up whenever the ray passes through the cell.
+        Vec3 offset = state.getOffset(pos);
+        return LOWERED_SHAPE.move(offset.x, offset.y, offset.z);
+    }
+
+    private static final VoxelShape TOGGLE_SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 16.0D, 14.0D);
+
+    private static boolean hasHeightProperty(BlockState state) {
+        for (var property : state.getProperties()) {
+            if (property.getName().equals("height")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Destroy progress per tick when breaking a plant without a gardening tool (about 3 seconds). */
+    private static final float HAND_BREAK_PROGRESS = 1.0F / 60.0F;
+
+    @Override
+    protected float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
+        // Any item that isn't a gardening tool breaks as slowly as an empty hand
+        if (player.getMainHandItem().is(GARDENING_TOOLS)) {
+            return 1.0F;
+        }
+        return HAND_BREAK_PROGRESS;
     }
 
     @Override
@@ -120,8 +164,8 @@ public class Bush extends AbstractBush implements Waterloggable {
         BlockPos down = blockpos.below();
         BlockState blockStateDown = iblockreader.getBlockState(down);
 
-        if (blockStateDown.hasProperty(Layer.LAYERS) || (blockStateDown.hasProperty(Slab.LAYERS) && blockStateDown.getValue(TYPE_UPDOWN) == Half.BOTTOM)) {
-            return super.getStateForPlacement(context).setValue(LAYERS, blockStateDown.getValue(LAYERS));
+        if ((PlantSupport.isSpecial(blockStateDown) || blockStateDown.hasProperty(Layer.LAYERS)) || (blockStateDown.hasProperty(Slab.LAYERS) && blockStateDown.getValue(TYPE_UPDOWN) == Half.BOTTOM)) {
+            return super.getStateForPlacement(context).setValue(LAYERS, PlantSupport.layers(blockStateDown));
         } else {
             return super.getStateForPlacement(context).setValue(LAYERS, 8);
         }
@@ -148,8 +192,8 @@ public class Bush extends AbstractBush implements Waterloggable {
             return result;
         }
 
-        if (blockStateDown.hasProperty(Layer.LAYERS) || (blockStateDown.hasProperty(Slab.LAYERS) && blockStateDown.getValue(TYPE_UPDOWN) == Half.BOTTOM)) {
-            return result.setValue(LAYERS, blockStateDown.getValue(LAYERS));
+        if ((PlantSupport.isSpecial(blockStateDown) || blockStateDown.hasProperty(Layer.LAYERS)) || (blockStateDown.hasProperty(Slab.LAYERS) && blockStateDown.getValue(TYPE_UPDOWN) == Half.BOTTOM)) {
+            return result.setValue(LAYERS, PlantSupport.layers(blockStateDown));
         } else {
             return result.setValue(LAYERS, 8);
         }
