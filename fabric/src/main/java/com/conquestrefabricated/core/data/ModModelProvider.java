@@ -31,10 +31,7 @@ import com.conquestrefabricated.core.block.base.WaterloggedHorizontalDirectional
 import com.conquestrefabricated.core.block.data.BlockData;
 import com.conquestrefabricated.core.block.data.BlockDataRegistry;
 import com.conquestrefabricated.core.block.data.ColorType;
-import com.conquestrefabricated.core.block.properties.BidirectionalShape;
-import com.conquestrefabricated.core.block.properties.CapitalDirection;
-import com.conquestrefabricated.core.block.properties.ModdedWallShape;
-import com.conquestrefabricated.core.block.properties.SphereShape;
+import com.conquestrefabricated.core.block.properties.*;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.client.color.item.GrassColorSource;
@@ -56,7 +53,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.level.DryFoliageColor;
-import net.minecraft.world.level.FoliageColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.properties.*;
@@ -557,55 +553,72 @@ public class ModModelProvider extends FabricModelProvider {
         Identifier identifierNS = new ModelTemplate(Optional.of(Identifier.parse("conquest:block/templates/parent_beam_horizontal_ns")), Optional.empty(), textureKeys.toArray(new TextureSlot[textureKeys.size()])).createWithSuffix(block, "_ns", textureMap, blockStateModelGenerator.modelOutput);
         Identifier identifierNE = new ModelTemplate(Optional.of(Identifier.parse("conquest:block/templates/parent_beam_horizontal_ne")), Optional.empty(), textureKeys.toArray(new TextureSlot[textureKeys.size()])).createWithSuffix(block, "_ne", textureMap, blockStateModelGenerator.modelOutput);
         Identifier identifierNSE = new ModelTemplate(Optional.of(Identifier.parse("conquest:block/templates/parent_beam_horizontal_nse")), Optional.empty(), textureKeys.toArray(new TextureSlot[textureKeys.size()])).createWithSuffix(block, "_nse", textureMap, blockStateModelGenerator.modelOutput);
-        Identifier identifierNSEW = new ModelTemplate(Optional.of(Identifier.parse("conquest:block/templates/parent_beam_horizontal_nsew")), Optional.empty(), textureKeys.toArray(new TextureSlot[textureKeys.size()])).createWithSuffix(block, "_nsew", textureMap, blockStateModelGenerator.modelOutput);
-        Identifier identifierBottomNS = new ModelTemplate(Optional.of(Identifier.parse("conquest:block/templates/parent_beam_horizontal_ns_bottom")), Optional.empty(), textureKeys.toArray(new TextureSlot[textureKeys.size()])).createWithSuffix(block, "_ns_bottom", textureMap, blockStateModelGenerator.modelOutput);
-        Identifier identifierBottomNE = new ModelTemplate(Optional.of(Identifier.parse("conquest:block/templates/parent_beam_horizontal_ne_bottom")), Optional.empty(), textureKeys.toArray(new TextureSlot[textureKeys.size()])).createWithSuffix(block, "_ne_bottom", textureMap, blockStateModelGenerator.modelOutput);
-        Identifier identifierBottomNSE = new ModelTemplate(Optional.of(Identifier.parse("conquest:block/templates/parent_beam_horizontal_nse_bottom")), Optional.empty(), textureKeys.toArray(new TextureSlot[textureKeys.size()])).createWithSuffix(block, "_nse_bottom", textureMap, blockStateModelGenerator.modelOutput);
-        Identifier identifierBottomNSEW = new ModelTemplate(Optional.of(Identifier.parse("conquest:block/templates/parent_beam_horizontal_nsew_bottom")), Optional.empty(), textureKeys.toArray(new TextureSlot[textureKeys.size()])).createWithSuffix(block, "_nsew_bottom", textureMap, blockStateModelGenerator.modelOutput);
+        Identifier identifierNSEW = new ModelTemplate(Optional.of(Identifier.parse("conquest:block/templates/parent_beam_horizontal_nsew")), Optional.empty(), textureKeys.toArray(new TextureSlot[textureKeys.size()])).createWithSuffix(block, "", textureMap, blockStateModelGenerator.modelOutput);
 
         registerTintedOrPlain(blockStateModelGenerator, block, identifierNS, blockData);
         blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator.dispatch(block)
-                .with(PropertyDispatch.initial(TYPE_UPDOWN, BeamHorizontal.ACTIVATED, HorizontalDirectionalShape.DIRECTION)
-                        .select(Half.TOP, 1, Direction.NORTH, BlockModelGenerators.plainVariant(identifierNS))
-                        .select(Half.TOP, 1, Direction.EAST, BlockModelGenerators.plainVariant(identifierNS).with(BlockModelGenerators.Y_ROT_90))
-                        .select(Half.TOP, 1, Direction.SOUTH, BlockModelGenerators.plainVariant(identifierNS).with(BlockModelGenerators.Y_ROT_180))
-                        .select(Half.TOP, 1, Direction.WEST, BlockModelGenerators.plainVariant(identifierNS).with(BlockModelGenerators.Y_ROT_270))
+                .with(PropertyDispatch.initial(ModBlockProperties.TYPE_UPMIDDLEDOWN, BeamHorizontal.ACTIVATED, HorizontalDirectionalShape.DIRECTION)
+                        .select(Third.TOP, 1, Direction.NORTH, BlockModelGenerators.plainVariant(identifierNS).with(OffsetVariantSetting.yOffset(6)))
+                        .select(Third.TOP, 1, Direction.EAST, BlockModelGenerators.plainVariant(identifierNS).with(BlockModelGenerators.Y_ROT_90).with(OffsetVariantSetting.yOffset(6)))
+                        .select(Third.TOP, 1, Direction.SOUTH, BlockModelGenerators.plainVariant(identifierNS).with(BlockModelGenerators.Y_ROT_180).with(OffsetVariantSetting.yOffset(6)))
+                        .select(Third.TOP, 1, Direction.WEST, BlockModelGenerators.plainVariant(identifierNS).with(BlockModelGenerators.Y_ROT_270).with(OffsetVariantSetting.yOffset(6)))
 
-                        .select(Half.TOP, 2, Direction.NORTH, BlockModelGenerators.plainVariant(identifierNE))
-                        .select(Half.TOP, 2, Direction.EAST, BlockModelGenerators.plainVariant(identifierNE).with(BlockModelGenerators.Y_ROT_90))
-                        .select(Half.TOP, 2, Direction.SOUTH, BlockModelGenerators.plainVariant(identifierNE).with(BlockModelGenerators.Y_ROT_180))
-                        .select(Half.TOP, 2, Direction.WEST, BlockModelGenerators.plainVariant(identifierNE).with(BlockModelGenerators.Y_ROT_270))
+                        .select(Third.TOP, 2, Direction.NORTH, BlockModelGenerators.plainVariant(identifierNE).with(OffsetVariantSetting.yOffset(6)))
+                        .select(Third.TOP, 2, Direction.EAST, BlockModelGenerators.plainVariant(identifierNE).with(BlockModelGenerators.Y_ROT_90).with(OffsetVariantSetting.yOffset(6)))
+                        .select(Third.TOP, 2, Direction.SOUTH, BlockModelGenerators.plainVariant(identifierNE).with(BlockModelGenerators.Y_ROT_180).with(OffsetVariantSetting.yOffset(6)))
+                        .select(Third.TOP, 2, Direction.WEST, BlockModelGenerators.plainVariant(identifierNE).with(BlockModelGenerators.Y_ROT_270).with(OffsetVariantSetting.yOffset(6)))
 
-                        .select(Half.TOP, 3, Direction.NORTH, BlockModelGenerators.plainVariant(identifierNSE))
-                        .select(Half.TOP, 3, Direction.EAST, BlockModelGenerators.plainVariant(identifierNSE).with(BlockModelGenerators.Y_ROT_90))
-                        .select(Half.TOP, 3, Direction.SOUTH, BlockModelGenerators.plainVariant(identifierNSE).with(BlockModelGenerators.Y_ROT_180))
-                        .select(Half.TOP, 3, Direction.WEST, BlockModelGenerators.plainVariant(identifierNSE).with(BlockModelGenerators.Y_ROT_270))
+                        .select(Third.TOP, 3, Direction.NORTH, BlockModelGenerators.plainVariant(identifierNSE).with(OffsetVariantSetting.yOffset(6)))
+                        .select(Third.TOP, 3, Direction.EAST, BlockModelGenerators.plainVariant(identifierNSE).with(BlockModelGenerators.Y_ROT_90).with(OffsetVariantSetting.yOffset(6)))
+                        .select(Third.TOP, 3, Direction.SOUTH, BlockModelGenerators.plainVariant(identifierNSE).with(BlockModelGenerators.Y_ROT_180).with(OffsetVariantSetting.yOffset(6)))
+                        .select(Third.TOP, 3, Direction.WEST, BlockModelGenerators.plainVariant(identifierNSE).with(BlockModelGenerators.Y_ROT_270).with(OffsetVariantSetting.yOffset(6)))
 
-                        .select(Half.TOP, 4, Direction.NORTH, BlockModelGenerators.plainVariant(identifierNSEW))
-                        .select(Half.TOP, 4, Direction.EAST, BlockModelGenerators.plainVariant(identifierNSEW).with(BlockModelGenerators.Y_ROT_90))
-                        .select(Half.TOP, 4, Direction.SOUTH, BlockModelGenerators.plainVariant(identifierNSEW).with(BlockModelGenerators.Y_ROT_180))
-                        .select(Half.TOP, 4, Direction.WEST, BlockModelGenerators.plainVariant(identifierNSEW).with(BlockModelGenerators.Y_ROT_270))
+                        .select(Third.TOP, 4, Direction.NORTH, BlockModelGenerators.plainVariant(identifierNSEW).with(OffsetVariantSetting.yOffset(6)))
+                        .select(Third.TOP, 4, Direction.EAST, BlockModelGenerators.plainVariant(identifierNSEW).with(BlockModelGenerators.Y_ROT_90).with(OffsetVariantSetting.yOffset(6)))
+                        .select(Third.TOP, 4, Direction.SOUTH, BlockModelGenerators.plainVariant(identifierNSEW).with(BlockModelGenerators.Y_ROT_180).with(OffsetVariantSetting.yOffset(6)))
+                        .select(Third.TOP, 4, Direction.WEST, BlockModelGenerators.plainVariant(identifierNSEW).with(BlockModelGenerators.Y_ROT_270).with(OffsetVariantSetting.yOffset(6)))
 
 
-                        .select(Half.BOTTOM, 1, Direction.NORTH, BlockModelGenerators.plainVariant(identifierBottomNS))
-                        .select(Half.BOTTOM, 1, Direction.EAST, BlockModelGenerators.plainVariant(identifierBottomNS).with(BlockModelGenerators.Y_ROT_90))
-                        .select(Half.BOTTOM, 1, Direction.SOUTH, BlockModelGenerators.plainVariant(identifierBottomNS).with(BlockModelGenerators.Y_ROT_180))
-                        .select(Half.BOTTOM, 1, Direction.WEST, BlockModelGenerators.plainVariant(identifierBottomNS).with(BlockModelGenerators.Y_ROT_270))
+                        .select(Third.MIDDLE, 1, Direction.NORTH, BlockModelGenerators.plainVariant(identifierNS))
+                        .select(Third.MIDDLE, 1, Direction.EAST, BlockModelGenerators.plainVariant(identifierNS).with(BlockModelGenerators.Y_ROT_90))
+                        .select(Third.MIDDLE, 1, Direction.SOUTH, BlockModelGenerators.plainVariant(identifierNS).with(BlockModelGenerators.Y_ROT_180))
+                        .select(Third.MIDDLE, 1, Direction.WEST, BlockModelGenerators.plainVariant(identifierNS).with(BlockModelGenerators.Y_ROT_270))
 
-                        .select(Half.BOTTOM, 2, Direction.NORTH, BlockModelGenerators.plainVariant(identifierBottomNE))
-                        .select(Half.BOTTOM, 2, Direction.EAST, BlockModelGenerators.plainVariant(identifierBottomNE).with(BlockModelGenerators.Y_ROT_90))
-                        .select(Half.BOTTOM, 2, Direction.SOUTH, BlockModelGenerators.plainVariant(identifierBottomNE).with(BlockModelGenerators.Y_ROT_180))
-                        .select(Half.BOTTOM, 2, Direction.WEST, BlockModelGenerators.plainVariant(identifierBottomNE).with(BlockModelGenerators.Y_ROT_270))
+                        .select(Third.MIDDLE, 2, Direction.NORTH, BlockModelGenerators.plainVariant(identifierNE))
+                        .select(Third.MIDDLE, 2, Direction.EAST, BlockModelGenerators.plainVariant(identifierNE).with(BlockModelGenerators.Y_ROT_90))
+                        .select(Third.MIDDLE, 2, Direction.SOUTH, BlockModelGenerators.plainVariant(identifierNE).with(BlockModelGenerators.Y_ROT_180))
+                        .select(Third.MIDDLE, 2, Direction.WEST, BlockModelGenerators.plainVariant(identifierNE).with(BlockModelGenerators.Y_ROT_270))
 
-                        .select(Half.BOTTOM, 3, Direction.NORTH, BlockModelGenerators.plainVariant(identifierBottomNSE))
-                        .select(Half.BOTTOM, 3, Direction.EAST, BlockModelGenerators.plainVariant(identifierBottomNSE).with(BlockModelGenerators.Y_ROT_90))
-                        .select(Half.BOTTOM, 3, Direction.SOUTH, BlockModelGenerators.plainVariant(identifierBottomNSE).with(BlockModelGenerators.Y_ROT_180))
-                        .select(Half.BOTTOM, 3, Direction.WEST, BlockModelGenerators.plainVariant(identifierBottomNSE).with(BlockModelGenerators.Y_ROT_270))
+                        .select(Third.MIDDLE, 3, Direction.NORTH, BlockModelGenerators.plainVariant(identifierNSE))
+                        .select(Third.MIDDLE, 3, Direction.EAST, BlockModelGenerators.plainVariant(identifierNSE).with(BlockModelGenerators.Y_ROT_90))
+                        .select(Third.MIDDLE, 3, Direction.SOUTH, BlockModelGenerators.plainVariant(identifierNSE).with(BlockModelGenerators.Y_ROT_180))
+                        .select(Third.MIDDLE, 3, Direction.WEST, BlockModelGenerators.plainVariant(identifierNSE).with(BlockModelGenerators.Y_ROT_270))
 
-                        .select(Half.BOTTOM, 4, Direction.NORTH, BlockModelGenerators.plainVariant(identifierBottomNSEW))
-                        .select(Half.BOTTOM, 4, Direction.EAST, BlockModelGenerators.plainVariant(identifierBottomNSEW).with(BlockModelGenerators.Y_ROT_90))
-                        .select(Half.BOTTOM, 4, Direction.SOUTH, BlockModelGenerators.plainVariant(identifierBottomNSEW).with(BlockModelGenerators.Y_ROT_180))
-                        .select(Half.BOTTOM, 4, Direction.WEST, BlockModelGenerators.plainVariant(identifierBottomNSEW).with(BlockModelGenerators.Y_ROT_270))
+                        .select(Third.MIDDLE, 4, Direction.NORTH, BlockModelGenerators.plainVariant(identifierNSEW))
+                        .select(Third.MIDDLE, 4, Direction.EAST, BlockModelGenerators.plainVariant(identifierNSEW).with(BlockModelGenerators.Y_ROT_90))
+                        .select(Third.MIDDLE, 4, Direction.SOUTH, BlockModelGenerators.plainVariant(identifierNSEW).with(BlockModelGenerators.Y_ROT_180))
+                        .select(Third.MIDDLE, 4, Direction.WEST, BlockModelGenerators.plainVariant(identifierNSEW).with(BlockModelGenerators.Y_ROT_270))
+
+
+                        .select(Third.BOTTOM, 1, Direction.NORTH, BlockModelGenerators.plainVariant(identifierNS).with(OffsetVariantSetting.yOffset(-6)))
+                        .select(Third.BOTTOM, 1, Direction.EAST, BlockModelGenerators.plainVariant(identifierNS).with(BlockModelGenerators.Y_ROT_90).with(OffsetVariantSetting.yOffset(-6)))
+                        .select(Third.BOTTOM, 1, Direction.SOUTH, BlockModelGenerators.plainVariant(identifierNS).with(BlockModelGenerators.Y_ROT_180).with(OffsetVariantSetting.yOffset(-6)))
+                        .select(Third.BOTTOM, 1, Direction.WEST, BlockModelGenerators.plainVariant(identifierNS).with(BlockModelGenerators.Y_ROT_270).with(OffsetVariantSetting.yOffset(-6)))
+
+                        .select(Third.BOTTOM, 2, Direction.NORTH, BlockModelGenerators.plainVariant(identifierNE).with(OffsetVariantSetting.yOffset(-6)))
+                        .select(Third.BOTTOM, 2, Direction.EAST, BlockModelGenerators.plainVariant(identifierNE).with(BlockModelGenerators.Y_ROT_90).with(OffsetVariantSetting.yOffset(-6)))
+                        .select(Third.BOTTOM, 2, Direction.SOUTH, BlockModelGenerators.plainVariant(identifierNE).with(BlockModelGenerators.Y_ROT_180).with(OffsetVariantSetting.yOffset(-6)))
+                        .select(Third.BOTTOM, 2, Direction.WEST, BlockModelGenerators.plainVariant(identifierNE).with(BlockModelGenerators.Y_ROT_270).with(OffsetVariantSetting.yOffset(-6)))
+
+                        .select(Third.BOTTOM, 3, Direction.NORTH, BlockModelGenerators.plainVariant(identifierNSE).with(OffsetVariantSetting.yOffset(-6)))
+                        .select(Third.BOTTOM, 3, Direction.EAST, BlockModelGenerators.plainVariant(identifierNSE).with(BlockModelGenerators.Y_ROT_90).with(OffsetVariantSetting.yOffset(-6)))
+                        .select(Third.BOTTOM, 3, Direction.SOUTH, BlockModelGenerators.plainVariant(identifierNSE).with(BlockModelGenerators.Y_ROT_180).with(OffsetVariantSetting.yOffset(-6)))
+                        .select(Third.BOTTOM, 3, Direction.WEST, BlockModelGenerators.plainVariant(identifierNSE).with(BlockModelGenerators.Y_ROT_270).with(OffsetVariantSetting.yOffset(-6)))
+
+                        .select(Third.BOTTOM, 4, Direction.NORTH, BlockModelGenerators.plainVariant(identifierNSEW).with(OffsetVariantSetting.yOffset(-6)))
+                        .select(Third.BOTTOM, 4, Direction.EAST, BlockModelGenerators.plainVariant(identifierNSEW).with(BlockModelGenerators.Y_ROT_90).with(OffsetVariantSetting.yOffset(-6)))
+                        .select(Third.BOTTOM, 4, Direction.SOUTH, BlockModelGenerators.plainVariant(identifierNSEW).with(BlockModelGenerators.Y_ROT_180).with(OffsetVariantSetting.yOffset(-6)))
+                        .select(Third.BOTTOM, 4, Direction.WEST, BlockModelGenerators.plainVariant(identifierNSEW).with(BlockModelGenerators.Y_ROT_270).with(OffsetVariantSetting.yOffset(-6)))
 
                 ));
 
