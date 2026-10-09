@@ -1,5 +1,6 @@
 package com.conquestrefabricated.content.blocks.block.vanilla;
 
+import com.conquestrefabricated.content.blocks.util.PlantSupport;
 import com.conquestrefabricated.content.blocks.block.Layer;
 import com.conquestrefabricated.content.blocks.block.Slab;
 import com.conquestrefabricated.content.blocks.util.PlacementHelper;
@@ -65,8 +66,8 @@ public class TallFlowerVanilla extends TallFlowerBlock {
         BlockState blockStateDown = iblockreader.getBlockState(down);
 
         if (iblockreader.getBlockState(blockpos.above()).canBeReplaced(context)) {
-            if (blockStateDown.hasProperty(Layer.LAYERS) || blockStateDown.hasProperty(Slab.LAYERS) || blockStateDown.hasProperty(TallFlowerVanilla.LAYERS)) {
-                return super.getStateForPlacement(context).setValue(LAYERS, blockStateDown.getValue(LAYERS));
+            if ((PlantSupport.isSpecial(blockStateDown) || blockStateDown.hasProperty(Layer.LAYERS)) || blockStateDown.hasProperty(Slab.LAYERS) || blockStateDown.hasProperty(TallFlowerVanilla.LAYERS)) {
+                return super.getStateForPlacement(context).setValue(LAYERS, PlantSupport.layers(blockStateDown));
             } else {
                 return super.getStateForPlacement(context).setValue(LAYERS, 8);
             }
@@ -81,8 +82,8 @@ public class TallFlowerVanilla extends TallFlowerBlock {
         BlockPos down = currentPos.below();
         BlockState blockStateDown = level.getBlockState(down);
 
-        if ((directionToNeighbour.getAxis() != Direction.Axis.Y || doubleblockhalf == DoubleBlockHalf.LOWER != (directionToNeighbour == Direction.UP) || neighbourState.getBlock() == this && neighbourState.getValue(HALF) != doubleblockhalf) && blockStateDown.hasProperty(Layer.LAYERS) || blockStateDown.hasProperty(Slab.LAYERS) || blockStateDown.hasProperty(TallFlowerVanilla.LAYERS)) {
-            return doubleblockhalf == DoubleBlockHalf.LOWER && directionToNeighbour == Direction.DOWN && !stateIn.canSurvive(level, currentPos) ? Blocks.AIR.defaultBlockState() : stateIn.setValue(LAYERS, blockStateDown.getValue(LAYERS));
+        if ((directionToNeighbour.getAxis() != Direction.Axis.Y || doubleblockhalf == DoubleBlockHalf.LOWER != (directionToNeighbour == Direction.UP) || neighbourState.getBlock() == this && neighbourState.getValue(HALF) != doubleblockhalf) && (PlantSupport.isSpecial(blockStateDown) || blockStateDown.hasProperty(Layer.LAYERS)) || blockStateDown.hasProperty(Slab.LAYERS) || blockStateDown.hasProperty(TallFlowerVanilla.LAYERS)) {
+            return doubleblockhalf == DoubleBlockHalf.LOWER && directionToNeighbour == Direction.DOWN && !stateIn.canSurvive(level, currentPos) ? Blocks.AIR.defaultBlockState() : stateIn.setValue(LAYERS, PlantSupport.layers(blockStateDown));
         } else if ((directionToNeighbour.getAxis() != Direction.Axis.Y || doubleblockhalf == DoubleBlockHalf.LOWER != (directionToNeighbour == Direction.UP) || neighbourState.getBlock() == this && neighbourState.getValue(HALF) != doubleblockhalf)) {
             return doubleblockhalf == DoubleBlockHalf.LOWER && directionToNeighbour == Direction.DOWN && !stateIn.canSurvive(level, currentPos) ? Blocks.AIR.defaultBlockState() : stateIn;
         } else {

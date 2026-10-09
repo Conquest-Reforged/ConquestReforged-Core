@@ -1,5 +1,6 @@
 package com.conquestrefabricated.content.blocks.block.plants;
 
+import com.conquestrefabricated.content.blocks.util.PlantSupport;
 import com.conquestrefabricated.client.gui.config.ConquestConfig;
 import com.conquestrefabricated.content.blocks.block.Layer;
 import com.conquestrefabricated.content.blocks.block.Slab;
@@ -67,7 +68,7 @@ public class PlantsTall0to3 extends Bush {
             Entity entity = entityContext.getEntity();
             if (entity instanceof Player player) {
                 // Check if player is in creative mode or holding iron axe
-                if ((player.getAbilities().instabuild || player.getMainHandItem().is(GARDENING_TOOLS) && player.getAbilities().mayBuild)) {
+                if ((player.getAbilities().instabuild || player.getAbilities().mayBuild)) {
                     return super.getShape(state, worldIn, pos, context);
                 } else {
                     return Shapes.empty();
@@ -128,8 +129,8 @@ public class PlantsTall0to3 extends Bush {
         BlockState blockStateDown = iblockreader.getBlockState(down);
         int layerBlockState = 8;
 
-        if (blockStateDown.hasProperty(Layer.LAYERS) || blockStateDown.hasProperty(Slab.LAYERS) || blockStateDown.hasProperty(LAYERS)) {
-            layerBlockState = blockStateDown.getValue(LAYERS);
+        if ((PlantSupport.isSpecial(blockStateDown) || blockStateDown.hasProperty(Layer.LAYERS)) || blockStateDown.hasProperty(Slab.LAYERS) || blockStateDown.hasProperty(LAYERS)) {
+            layerBlockState = PlantSupport.layers(blockStateDown);
         }
 
         return super.getStateForPlacement(context).setValue(LAYERS, layerBlockState).setValue(HEIGHT, 1);

@@ -116,7 +116,7 @@ public class BerryBush extends AbstractCropsBlock {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-        return BlockVoxelShapes.cubeMediumLargePartialShape.get(0);
+        return com.conquestrefabricated.content.blocks.util.PlantHitboxes.flat(state, pos, context);
     }
 
     @Override

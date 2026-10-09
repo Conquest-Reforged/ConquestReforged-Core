@@ -1,5 +1,6 @@
 package com.conquestrefabricated.content.blocks.block.vanilla;
 
+import com.conquestrefabricated.content.blocks.util.PlantSupport;
 import com.conquestrefabricated.content.blocks.block.Layer;
 import com.conquestrefabricated.content.blocks.block.Slab;
 import com.conquestrefabricated.content.blocks.util.PlacementHelper;
@@ -30,6 +31,11 @@ public class BeetrootsVanilla extends BeetrootBlock {
     }
 
     @Override
+    protected net.minecraft.world.phys.shapes.VoxelShape getShape(net.minecraft.world.level.block.state.BlockState state, net.minecraft.world.level.BlockGetter level, net.minecraft.core.BlockPos pos, net.minecraft.world.phys.shapes.CollisionContext context) {
+        return com.conquestrefabricated.content.blocks.util.PlantHitboxes.flat(state, pos, context);
+    }
+
+    @Override
     public boolean canSurvive(BlockState state, LevelReader reader, BlockPos pos) {
         if (PlacementHelper.isDuringWorldGen(reader)) {
             return super.canSurvive(state, reader, pos);
@@ -52,8 +58,8 @@ public class BeetrootsVanilla extends BeetrootBlock {
         BlockPos down = blockpos.below();
         BlockState blockStateDown = iblockreader.getBlockState(down);
 
-        if (blockStateDown.hasProperty(Layer.LAYERS) || blockStateDown.hasProperty(Slab.LAYERS)) {
-            return super.getStateForPlacement(context).setValue(LAYERS, blockStateDown.getValue(LAYERS));
+        if ((PlantSupport.isSpecial(blockStateDown) || blockStateDown.hasProperty(Layer.LAYERS)) || blockStateDown.hasProperty(Slab.LAYERS)) {
+            return super.getStateForPlacement(context).setValue(LAYERS, PlantSupport.layers(blockStateDown));
         } else {
             return super.getStateForPlacement(context).setValue(LAYERS, 8);
         }
@@ -64,8 +70,8 @@ public class BeetrootsVanilla extends BeetrootBlock {
         BlockPos down = currentPos.below();
         BlockState blockStateDown = level.getBlockState(down);
 
-        if (blockStateDown.hasProperty(Layer.LAYERS) || blockStateDown.hasProperty(Slab.LAYERS)) {
-            return super.updateShape(stateIn, level, ticks, currentPos, directionToNeighbour, neighbourPos, neighbourState, random).setValue(LAYERS, blockStateDown.getValue(LAYERS));
+        if ((PlantSupport.isSpecial(blockStateDown) || blockStateDown.hasProperty(Layer.LAYERS)) || blockStateDown.hasProperty(Slab.LAYERS)) {
+            return super.updateShape(stateIn, level, ticks, currentPos, directionToNeighbour, neighbourPos, neighbourState, random).setValue(LAYERS, PlantSupport.layers(blockStateDown));
         } else {
             return super.updateShape(stateIn, level, ticks, currentPos, directionToNeighbour, neighbourPos, neighbourState, random).setValue(LAYERS, 8);
         }

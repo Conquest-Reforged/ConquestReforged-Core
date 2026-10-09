@@ -1,5 +1,6 @@
 package com.conquestrefabricated.content.blocks.block.plants;
 
+import com.conquestrefabricated.content.blocks.util.PlantSupport;
 import com.conquestrefabricated.client.gui.config.ConquestConfig;
 import com.conquestrefabricated.content.blocks.block.Layer;
 import com.conquestrefabricated.content.blocks.block.Slab;
@@ -97,8 +98,8 @@ public class PlantsDenseStackable extends Bush {
         int randomBlockstate = rand.nextInt(3);
         int layerBlockState = 8;
 
-        if (blockStateDown.hasProperty(Layer.LAYERS) || blockStateDown.hasProperty(Slab.LAYERS) || blockStateDown.hasProperty(LAYERS)) {
-            layerBlockState = blockStateDown.getValue(LAYERS);
+        if ((PlantSupport.isSpecial(blockStateDown) || blockStateDown.hasProperty(Layer.LAYERS)) || blockStateDown.hasProperty(Slab.LAYERS) || blockStateDown.hasProperty(LAYERS)) {
+            layerBlockState = PlantSupport.layers(blockStateDown);
         } else if (blockStateUp.hasProperty(Layer.LAYERS) || blockStateUp.hasProperty(Slab.LAYERS) || blockStateUp.hasProperty(LAYERS)) {
             layerBlockState = blockStateUp.getValue(LAYERS);
         }

@@ -1,5 +1,6 @@
 package com.conquestrefabricated.content.blocks.block.vanilla;
 
+import com.conquestrefabricated.content.blocks.util.PlantSupport;
 import com.conquestrefabricated.content.blocks.block.Layer;
 import com.conquestrefabricated.content.blocks.block.Slab;
 import com.conquestrefabricated.content.blocks.block.plants.Bush;
@@ -41,8 +42,8 @@ public class MushroomVanilla extends Bush {
         BlockPos down = blockpos.below();
         BlockState blockStateDown = iblockreader.getBlockState(down);
 
-        if (blockStateDown.hasProperty(Layer.LAYERS) || blockStateDown.hasProperty(Slab.LAYERS)) {
-            return super.getStateForPlacement(context).setValue(LAYERS, blockStateDown.getValue(LAYERS));
+        if ((PlantSupport.isSpecial(blockStateDown) || blockStateDown.hasProperty(Layer.LAYERS)) || blockStateDown.hasProperty(Slab.LAYERS)) {
+            return super.getStateForPlacement(context).setValue(LAYERS, PlantSupport.layers(blockStateDown));
         } else {
             return super.getStateForPlacement(context).setValue(LAYERS, 8);
         }

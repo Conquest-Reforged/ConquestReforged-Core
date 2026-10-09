@@ -1,5 +1,6 @@
 package com.conquestrefabricated.content.blocks.block.plants;
 
+import com.conquestrefabricated.content.blocks.util.PlantSupport;
 import com.conquestrefabricated.content.blocks.BlockVoxelShapes;
 import com.conquestrefabricated.content.blocks.block.Layer;
 import com.conquestrefabricated.content.blocks.block.Slab;
@@ -82,8 +83,8 @@ public class Corn extends Crops {
         BlockState blockStateDown = iblockreader.getBlockState(down);
         int layerBlockState = 8;
 
-        if (blockStateDown.hasProperty(Layer.LAYERS) || blockStateDown.hasProperty(Slab.LAYERS) || blockStateDown.hasProperty(Bush.LAYERS)) {
-            layerBlockState = blockStateDown.getValue(LAYERS);
+        if ((PlantSupport.isSpecial(blockStateDown) || blockStateDown.hasProperty(Layer.LAYERS)) || blockStateDown.hasProperty(Slab.LAYERS) || blockStateDown.hasProperty(Bush.LAYERS)) {
+            layerBlockState = PlantSupport.layers(blockStateDown);
         } else if (blockStateUp.hasProperty(Layer.LAYERS) || blockStateUp.hasProperty(Slab.LAYERS) || blockStateUp.hasProperty(Bush.LAYERS)) {
             layerBlockState = blockStateUp.getValue(LAYERS);
         }

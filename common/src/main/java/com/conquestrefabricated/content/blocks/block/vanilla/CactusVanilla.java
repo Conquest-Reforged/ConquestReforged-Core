@@ -1,5 +1,6 @@
 package com.conquestrefabricated.content.blocks.block.vanilla;
 
+import com.conquestrefabricated.content.blocks.util.PlantSupport;
 import com.conquestrefabricated.content.blocks.block.Layer;
 import com.conquestrefabricated.content.blocks.block.Slab;
 import com.conquestrefabricated.content.blocks.util.PlacementHelper;
@@ -45,8 +46,8 @@ public class CactusVanilla extends CactusBlock {
         BlockPos down = blockpos.below();
         BlockState blockStateDown = iblockreader.getBlockState(down);
 
-        if (blockStateDown.hasProperty(Layer.LAYERS) || blockStateDown.hasProperty(Slab.LAYERS)) {
-            return super.getStateForPlacement(context).setValue(LAYERS, blockStateDown.getValue(LAYERS));
+        if ((PlantSupport.isSpecial(blockStateDown) || blockStateDown.hasProperty(Layer.LAYERS)) || blockStateDown.hasProperty(Slab.LAYERS)) {
+            return super.getStateForPlacement(context).setValue(LAYERS, PlantSupport.layers(blockStateDown));
         } else {
             return super.getStateForPlacement(context).setValue(LAYERS, 8);
         }
@@ -57,8 +58,8 @@ public class CactusVanilla extends CactusBlock {
         BlockPos down = currentPos.below();
         BlockState blockStateDown = level.getBlockState(down);
 
-        if (blockStateDown.hasProperty(Layer.LAYERS) || blockStateDown.hasProperty(Slab.LAYERS)) {
-            return super.updateShape(stateIn, level, ticks, currentPos, directionToNeighbour, neighbourPos, neighbourState, random).setValue(LAYERS, blockStateDown.getValue(LAYERS));
+        if ((PlantSupport.isSpecial(blockStateDown) || blockStateDown.hasProperty(Layer.LAYERS)) || blockStateDown.hasProperty(Slab.LAYERS)) {
+            return super.updateShape(stateIn, level, ticks, currentPos, directionToNeighbour, neighbourPos, neighbourState, random).setValue(LAYERS, PlantSupport.layers(blockStateDown));
         } else {
             return super.updateShape(stateIn, level, ticks, currentPos, directionToNeighbour, neighbourPos, neighbourState, random).setValue(LAYERS, 8);
         }

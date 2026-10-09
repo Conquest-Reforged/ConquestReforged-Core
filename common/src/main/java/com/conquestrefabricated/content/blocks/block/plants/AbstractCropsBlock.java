@@ -1,12 +1,16 @@
 package com.conquestrefabricated.content.blocks.block.plants;
 
+import com.conquestrefabricated.content.blocks.util.PlantSupport;
 import com.conquestrefabricated.client.gui.config.ConquestConfig;
 import com.conquestrefabricated.content.blocks.block.Layer;
 import com.conquestrefabricated.content.blocks.block.Slab;
 import com.conquestrefabricated.content.blocks.util.PlacementHelper;
 import com.conquestrefabricated.content.effects.Effects;
 import com.conquestrefabricated.core.block.builder.Props;
+import com.conquestrefabricated.content.blocks.util.PlantHitboxes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -43,6 +47,11 @@ public abstract class AbstractCropsBlock extends CropBlock {
         super(props.toSettings());
         this.slowness = props.getOrDefault("slowness", Integer.class, 0);
         this.registerDefaultState(this.stateDefinition.any().setValue(LAYERS, 8).setValue(AGE, 0));
+    }
+
+    @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return PlantHitboxes.flat(state, pos, context);
     }
 
     @Override
@@ -86,8 +95,8 @@ public abstract class AbstractCropsBlock extends CropBlock {
         BlockPos down = blockpos.below();
         BlockState blockStateDown = iblockreader.getBlockState(down);
 
-        if (blockStateDown.hasProperty(Layer.LAYERS) || blockStateDown.hasProperty(Slab.LAYERS)) {
-            return super.getStateForPlacement(context).setValue(LAYERS, blockStateDown.getValue(LAYERS));
+        if ((PlantSupport.isSpecial(blockStateDown) || blockStateDown.hasProperty(Layer.LAYERS)) || blockStateDown.hasProperty(Slab.LAYERS)) {
+            return super.getStateForPlacement(context).setValue(LAYERS, PlantSupport.layers(blockStateDown));
         } else {
             return super.getStateForPlacement(context).setValue(LAYERS, 8);
         }
@@ -105,8 +114,8 @@ public abstract class AbstractCropsBlock extends CropBlock {
             return result;
         }
 
-        if (blockStateDown.hasProperty(Layer.LAYERS) || blockStateDown.hasProperty(Slab.LAYERS)) {
-            return result.setValue(LAYERS, blockStateDown.getValue(LAYERS));
+        if ((PlantSupport.isSpecial(blockStateDown) || blockStateDown.hasProperty(Layer.LAYERS)) || blockStateDown.hasProperty(Slab.LAYERS)) {
+            return result.setValue(LAYERS, PlantSupport.layers(blockStateDown));
         } else {
             return result.setValue(LAYERS, 8);
         }
