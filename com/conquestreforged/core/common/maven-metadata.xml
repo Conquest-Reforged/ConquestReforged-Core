@@ -3,8 +3,8 @@
   <groupId>com.conquestreforged.core</groupId>
   <artifactId>common</artifactId>
   <versioning>
-    <latest>BETA-0.0.26</latest>
-    <release>BETA-0.0.26</release>
+    <latest>BETA-0.0.27</latest>
+    <release>BETA-0.0.27</release>
     <versions>
       <version>BETA-0.0.1</version>
       <version>BETA-0.0.2</version>
@@ -31,7 +31,8 @@
       <version>BETA-0.0.22</version>
       <version>BETA-0.0.24</version>
       <version>BETA-0.0.26</version>
+      <version>BETA-0.0.27</version>
     </versions>
-    <lastUpdated>20261007104200</lastUpdated>
+    <lastUpdated>20261009120835</lastUpdated>
   </versioning>
 </metadata>
