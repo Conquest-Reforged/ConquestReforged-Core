@@ -565,9 +565,9 @@ public class ModModelProvider extends FabricModelProvider {
         Identifier identifierNS = new ModelTemplate(Optional.of(Identifier.parse("conquest:block/templates/parent_beam_horizontal_ns")), Optional.empty(), textureKeys.toArray(new TextureSlot[textureKeys.size()])).createWithSuffix(block, "_ns", textureMap, blockStateModelGenerator.modelOutput);
         Identifier identifierNE = new ModelTemplate(Optional.of(Identifier.parse("conquest:block/templates/parent_beam_horizontal_ne")), Optional.empty(), textureKeys.toArray(new TextureSlot[textureKeys.size()])).createWithSuffix(block, "_ne", textureMap, blockStateModelGenerator.modelOutput);
         Identifier identifierNSE = new ModelTemplate(Optional.of(Identifier.parse("conquest:block/templates/parent_beam_horizontal_nse")), Optional.empty(), textureKeys.toArray(new TextureSlot[textureKeys.size()])).createWithSuffix(block, "_nse", textureMap, blockStateModelGenerator.modelOutput);
-        Identifier identifierNSEW = new ModelTemplate(Optional.of(Identifier.parse("conquest:block/templates/parent_beam_horizontal_nsew")), Optional.empty(), textureKeys.toArray(new TextureSlot[textureKeys.size()])).createWithSuffix(block, "", textureMap, blockStateModelGenerator.modelOutput);
+        Identifier identifierNSEW = new ModelTemplate(Optional.of(Identifier.parse("conquest:block/templates/parent_beam_horizontal_nsew")), Optional.empty(), textureKeys.toArray(new TextureSlot[textureKeys.size()])).createWithSuffix(block, "_nsew", textureMap, blockStateModelGenerator.modelOutput);
 
-        registerTintedOrPlain(blockStateModelGenerator, block, identifierNS, blockData);
+        registerTintedOrPlain(blockStateModelGenerator, block, identifierNSEW, blockData);
         blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator.dispatch(block)
                 .with(PropertyDispatch.initial(ModBlockProperties.TYPE_UPMIDDLEDOWN, BeamHorizontal.ACTIVATED, HorizontalDirectionalShape.DIRECTION)
                         .select(Third.TOP, 1, Direction.NORTH, BlockModelGenerators.plainVariant(identifierNS).with(OffsetVariantSetting.yOffset(6)))
