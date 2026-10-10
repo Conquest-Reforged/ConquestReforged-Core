@@ -279,6 +279,10 @@ public class ModModelProvider extends FabricModelProvider {
                         registerManualItemTinted(blockStateModelGenerator, block, ItemModelUtils.constantTint(-12012264));
                     } else if (blockData.getProps().getColorType() == ColorType.DRY_FOLIAGE) {
                         registerManualItemTinted(blockStateModelGenerator, block, ItemModelUtils.constantTint(DryFoliageColor.FOLIAGE_DRY_DEFAULT));
+                    } else if (blockData.getProps().getColorType() == ColorType.BIRCH) {
+                        registerManualItemTinted(blockStateModelGenerator, block, ItemModelUtils.constantTint(-8345771));
+                    } else if (blockData.getProps().getColorType() == ColorType.EVERGREEN) {
+                        registerManualItemTinted(blockStateModelGenerator, block, ItemModelUtils.constantTint(-10380959));
                     } else if (blockData.getProps().getColorType() == ColorType.GRASS) {
                         registerManualItemTinted(blockStateModelGenerator, block, new GrassColorSource());
                     } else {
@@ -290,6 +294,10 @@ public class ModModelProvider extends FabricModelProvider {
                     registerManualItemTinted(blockStateModelGenerator, block, ItemModelUtils.constantTint(-12012264));
                 } else if (blockData.getProps().getColorType() == ColorType.DRY_FOLIAGE) {
                     registerManualItemTinted(blockStateModelGenerator, block, ItemModelUtils.constantTint(DryFoliageColor.FOLIAGE_DRY_DEFAULT));
+                } else if (blockData.getProps().getColorType() == ColorType.BIRCH) {
+                    registerManualItemTinted(blockStateModelGenerator, block, ItemModelUtils.constantTint(-8345771));
+                } else if (blockData.getProps().getColorType() == ColorType.EVERGREEN) {
+                    registerManualItemTinted(blockStateModelGenerator, block, ItemModelUtils.constantTint(-10380959));
                 } else if (blockData.getProps().getColorType() == ColorType.GRASS) {
                     registerManualItemTinted(blockStateModelGenerator, block, new GrassColorSource());
                 } else {
@@ -304,6 +312,10 @@ public class ModModelProvider extends FabricModelProvider {
             generator.registerSimpleTintedItemModel(block, modelId, ItemModelUtils.constantTint(-12012264));
         } else if (blockData.getProps().getColorType() == ColorType.DRY_FOLIAGE) {
             generator.registerSimpleTintedItemModel(block, modelId, ItemModelUtils.constantTint(DryFoliageColor.FOLIAGE_DRY_DEFAULT));
+        } else if (blockData.getProps().getColorType() == ColorType.BIRCH) {
+            generator.registerSimpleTintedItemModel(block, modelId, ItemModelUtils.constantTint(-8345771));
+        } else if (blockData.getProps().getColorType() == ColorType.EVERGREEN) {
+            generator.registerSimpleTintedItemModel(block, modelId, ItemModelUtils.constantTint(-10380959));
         } else if (blockData.getProps().getColorType() == ColorType.GRASS) {
             generator.registerSimpleTintedItemModel(block, modelId, new GrassColorSource());
         } else {
