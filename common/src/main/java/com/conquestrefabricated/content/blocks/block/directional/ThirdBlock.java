@@ -45,7 +45,7 @@ import static com.conquestrefabricated.core.block.properties.ModBlockProperties.
 public class ThirdBlock extends Shape {
 
     private static final VoxelShape TOP_SHAPE = Block.box(1.0D, 8.0D, 1.0D, 15.0D, 16.0D, 15.0D);
-    private static final VoxelShape MIDDLE_SHAPE = Block.box(1.0D, 8.0D, 1.0D, 15.0D, 12.0D, 15.0D);
+    private static final VoxelShape MIDDLE_SHAPE = Block.box(1.0D, 4.0D, 1.0D, 15.0D, 12.0D, 15.0D);
     private static final VoxelShape BOTTOM_SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 8.0D, 15.0D);
 
     public ThirdBlock(Properties properties) {
