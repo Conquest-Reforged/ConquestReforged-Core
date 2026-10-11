@@ -1,6 +1,5 @@
 package com.conquestrefabricated.content.blocks.block.trees;
 
-import com.conquestrefabricated.content.blocks.BlockVoxelShapes;
 import com.conquestrefabricated.content.blocks.block.Layer;
 import com.conquestrefabricated.content.blocks.block.Slab;
 import com.conquestrefabricated.content.blocks.block.directional.HorizontalDirectional;
@@ -161,9 +160,12 @@ public class BranchTip extends HorizontalDirectional {
             this.registerDefaultState(this.stateDefinition.any().setValue(TYPE_UPMIDDLEDOWN, Third.TOP).setValue(TOGGLE, 1).setValue(DIRECTION, Direction.NORTH));
         }
 
+        private static final VoxelShape CUBE_SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D);
+
+
         @Override
         public VoxelShape getShape(BlockState state) {
-                return (VoxelShape) BlockVoxelShapes.cubePartialShape;
+                return Top.CUBE_SHAPE;
         }
 
         // Tip2 Corner
