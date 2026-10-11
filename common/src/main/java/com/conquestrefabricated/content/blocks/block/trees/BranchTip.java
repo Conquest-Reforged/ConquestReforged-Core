@@ -108,7 +108,7 @@ public class BranchTip extends HorizontalDirectional {
 
     // Tip Corner
     @ItemDescription(description = "toggle_2")
-    public class Corner extends BranchTip {
+    public static class Corner extends BranchTip {
 
         public Corner(Props props) {
             super(props);
@@ -154,7 +154,7 @@ public class BranchTip extends HorizontalDirectional {
 
     // Tip2
     @ItemDescription(description = "toggle_2")
-    public class Top extends ThirdBlock.Directional.Toggle2 {
+    public static class Top extends ThirdBlock.Directional.Toggle2 {
 
         public Top(Properties properties) {
             super(properties);
@@ -168,7 +168,7 @@ public class BranchTip extends HorizontalDirectional {
 
         // Tip2 Corner
         @ItemDescription(description = "toggle_2")
-        public class Corner extends BranchTip.Top {
+        public static class Corner extends BranchTip.Top {
 
             public Corner(Properties properties) {
                 super(properties);
