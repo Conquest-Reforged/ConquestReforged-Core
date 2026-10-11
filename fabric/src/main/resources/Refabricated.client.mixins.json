@@ -3,7 +3,9 @@
 	"package": "com.conquestrefabricated.mixin/client",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
-		"CuboidModelMixin"
+		"CuboidModelMixin",
+		"GuiItemRenderStateMixin",
+		"GuiRendererMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -3,6 +3,9 @@ package com.conquestrefabricated.client.gui.palette;
 import com.conquestrefabricated.client.ModBinds;
 import com.conquestrefabricated.client.gui.CustomCreativeScreen;
 import com.conquestrefabricated.client.gui.palette.component.PaletteSettings;
+import com.conquestrefabricated.client.gui.palette.component.PaletteSlot;
+import com.conquestrefabricated.client.gui.palette.component.Style;
+import com.conquestrefabricated.client.gui.render.ItemOutline;
 import com.conquestrefabricated.client.gui.render.Render;
 import com.conquestrefabricated.client.tutorial.Tutorials;
 import net.minecraft.client.Minecraft;
@@ -17,6 +20,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.joml.Matrix3x2fStack;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 
 public class PaletteScreen extends CustomCreativeScreen<PaletteContainer> {
@@ -68,23 +77,48 @@ public class PaletteScreen extends CustomCreativeScreen<PaletteContainer> {
         {
             final int mx = mouseX - leftPos;
             final int my = mouseY - topPos;
-            getMenu().visitRadius(mx, my, (slot, depth) -> {
+            // visitRadius yields the slot nearest the cursor first; draw it last so it sits on top
+            final List<Map.Entry<PaletteSlot, Float>> radial = new ArrayList<>();
+            getMenu().visitRadius(mx, my, (slot, depth) -> radial.add(Map.entry(slot, depth)));
+            Collections.reverse(radial);
+            for (Map.Entry<PaletteSlot, Float> e : radial) {
+                PaletteSlot slot = e.getKey();
+                renderSlotBackGround(graphics, slot, slot.getStyle(), e.getValue(), slot.getScale(mx, my, settings));
+            }
+            for (Map.Entry<PaletteSlot, Float> e : radial) {
+                PaletteSlot slot = e.getKey();
+                float depth = e.getValue();
                 float scale = slot.getScale(mx, my, settings);
-                renderSlotBackGround(graphics, slot, slot.getStyle(), depth, scale);
-            });
-            getMenu().visitRadius(mx, my, (slot, depth) -> {
-                float scale = slot.getScale(mx, my, settings);
+                if (depth == 1F) {
+                    renderSlotOutline(graphics, slot, slot.getStyle(), scale);
+                }
                 renderSlot(graphics, slot, slot.getStyle(), mx, my, depth, scale);
-            });
+            }
             getMenu().visitCenter(slot -> {
                 float scale = slot.getScale(mx, my, settings);
                 renderSlotBackGround(graphics, slot, slot.getStyle(), 1F, scale);
+                if (slot.isMouseOver(mx, my)) {
+                    renderSlotOutline(graphics, slot, slot.getStyle(), scale);
+                }
                 renderSlot(graphics, slot, slot.getStyle(), mx, my, 1F, scale);
             });
             getMenu().visitHotbar(slot -> renderSlot(graphics, slot, mx, my, 1F, 1F));
             renderDraggedItem(graphics, mx, my, 1F, getMenu().getDraggedStyle());
         }
         tearDownRender(graphics.pose());
+    }
+
+    /** Highlight: the item as a flat-colour silhouette, slightly larger, drawn behind the item itself. */
+    private void renderSlotOutline(GuiGraphicsExtractor graphics, PaletteSlot slot, Style style, float scale) {
+        if (!slot.hasItem()) {
+            return;
+        }
+        Matrix3x2fStack pose = graphics.pose();
+        pose.pushMatrix();
+        pose.translate(slot.x + 8, slot.y + 8);
+        pose.scale(scale * style.highlightScale, scale * style.highlightScale);
+        ItemOutline.item(graphics, slot.getItem(), -8, -8, 0xFF000000 | style.highlightColor);
+        pose.popMatrix();
     }
 
     public void extractBg(GuiGraphicsExtractor drawContext, float partialTicks, int mouseX, int mouseY) {

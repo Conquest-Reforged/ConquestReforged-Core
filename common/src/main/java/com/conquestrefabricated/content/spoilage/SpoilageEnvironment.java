@@ -6,10 +6,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
+import net.minecraft.server.level.ServerChunkCache;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  * How fast food goes off where it is: a multiple of the normal pace (1.0 is a temperate biome, in the
@@ -66,7 +72,7 @@ public final class SpoilageEnvironment {
         if (level.canSeeSky(pos.above())) {
             return Place.OPEN;
         }
-        int ground = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, pos.getX(), pos.getZ());
+        int ground = ground(level, pos.getX(), pos.getZ());
         if (pos.getY() <= ground - BURIED_BY) {
             return Place.CELLAR;
         }
@@ -74,6 +80,30 @@ public final class SpoilageEnvironment {
             return Place.ATTIC;
         }
         return Place.ROOFED;
+    }
+
+    /** Terrain heights already asked of the generator, by level and column. */
+    private static final Map<Level, Map<Long, Integer>> GROUND = new WeakHashMap<>();
+
+    /**
+     * The height of the terrain as generated at a column. The world-gen heightmap is only kept while a chunk
+     * is being made - reloaded, it is rebuilt from whatever stands there now, roofs included, and every
+     * room under one would read as a cellar - so the generator is asked instead, once per column.
+     */
+    private static int ground(Level level, int x, int z) {
+        if (!(level instanceof ServerLevel server)) {
+            return level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z);
+        }
+        synchronized (GROUND) {
+            Map<Long, Integer> columns = GROUND.computeIfAbsent(level, key -> new HashMap<>());
+            if (columns.size() > 20000) {
+                columns.clear();
+            }
+            return columns.computeIfAbsent(((long) x << 32) ^ (z & 0xFFFFFFFFL), key -> {
+                ServerChunkCache source = server.getChunkSource();
+                return source.getGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG, server, source.randomState());
+            });
+        }
     }
 
     /**

@@ -4,6 +4,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
@@ -46,14 +47,46 @@ public class CustomSlownessEffect extends MobEffect {// Create a unique ID for y
         }
     }
 
+    /**
+     * Plant blocks re-apply this effect with a 15 tick duration every tick the entity is inside them, so the
+     * remaining duration only drops below this while the entity is out of the foliage. At or above this value the
+     * effect is at full strength; below it, strength fades linearly to zero (about two thirds of a second).
+     */
+    private static final int FULL_STRENGTH_TICKS = 13;
+
+    private static float strength(LivingEntity entity) {
+        for (MobEffectInstance instance : entity.getActiveEffects()) {
+            if (instance.getEffect().value() == Effects.CUSTOM_SLOWNESS) {
+                return Math.min(1.0F, instance.getDuration() / (float) FULL_STRENGTH_TICKS);
+            }
+        }
+        return 1.0F;
+    }
+
+    private void updateSpeedModifier(LivingEntity entity, int amplifier, float strength) {
+        AttributeInstance instance = entity.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (instance == null) {
+            return;
+        }
+        double amount = getMovementSpeedModifierValue(amplifier) * strength;
+        AttributeModifier existing = instance.getModifier(MODIFIER_ID);
+        if (existing != null && Math.abs(existing.amount() - amount) < 1.0E-4) {
+            return;
+        }
+        instance.removeModifier(MODIFIER_ID);
+        instance.addTransientModifier(new AttributeModifier(MODIFIER_ID, amount, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+    }
+
     @Override
     public boolean applyEffectTick(ServerLevel serverLevel, LivingEntity entity, int amplifier) {
+        float strength = strength(entity);
+        updateSpeedModifier(entity, amplifier, strength);
         // Handle jump and sprint penalties
         if (entity instanceof Player player) {
             // Modify jump behavior
 
             if (player.jumping && player.isSprinting()) {
-                double sprintPenalty = getSprintPenaltyValue(amplifier);
+                double sprintPenalty = getSprintPenaltyValue(amplifier) * strength;
                 if (player.getDeltaMovement().y > 0) {
                     player.setDeltaMovement(
                             player.getDeltaMovement().x * (1.0 - sprintPenalty),
@@ -64,7 +97,7 @@ public class CustomSlownessEffect extends MobEffect {// Create a unique ID for y
             }
             else if (player.jumping) {
                 // Reduce jump velocity
-                double jumpReduction = getJumpReductionValue(amplifier);
+                double jumpReduction = getJumpReductionValue(amplifier) * strength;
                 if (player.getDeltaMovement().y > 0) {
                     player.setDeltaMovement(
                             player.getDeltaMovement().x * (1.0 - jumpReduction),
