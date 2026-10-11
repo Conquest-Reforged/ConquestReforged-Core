@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 
 import static com.conquestrefabricated.core.block.properties.ModBlockProperties.TYPE_UPDOWN;
 import static com.conquestrefabricated.core.block.properties.ModBlockProperties.TYPE_UPMIDDLEDOWN;
@@ -46,6 +47,7 @@ public class BranchTip extends HorizontalDirectional {
         builder.add(TOGGLE, DOWN, TYPE_UPMIDDLEDOWN);
     }
 
+    @NotNull
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction facing = context.getHorizontalDirection().getOpposite();
@@ -84,6 +86,7 @@ public class BranchTip extends HorizontalDirectional {
         }
     }
 
+    @NotNull
     @Override
     public BlockState updateShape(BlockState stateIn, LevelReader level, ScheduledTickAccess ticks, BlockPos currentPos, Direction directionToNeighbour, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
         BlockState down = level.getBlockState(currentPos.below());
@@ -104,6 +107,7 @@ public class BranchTip extends HorizontalDirectional {
 
 
     // Tip Corner
+    @ItemDescription(description = "toggle_2")
     public class Corner extends BranchTip {
 
         public Corner(Props props) {
@@ -111,6 +115,7 @@ public class BranchTip extends HorizontalDirectional {
             this.registerDefaultState(this.stateDefinition.any().setValue(DOWN, false).setValue(TYPE_UPMIDDLEDOWN, Third.BOTTOM).setValue(TOGGLE, 1).setValue(DIRECTION, Direction.NORTH));
         }
 
+        @NotNull
         @Override
         public BlockState mirror(BlockState state, Mirror mirrorIn) {
             switch (mirrorIn) {
@@ -148,6 +153,7 @@ public class BranchTip extends HorizontalDirectional {
 
 
     // Tip2
+    @ItemDescription(description = "toggle_2")
     public class Top extends ThirdBlock.Directional.Toggle2 {
 
         public Top(Properties properties) {
@@ -161,12 +167,14 @@ public class BranchTip extends HorizontalDirectional {
         }
 
         // Tip2 Corner
+        @ItemDescription(description = "toggle_2")
         public class Corner extends BranchTip.Top {
 
             public Corner(Properties properties) {
                 super(properties);
                 this.registerDefaultState(this.stateDefinition.any().setValue(TYPE_UPMIDDLEDOWN, Third.TOP).setValue(TOGGLE, 1).setValue(DIRECTION, Direction.NORTH));
             }
+
             @Override
             public BlockState mirror(BlockState state, Mirror mirrorIn) {
                 switch (mirrorIn) {

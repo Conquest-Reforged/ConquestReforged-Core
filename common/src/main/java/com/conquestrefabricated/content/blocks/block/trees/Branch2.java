@@ -77,7 +77,9 @@ public class Branch2 extends HorizontalDirectional {
         return Interactions.onUseToggleItem(player, level, blockPos, state, TOGGLE);
     }
 
+    @ItemDescription(description = "toggle_2")
     public class Corner extends Branch2 {
+
 
         public Corner(Props props) {
             super(props);
