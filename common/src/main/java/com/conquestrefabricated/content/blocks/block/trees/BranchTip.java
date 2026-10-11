@@ -1,11 +1,14 @@
 package com.conquestrefabricated.content.blocks.block.trees;
 
+import com.conquestrefabricated.content.blocks.BlockVoxelShapes;
 import com.conquestrefabricated.content.blocks.block.Layer;
 import com.conquestrefabricated.content.blocks.block.Slab;
 import com.conquestrefabricated.content.blocks.block.directional.HorizontalDirectional;
+import com.conquestrefabricated.content.blocks.block.directional.ThirdBlock;
 import com.conquestrefabricated.content.blocks.util.Interactions;
 import com.conquestrefabricated.core.asset.annotation.ItemDescription;
 import com.conquestrefabricated.core.block.builder.Props;
+import com.conquestrefabricated.core.block.properties.Third;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -14,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -21,9 +25,10 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import static com.conquestrefabricated.core.block.properties.ModBlockProperties.TYPE_UPDOWN;
+import static com.conquestrefabricated.core.block.properties.ModBlockProperties.TYPE_UPMIDDLEDOWN;
 
 @ItemDescription(description = "toggle_2")
 public class BranchTip extends HorizontalDirectional {
@@ -33,17 +38,19 @@ public class BranchTip extends HorizontalDirectional {
 
     public BranchTip(Props props) {
         super(props);
-        this.registerDefaultState(this.stateDefinition.any().setValue(DOWN, false));
+        this.registerDefaultState(this.stateDefinition.any().setValue(DOWN, false).setValue(TYPE_UPMIDDLEDOWN, Third.BOTTOM).setValue(TOGGLE, 1).setValue(DIRECTION, Direction.NORTH));
     }
 
     @Override
     protected void addProperties(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(TOGGLE, DOWN);
+        builder.add(TOGGLE, DOWN, TYPE_UPMIDDLEDOWN);
     }
 
     @Override
-    @NotNull
     public BlockState getStateForPlacement(BlockPlaceContext context) {
+        Direction facing = context.getHorizontalDirection().getOpposite();
+        BlockPos pos = context.getClickedPos();
+
         BlockGetter blockreader = context.getLevel();
         BlockPos blockpos = context.getClickedPos();
 
@@ -56,7 +63,25 @@ public class BranchTip extends HorizontalDirectional {
             isDown = true;
         }
 
-        return super.getStateForPlacement(context).setValue(TOGGLE, 1).setValue(DOWN, isDown);
+        if ((context.getClickLocation().y - (double)pos.getY() < 0.33D) || (facing == Direction.DOWN)) {
+            return super.getStateForPlacement(context)
+                    .setValue(DIRECTION, facing)
+                    .setValue(TYPE_UPMIDDLEDOWN, Third.BOTTOM)
+                    .setValue(TOGGLE, 1)
+                    .setValue(DOWN, isDown);
+        } else if ((context.getClickLocation().y - (double)pos.getY() > 0.66D) || (facing == Direction.UP)) {
+            return super.getStateForPlacement(context)
+                    .setValue(DIRECTION, facing)
+                    .setValue(TYPE_UPMIDDLEDOWN, Third.TOP)
+                    .setValue(TOGGLE, 1)
+                    .setValue(DOWN, isDown);
+        } else {
+            return super.getStateForPlacement(context)
+                    .setValue(DIRECTION, facing)
+                    .setValue(TYPE_UPMIDDLEDOWN, Third.MIDDLE)
+                    .setValue(TOGGLE, 1)
+                    .setValue(DOWN, isDown);
+        }
     }
 
     @Override
@@ -74,5 +99,106 @@ public class BranchTip extends HorizontalDirectional {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos blockPos, Player player, BlockHitResult hitResult) {
         return Interactions.onUseToggleItem(player, level, blockPos, state, TOGGLE);
+    }
+
+
+
+    // Tip Corner
+    public class Corner extends BranchTip {
+
+        public Corner(Props props) {
+            super(props);
+            this.registerDefaultState(this.stateDefinition.any().setValue(DOWN, false).setValue(TYPE_UPMIDDLEDOWN, Third.BOTTOM).setValue(TOGGLE, 1).setValue(DIRECTION, Direction.NORTH));
+        }
+
+        @Override
+        public BlockState mirror(BlockState state, Mirror mirrorIn) {
+            switch (mirrorIn) {
+                case FRONT_BACK:
+                    switch(state.getValue(DIRECTION)) {
+                        case NORTH:
+                            return state.setValue(DIRECTION, Direction.EAST);
+                        case EAST:
+                            return state.setValue(DIRECTION, Direction.NORTH);
+                        case SOUTH:
+                            return state.setValue(DIRECTION, Direction.WEST);
+                        case WEST:
+                            return state.setValue(DIRECTION, Direction.SOUTH);
+                        default:
+                            return super.mirror(state, mirrorIn);
+                    }
+                case LEFT_RIGHT:
+                    switch(state.getValue(DIRECTION)) {
+                        case NORTH:
+                            return state.setValue(DIRECTION, Direction.WEST);
+                        case EAST:
+                            return state.setValue(DIRECTION, Direction.SOUTH);
+                        case SOUTH:
+                            return state.setValue(DIRECTION, Direction.EAST);
+                        case WEST:
+                            return state.setValue(DIRECTION, Direction.NORTH);
+                        default:
+                            return super.mirror(state, mirrorIn);
+                    }
+            }
+            return super.mirror(state, mirrorIn);
+        }
+    }
+
+
+
+    // Tip2
+    public class Top extends ThirdBlock.Directional.Toggle2 {
+
+        public Top(Properties properties) {
+            super(properties);
+            this.registerDefaultState(this.stateDefinition.any().setValue(TYPE_UPMIDDLEDOWN, Third.TOP).setValue(TOGGLE, 1).setValue(DIRECTION, Direction.NORTH));
+        }
+
+        @Override
+        public VoxelShape getShape(BlockState state) {
+                return (VoxelShape) BlockVoxelShapes.cubePartialShape;
+        }
+
+        // Tip2 Corner
+        public class Corner extends BranchTip.Top {
+
+            public Corner(Properties properties) {
+                super(properties);
+                this.registerDefaultState(this.stateDefinition.any().setValue(TYPE_UPMIDDLEDOWN, Third.TOP).setValue(TOGGLE, 1).setValue(DIRECTION, Direction.NORTH));
+            }
+            @Override
+            public BlockState mirror(BlockState state, Mirror mirrorIn) {
+                switch (mirrorIn) {
+                    case FRONT_BACK:
+                        switch(state.getValue(DIRECTION)) {
+                            case NORTH:
+                                return state.setValue(DIRECTION, Direction.EAST);
+                            case EAST:
+                                return state.setValue(DIRECTION, Direction.NORTH);
+                            case SOUTH:
+                                return state.setValue(DIRECTION, Direction.WEST);
+                            case WEST:
+                                return state.setValue(DIRECTION, Direction.SOUTH);
+                            default:
+                                return super.mirror(state, mirrorIn);
+                        }
+                    case LEFT_RIGHT:
+                        switch(state.getValue(DIRECTION)) {
+                            case NORTH:
+                                return state.setValue(DIRECTION, Direction.WEST);
+                            case EAST:
+                                return state.setValue(DIRECTION, Direction.SOUTH);
+                            case SOUTH:
+                                return state.setValue(DIRECTION, Direction.EAST);
+                            case WEST:
+                                return state.setValue(DIRECTION, Direction.NORTH);
+                            default:
+                                return super.mirror(state, mirrorIn);
+                        }
+                }
+                return super.mirror(state, mirrorIn);
+            }
+        }
     }
 }
