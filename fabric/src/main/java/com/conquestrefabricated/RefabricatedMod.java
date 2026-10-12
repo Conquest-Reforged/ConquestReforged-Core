@@ -61,6 +61,7 @@ public class RefabricatedMod implements ModInitializer {
         PaintersKitInit.register();
         LimeInit.register();
         com.conquestrefabricated.content.salt.SaltEvents.register();
+        com.conquestrefabricated.content.treefelling.TreeFelling.register();
         com.conquestrefabricated.content.fuel.fabric.WoodFuel.register();
         com.conquestrefabricated.content.spoilage.fabric.SpoilageInit.register();
         TileRegistrar.entities();
@@ -137,7 +138,8 @@ public class RefabricatedMod implements ModInitializer {
                     ConquestConfig.INSTANCE.plantBreaking.get(),
                     ConquestConfig.INSTANCE.passThroughLeaves.get(),
                     ConquestConfig.INSTANCE.spoilage.get(),
-                    ConquestConfig.INSTANCE.saltProduction.get()
+                    ConquestConfig.INSTANCE.saltProduction.get(),
+                    ConquestConfig.INSTANCE.treeFelling.get()
             ));
         });
 

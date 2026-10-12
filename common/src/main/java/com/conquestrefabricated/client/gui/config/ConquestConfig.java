@@ -36,6 +36,8 @@ public class ConquestConfig {
     public final Option.BooleanOption saltProduction = addOption(new Option.BooleanOption("salt_production", true));
     /** Food going off: perishable stacks age in inventories, containers and on the ground. */
     public final Option.BooleanOption spoilage = addOption(new Option.BooleanOption("spoilage", true));
+    /** Chopping the foot of a tree with an axe brings the whole tree down. */
+    public final Option.BooleanOption treeFelling = addOption(new Option.BooleanOption("tree_felling", true));
     public final Option.BooleanOption ignore_intro = addOption(new Option.BooleanOption("ignore_intro", false));
     public final Option.BooleanOption ignore_dependencies = addOption(new Option.BooleanOption("ignore_dependencies", false));
     public final Option.BooleanOption using_modpack = addOption(new Option.BooleanOption("using_modpack", false));

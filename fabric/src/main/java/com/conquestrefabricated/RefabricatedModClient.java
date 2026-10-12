@@ -81,6 +81,7 @@ public class RefabricatedModClient implements ClientModInitializer {
     private static Boolean localPassThroughLeaves;
     private static Boolean localSpoilage;
     private static Boolean localSaltProduction;
+    private static Boolean localTreeFelling;
 
     private static boolean hasShownIntro = false;
 
@@ -379,6 +380,7 @@ public class RefabricatedModClient implements ClientModInitializer {
                 localPassThroughLeaves = ConquestConfig.INSTANCE.passThroughLeaves.get();
                 localSpoilage = ConquestConfig.INSTANCE.spoilage.get();
                 localSaltProduction = ConquestConfig.INSTANCE.saltProduction.get();
+                localTreeFelling = ConquestConfig.INSTANCE.treeFelling.get();
 
                 // Apply server values for this multiplayer session only
                 ConquestConfig.INSTANCE.plantSlowness.set(payload.plantSlowness());
@@ -386,6 +388,7 @@ public class RefabricatedModClient implements ClientModInitializer {
                 ConquestConfig.INSTANCE.passThroughLeaves.set(payload.passThroughLeaves());
                 ConquestConfig.INSTANCE.spoilage.set(payload.spoilage());
                 ConquestConfig.INSTANCE.saltProduction.set(payload.saltProduction());
+                ConquestConfig.INSTANCE.treeFelling.set(payload.treeFelling());
             });
         });
 
@@ -399,6 +402,7 @@ public class RefabricatedModClient implements ClientModInitializer {
                     ConquestConfig.INSTANCE.passThroughLeaves.set(localPassThroughLeaves);
                     ConquestConfig.INSTANCE.spoilage.set(localSpoilage);
                     ConquestConfig.INSTANCE.saltProduction.set(localSaltProduction);
+                    ConquestConfig.INSTANCE.treeFelling.set(localTreeFelling);
 
                     // Re-save to disk so the json file is back to the player's preferences
                     // (this also undoes any accidental overwrite from clicking DONE in MP)
@@ -410,6 +414,7 @@ public class RefabricatedModClient implements ClientModInitializer {
                     localPassThroughLeaves = null;
                     localSpoilage = null;
                     localSaltProduction = null;
+                    localTreeFelling = null;
                 }
             });
         });

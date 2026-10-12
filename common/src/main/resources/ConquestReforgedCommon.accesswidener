@@ -10,3 +10,7 @@ accessible method net/minecraft/world/item/CreativeModeTab <init> (Lnet/minecraf
 accessible field net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen selectedTab Lnet/minecraft/world/item/CreativeModeTab;
 accessible field net/minecraft/world/entity/LivingEntity jumping Z
 accessible field net/minecraft/client/renderer/RenderPipelines GUI_TEXTURED_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+accessible method net/minecraft/world/entity/Display setTransformation (Lcom/mojang/math/Transformation;)V
+accessible method net/minecraft/world/entity/Display setTransformationInterpolationDuration (I)V
+accessible method net/minecraft/world/entity/Display setTransformationInterpolationDelay (I)V
+accessible method net/minecraft/world/entity/Display$BlockDisplay setBlockState (Lnet/minecraft/world/level/block/state/BlockState;)V

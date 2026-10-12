@@ -163,7 +163,7 @@ public class BranchTip extends HorizontalDirectional {
 
         @Override
         public VoxelShape getShape(BlockState state) {
-                return (VoxelShape) BlockVoxelShapes.cubePartialShape;
+                return BlockVoxelShapes.cubePartialShape.get(0);
         }
 
         // Tip2 Corner

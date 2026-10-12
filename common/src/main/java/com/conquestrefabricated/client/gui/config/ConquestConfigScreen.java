@@ -33,8 +33,9 @@ public class ConquestConfigScreen extends Screen {
 
         Value<Boolean> spoilage = Value.of(config.spoilage);
         Value<Boolean> saltProduction = Value.of(config.saltProduction);
+        Value<Boolean> treeFelling = Value.of(config.treeFelling);
 
-        values = List.of(plantBreaking, plantSlowness, passThroughLeaves, spoilage, saltProduction);
+        values = List.of(plantBreaking, plantSlowness, passThroughLeaves, spoilage, saltProduction, treeFelling);
 
         boolean serverControlled = Minecraft.getInstance().level != null && !Minecraft.getInstance().isLocalServer();
 
@@ -72,6 +73,13 @@ public class ConquestConfigScreen extends Screen {
                 .build();
         saltProductionBtn.active = !serverControlled;
         addRenderableWidget(saltProductionBtn);
+
+        // Tree Felling button
+        Button treeFellingBtn = startBooleanValueButton(treeFelling, serverControlled)
+                .bounds(width / 2 - 100 + 110, height / 2 - 10 + 36, 200, 20)
+                .build();
+        treeFellingBtn.active = !serverControlled;
+        addRenderableWidget(treeFellingBtn);
 
         addRenderableWidget(Button.builder(CommonComponents.GUI_DONE,
                         button -> {
