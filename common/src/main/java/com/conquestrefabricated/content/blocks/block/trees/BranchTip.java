@@ -161,9 +161,12 @@ public class BranchTip extends HorizontalDirectional {
             this.registerDefaultState(this.stateDefinition.any().setValue(TYPE_UPMIDDLEDOWN, Third.TOP).setValue(TOGGLE, 1).setValue(DIRECTION, Direction.NORTH));
         }
 
+        private static final VoxelShape CUBE_SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D);
+
+
         @Override
         public VoxelShape getShape(BlockState state) {
-                return BlockVoxelShapes.cubePartialShape.get(0);
+            return BlockVoxelShapes.cubePartialShape.getFirst();
         }
 
         // Tip2 Corner

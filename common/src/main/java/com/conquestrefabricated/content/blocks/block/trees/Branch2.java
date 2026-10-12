@@ -78,7 +78,7 @@ public class Branch2 extends HorizontalDirectional {
     }
 
     @ItemDescription(description = "toggle_2")
-    public class Corner extends Branch2 {
+    public static class Corner extends Branch2 {
 
 
         public Corner(Props props) {
