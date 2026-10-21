@@ -46,6 +46,7 @@ conquest:norway_spruce_log
 conquest:mossy_norway_spruce_log
 
 minecraft:mangrove_log
+minecraft:mangrove_roots
 conquest:alder_log
 conquest:larch_log
 conquest:mossy_larch_log

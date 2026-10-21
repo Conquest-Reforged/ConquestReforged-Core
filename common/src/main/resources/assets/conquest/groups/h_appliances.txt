@@ -56,3 +56,4 @@ conquest:washstand_table
 conquest:hanging_washstand_pot
 
 minecraft:lectern
+minecraft:enchanting_table

@@ -11,6 +11,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
@@ -302,6 +303,32 @@ public class BlockFamilyInit {
 //
 //        addCarpets();
 //        addStoneShapes();
+
+        addVanillaShapes();
+    }
+
+    /**
+     * Vanilla blocks with no Conquest family of their own. Only the full block is listed in a
+     * creative tab; its stairs, slabs and walls are reached through the palette.
+     */
+    private static void addVanillaShapes() {
+        family(Blocks.COBBLED_DEEPSLATE, Blocks.COBBLED_DEEPSLATE_STAIRS, Blocks.COBBLED_DEEPSLATE_SLAB, Blocks.COBBLED_DEEPSLATE_WALL);
+        family(Blocks.DEEPSLATE_BRICKS, Blocks.DEEPSLATE_BRICK_STAIRS, Blocks.DEEPSLATE_BRICK_SLAB, Blocks.DEEPSLATE_BRICK_WALL);
+        family(Blocks.SMOOTH_SANDSTONE, Blocks.SMOOTH_SANDSTONE_STAIRS, Blocks.SMOOTH_SANDSTONE_SLAB);
+        family(Blocks.SMOOTH_RED_SANDSTONE, Blocks.SMOOTH_RED_SANDSTONE_STAIRS, Blocks.SMOOTH_RED_SANDSTONE_SLAB);
+        family(Blocks.SMOOTH_QUARTZ, Blocks.SMOOTH_QUARTZ_STAIRS, Blocks.SMOOTH_QUARTZ_SLAB);
+        family(Blocks.MOSS_BLOCK, Blocks.MOSS_CARPET);
+    }
+
+    private static void family(Block root, Block... blocks) {
+        // grouped like Conquest's own families: search tab only, so the tab files decide what is listed
+        BlockFamily family = new BlockFamily(CreativeModeTabs.searchTab(), TypeList.EMPTY);
+        family.setRoot(root);
+        FamilyRegistry.BLOCKS.register(root, family);
+        for (Block block : blocks) {
+            family.add(block);
+            FamilyRegistry.BLOCKS.register(block, family);
+        }
     }
 
     private static void addCarpets() {

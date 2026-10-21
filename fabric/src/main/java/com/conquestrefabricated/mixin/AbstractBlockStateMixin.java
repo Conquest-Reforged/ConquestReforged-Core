@@ -6,6 +6,8 @@ import com.conquestrefabricated.content.blocks.block.trees.LeavesGround;
 import com.conquestrefabricated.content.blocks.block.trees.LeavesGroundFruit;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
+import com.conquestrefabricated.content.treefelling.TreeFelling;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LeavesBlock;
@@ -24,6 +26,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class AbstractBlockStateMixin {
 
     private static final VoxelShape EMPTY_SHAPE = Shapes.empty();
+
+    /** A big tree takes longer to cut through; see TreeFelling.slowdown. */
+    @Inject(method = "getDestroyProgress", at = @At("RETURN"), cancellable = true)
+    private void conquest$treeFellingSlowdown(Player player, BlockGetter level, BlockPos pos, CallbackInfoReturnable<Float> cir) {
+        float progress = cir.getReturnValueF();
+        if (progress > 0.0F) {
+            float slowdown = TreeFelling.slowdown(player, level, pos);
+            if (slowdown > 1.0F) {
+                cir.setReturnValue(progress / slowdown);
+            }
+        }
+    }
 
     @Unique
     private BlockState self() {

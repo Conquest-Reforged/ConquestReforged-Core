@@ -3,6 +3,8 @@ conquest:bright_glacier_ice
 conquest:glacier_ice
 conquest:dirty_glacier_ice
 minecraft:snow_block
+minecraft:packed_ice
+minecraft:blue_ice
 conquest:ice_bricks
 minecraft:light_blue_glazed_terracotta
 conquest:icicles

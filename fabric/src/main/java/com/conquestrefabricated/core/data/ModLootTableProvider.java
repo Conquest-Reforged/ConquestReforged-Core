@@ -19,6 +19,21 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.item.Items;
+import com.conquestrefabricated.core.block.builder.Props;
+import com.conquestrefabricated.core.block.data.BlockDataRegistry;
+import java.util.HashMap;
+import java.util.Map;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Blocks;
+import com.conquestrefabricated.content.blocks.block.trees.LeavesFruit;
+import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
+import net.minecraft.world.level.storage.loot.predicates.BonusLevelTableCondition;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraft.world.level.block.state.properties.BedPart;
@@ -41,6 +56,10 @@ public class ModLootTableProvider extends FabricBlockLootSubProvider {
 
     @Override
     public void generate() {
+        Map<Block, Props> props = new HashMap<>();
+        Namespaces.stream().flatMap(BlockDataRegistry.getInstance()::getData)
+                .forEach(data -> props.put(data.getBlock(), data.getProps()));
+
         BuiltInRegistries.BLOCK.stream().filter(block -> Namespaces.isRegistered(BuiltInRegistries.BLOCK.getKey(block).getNamespace())).forEach(block -> {
             if (block.asItem() == net.minecraft.world.item.Items.AIR) {
                 return; // no item form — nothing to generate a loot table for
@@ -51,6 +70,9 @@ public class ModLootTableProvider extends FabricBlockLootSubProvider {
 
             if (block instanceof Sphere) {
                 dropSelf(block);
+            }
+            else if (block instanceof LeavesBlock || block instanceof LeavesFruit) {
+                add(block, leafDrops(block, saplingOf(props.get(block))));
             }
             else if (isBranch(block, parent)) {
                 // Branches are twigs, not timber: a few sticks whatever shape or family they are in.
@@ -110,6 +132,39 @@ public class ModLootTableProvider extends FabricBlockLootSubProvider {
     private static boolean isLoot(Block block) {
         return !(block instanceof DoubleHorizontalDirectional || block instanceof Door
                 || block instanceof Bed || block instanceof Plough || block instanceof PotteryWheel);
+    }
+
+    /** The sapling a leaf block was declared with, or null if it has none. */
+    private static Block saplingOf(Props props) {
+        if (props == null) {
+            return null;
+        }
+        ItemLike sapling = props.getOrDefault("sapling", ItemLike.class, null);
+        if (sapling == null || sapling.asItem() == Items.AIR) {
+            return null;
+        }
+        Block block = Block.byItem(sapling.asItem());
+        return block == Blocks.AIR ? null : block;
+    }
+
+    /**
+     * Leaves drop themselves only to shears or silk touch. Otherwise they give the odd sapling and the
+     * odd stick, as vanilla's do, but never apples: trees that bear fruit do so on their own.
+     */
+    private LootTable.Builder leafDrops(Block leaves, Block sapling) {
+        Holder<Enchantment> fortune = this.registries.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.FORTUNE);
+        LootPoolEntryContainer.Builder<?> saplingEntry = sapling == null
+                ? EmptyLootItem.emptyItem()
+                : this.applyExplosionCondition(leaves, LootItem.lootTableItem(sapling))
+                        .when(BonusLevelTableCondition.bonusLevelFlatChance(fortune, NORMAL_LEAVES_SAPLING_CHANCES));
+        return this.createSilkTouchOrShearsDispatchTable(leaves, saplingEntry)
+                .withPool(LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1.0F))
+                        .when(this.doesNotHaveShearsOrSilkTouch())
+                        .add(this.applyExplosionDecay(leaves, LootItem.lootTableItem(Items.STICK)
+                                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F))))
+                                .when(BonusLevelTableCondition.bonusLevelFlatChance(fortune,
+                                        0.02F, 0.022222223F, 0.025F, 0.033333335F, 0.1F))));
     }
 
     private static boolean isBranch(Block block, Block parent) {

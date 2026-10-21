@@ -52,11 +52,11 @@ public class VanillaProps {
     }
 
     public static Props sand() {
-        return Props.create(Blocks.SAND).group((ModGroups.UTILITY)).tags(BlockTags.MINEABLE_WITH_SHOVEL);
+        return Props.create(Blocks.SAND).group((ModGroups.UTILITY)).tags(BlockTags.MINEABLE_WITH_SHOVEL, BlockTags.SAND);
     }
 
     public static Props gravel() {
-        return Props.create(Blocks.GRAVEL).group((ModGroups.UTILITY)).tags(BlockTags.MINEABLE_WITH_SHOVEL);
+        return Props.create(Blocks.GRAVEL).group((ModGroups.UTILITY)).tags(BlockTags.MINEABLE_WITH_SHOVEL, ModTags.GRAVELS);
     }
 
     public static Props grass() {

@@ -43,9 +43,11 @@ conquest:tuff
 conquest:light_tuff
 conquest:dark_tuff
 minecraft:bedrock
+minecraft:reinforced_deepslate
 
 conquest:gray_limestone
 minecraft:stone
+minecraft:deepslate
 conquest:snow_covered_icy_limestone
 conquest:icy_limestone
 conquest:moss_covered_limestone
@@ -96,10 +98,12 @@ conquest:chalk
 conquest:layered_chalk
 conquest:sulfur_pools
 minecraft:calcite
+minecraft:bone_block
 conquest:calcite
 conquest:rough_calcite
 conquest:dripstone
 minecraft:pointed_dripstone
+minecraft:dripstone_block
 conquest:stalagmite
 conquest:stalactite
 
@@ -134,16 +138,24 @@ conquest:pile_of_coal
 conquest:rock_ladder
 
 minecraft:copper_ore
+minecraft:deepslate_copper_ore
 minecraft:raw_copper_block
 minecraft:iron_ore
+minecraft:deepslate_iron_ore
 minecraft:raw_iron_block
 minecraft:coal_ore
+minecraft:deepslate_coal_ore
 minecraft:gold_ore
+minecraft:deepslate_gold_ore
 minecraft:raw_gold_block
 minecraft:lapis_ore
+minecraft:deepslate_lapis_ore
 minecraft:diamond_ore
+minecraft:deepslate_diamond_ore
 minecraft:emerald_ore
+minecraft:deepslate_emerald_ore
 minecraft:redstone_ore
+minecraft:deepslate_redstone_ore
 minecraft:nether_quartz_ore
 minecraft:nether_gold_ore
 

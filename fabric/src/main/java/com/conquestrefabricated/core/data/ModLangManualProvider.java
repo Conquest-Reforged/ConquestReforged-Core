@@ -127,6 +127,7 @@ public class ModLangManualProvider extends FabricLanguageProvider {
         translationBuilder.add("itemGroup.conquest.q_food_and_consumables", "Food & Consumables");
         translationBuilder.add("itemGroup.conquest.hh_storage", "Storage");
         translationBuilder.add("itemGroup.conquest.r_miscellaneous", "Miscellaneous");
+        translationBuilder.add("itemGroup.conquest.ra_spawn_eggs", "Spawn Eggs");
         translationBuilder.add("itemGroup.conquest.oo_animals", "Animals");
 
         /* === Arms station === */
@@ -193,7 +194,7 @@ public class ModLangManualProvider extends FabricLanguageProvider {
         translationBuilder.add("options.conquest.salt_production", "Salt Production");
         translationBuilder.add("options.conquest.salt_production.tooltip", "Toggle off to stop sea water being scooped and poured and salt pans working.");
         translationBuilder.add("options.conquest.tree_felling", "Tree Felling");
-        translationBuilder.add("options.conquest.tree_felling.tooltip", "Chop the foot of a tree with an axe to bring the whole tree down, away from you. Sneak to chop a single block. Toggle off for vanilla chopping.");
+        translationBuilder.add("options.conquest.tree_felling.tooltip", "Chop through a tree with an axe to bring down everything above the cut, away from you; bigger trees take longer. Sneak to chop a single block. Toggle off for vanilla chopping.");
         translationBuilder.add("tooltip.conquest.freshness.fresh", "Fresh (%s%% left)");
         translationBuilder.add("tooltip.conquest.freshness.ageing", "Ageing (%s%% left)");
         translationBuilder.add("tooltip.conquest.freshness.stale", "Stale (%s%% left)");

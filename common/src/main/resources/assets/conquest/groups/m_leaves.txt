@@ -38,6 +38,9 @@ conquest:mistletoe_garland
 conquest:olive_tree_leaves
 minecraft:jungle_leaves
 minecraft:acacia_leaves
+minecraft:mangrove_leaves
+minecraft:cherry_leaves
+minecraft:pale_oak_leaves
 conquest:horse_chestnut_leaves
 conquest:autumnal_horse_chestnut_leaves
 conquest:diseased_horse_chestnut_leaves
@@ -120,6 +123,9 @@ conquest:horse_chestnut_tree_sapling
 conquest:alder_tree_sapling
 conquest:jungle_sapling
 minecraft:jungle_sapling
+minecraft:mangrove_propagule
+minecraft:cherry_sapling
+minecraft:pale_oak_sapling
 
 conquest:mallorn_tree_sapling
 

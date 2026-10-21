@@ -1,5 +1,6 @@
 conquest:hay_bale
 minecraft:hay_block
+minecraft:dried_kelp_block
 conquest:dried_fodder
 conquest:fodder
 
@@ -37,3 +38,7 @@ minecraft:sugar_cane
 minecraft:cocoa_beans
 minecraft:melon_seeds
 minecraft:pumpkin_seeds
+minecraft:wheat_seeds
+minecraft:beetroot_seeds
+minecraft:torchflower_seeds
+minecraft:pitcher_pod

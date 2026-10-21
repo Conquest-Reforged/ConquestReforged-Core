@@ -32,22 +32,35 @@ import java.util.Map;
  * distances: a leaf goes with the felled tree when that tree's wood is at least as near, in leaf steps,
  * as any other wood. Arborea's invisible {@code leaf_support} blocks (logs by tag, but not wood) are carried
  * along so they don't hold up a canopy that has lost its tree.</p>
+ *
+ * <p>Sphagnum moss shapes clad some trunks, so they count as wood too - but moss also carpets the ground,
+ * so only moss above the cut, and no more than {@link #MAX_MOSS_RUN} blocks from real wood, is taken. That
+ * keeps a mossy trunk whole without the search running off across a bog or into the next tree.</p>
  */
 final class TreeScan {
 
     static final int MAX_WOOD = 1500;
-    static final int MAX_FOLIAGE = 8000;
+    static final int MAX_FOLIAGE = 20000;
+    /** Wood looked at around the cut to tell this tree from its neighbours, and how far out (in blocks). */
+    private static final int MAX_SEARCH = 12000;
+    private static final int SEARCH_RADIUS = 28;
+    /** Blocks within this distance of the cut's column are the cut trunk itself (a wide foot, a stump ring). */
+    private static final int TRUNK_RADIUS = 3;
     /** Leaf steps explored from the wood; leaf decay itself gives up after 6. */
     private static final int EXPLORE_DEPTH = 14;
     /** Leaves further than this from the felled wood are never taken. */
     private static final int OWN_DEPTH = 12;
     /** A tree needs this many natural leaves; a log pile or a hand-built pillar has none. */
     private static final int MIN_LEAVES = 3;
+    /** The most moss blocks in a row, from real wood, that still count as trunk. */
+    private static final int MAX_MOSS_RUN = 3;
 
     private static final byte LEAF = 1;
     private static final byte SUPPORT = 2;
 
     private static final Map<Block, Boolean> NOT_TREE = new ConcurrentHashMap<>();
+    private static final Map<Block, Boolean> BRANCH = new ConcurrentHashMap<>();
+    private static final Map<Block, Boolean> MOSS = new ConcurrentHashMap<>();
 
     /** Positions to remove; all lists are in no particular order. {@code wood} includes the cut. */
     record Result(List<BlockPos> wood, List<BlockPos> leaves, List<BlockPos> supports) {
@@ -64,6 +77,16 @@ final class TreeScan {
             String path = BuiltInRegistries.BLOCK.getKey(block).getPath();
             return path.contains("beam") || path.contains("firewood") || path.contains("young_tree");
         });
+    }
+
+    /** Wood that is a branch rather than trunk: it snaps off against the ground instead of holding a tree up. */
+    static boolean isBranch(BlockState state) {
+        return BRANCH.computeIfAbsent(state.getBlock(), block -> BuiltInRegistries.BLOCK.getKey(block).getPath().contains("branch"));
+    }
+
+    /** Sphagnum moss in any shape: trunk cladding when it is on a tree, ground cover when it isn't. */
+    static boolean isMoss(BlockState state) {
+        return !state.hasBlockEntity() && MOSS.computeIfAbsent(state.getBlock(), block -> BuiltInRegistries.BLOCK.getKey(block).getPath().contains("sphagnum_moss_block"));
     }
 
     /** An invisible log stand-in inside a canopy. */
@@ -92,28 +115,33 @@ final class TreeScan {
         return isSupport(state) ? SUPPORT : 0;
     }
 
-    static @Nullable Result scan(BlockGetter level, BlockPos cut) {
-        if (!isWood(level.getBlockState(cut))) {
-            return null;
-        }
-        // Only a cut at the foot of the trunk fells the tree; higher up it is an ordinary break.
+    /**
+     * The wood of the tree being cut, the cut included; null if there is no tree to fell here.
+     *
+     * <p>In a forest, branches of neighbouring trees touch, so the wood joined to the cut can be several
+     * trees. All of it near the cut is gathered first, then shared out: every tree's foot (wood standing on
+     * the ground, away from the cut's own trunk) and all wood below the cut (the stump, and trees standing
+     * lower) claims what is nearest it along the wood, and the felled tree is what the cut is nearest.</p>
+     *
+     * <p>The cut must sever its trunk: if the trunk itself, around the cut, still runs down past it, it is a
+     * branch or a trunk only partly chopped through, and nothing falls.</p>
+     */
+    private static @Nullable LongOpenHashSet ownWood(BlockGetter level, BlockPos cut) {
         BlockPos.MutableBlockPos probe = new BlockPos.MutableBlockPos();
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                probe.set(cut.getX() + dx, cut.getY() - 1, cut.getZ() + dz);
-                if (isWood(level.getBlockState(probe))) {
-                    return null;
-                }
-            }
-        }
-
-        // Wood, through all 26 neighbours.
-        LongOpenHashSet woodSet = new LongOpenHashSet();
+        BlockPos.MutableBlockPos under = new BlockPos.MutableBlockPos();
+        LongOpenHashSet seen = new LongOpenHashSet();
         LongArrayFIFOQueue queue = new LongArrayFIFOQueue();
-        woodSet.add(cut.asLong());
+        // How many moss blocks in a row each moss block is from real wood.
+        Long2IntOpenHashMap mossRun = new Long2IntOpenHashMap();
+        // Where the sharing out starts from, besides the cut.
+        List<Long> feet = new ArrayList<>();
+        seen.add(cut.asLong());
         queue.enqueue(cut.asLong());
         while (!queue.isEmpty()) {
-            BlockPos p = BlockPos.of(queue.dequeueLong());
+            long key = queue.dequeueLong();
+            BlockPos p = BlockPos.of(key);
+            int run = mossRun.get(key);
+            boolean inTrunk = inTrunk(cut, p);
             for (int dx = -1; dx <= 1; dx++) {
                 for (int dy = -1; dy <= 1; dy++) {
                     for (int dz = -1; dz <= 1; dz++) {
@@ -121,18 +149,118 @@ final class TreeScan {
                             continue;
                         }
                         probe.set(p.getX() + dx, p.getY() + dy, p.getZ() + dz);
-                        if (probe.getY() < cut.getY() || woodSet.contains(probe.asLong()) || !isWood(level.getBlockState(probe))) {
+                        long nk = probe.asLong();
+                        if (seen.contains(nk) || Math.abs(probe.getX() - cut.getX()) > SEARCH_RADIUS
+                                || Math.abs(probe.getZ() - cut.getZ()) > SEARCH_RADIUS) {
                             continue;
                         }
-                        if (woodSet.size() >= MAX_WOOD) {
-                            return null;
+                        BlockState state = level.getBlockState(probe);
+                        if (!isWood(state)) {
+                            if (isMoss(state) && probe.getY() > cut.getY() && run < MAX_MOSS_RUN) {
+                                seen.add(nk);
+                                mossRun.put(nk, run + 1);
+                                queue.enqueue(nk);
+                            }
+                            continue;
                         }
-                        woodSet.add(probe.asLong());
-                        queue.enqueue(probe.asLong());
+                        if (probe.getY() < cut.getY()) {
+                            if (p.equals(cut)) {
+                                continue; // the stump: it stays standing
+                            }
+                            if (inTrunk) {
+                                return null; // the trunk still stands on what is below the cut
+                            }
+                            // Another tree standing lower, or a branch of the stump: it keeps what is nearest it.
+                            seen.add(nk);
+                            feet.add(nk);
+                            continue;
+                        }
+                        if (seen.size() >= MAX_SEARCH) {
+                            continue;
+                        }
+                        seen.add(nk);
+                        queue.enqueue(nk);
+                        if (!inTrunk(cut, probe)) {
+                            under.set(probe.getX(), probe.getY() - 1, probe.getZ());
+                            if (isGround(level.getBlockState(under), level, under)) {
+                                feet.add(nk);
+                            }
+                        }
                     }
                 }
             }
         }
+
+        // Share it out a step at a time from every start at once; the cut steps first, so a tie stays with this tree.
+        LongOpenHashSet own = new LongOpenHashSet();
+        LongOpenHashSet claimed = new LongOpenHashSet();
+        LongArrayFIFOQueue ownFront = new LongArrayFIFOQueue();
+        LongArrayFIFOQueue otherFront = new LongArrayFIFOQueue();
+        own.add(cut.asLong());
+        claimed.add(cut.asLong());
+        ownFront.enqueue(cut.asLong());
+        for (long foot : feet) {
+            if (claimed.add(foot)) {
+                otherFront.enqueue(foot);
+            }
+        }
+        while (!ownFront.isEmpty() || !otherFront.isEmpty()) {
+            ownFront = spread(ownFront, seen, claimed, own, probe);
+            otherFront = spread(otherFront, seen, claimed, null, probe);
+            if (own.size() > MAX_WOOD) {
+                return null;
+            }
+        }
+        return own;
+    }
+
+    /** One step of the sharing out: everything gathered next to {@code from} that nobody has yet. */
+    private static LongArrayFIFOQueue spread(LongArrayFIFOQueue from, LongOpenHashSet seen, LongOpenHashSet claimed,
+                                             @Nullable LongOpenHashSet into, BlockPos.MutableBlockPos probe) {
+        LongArrayFIFOQueue next = new LongArrayFIFOQueue();
+        while (!from.isEmpty()) {
+            BlockPos p = BlockPos.of(from.dequeueLong());
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dy = -1; dy <= 1; dy++) {
+                    for (int dz = -1; dz <= 1; dz++) {
+                        probe.set(p.getX() + dx, p.getY() + dy, p.getZ() + dz);
+                        long nk = probe.asLong();
+                        if (seen.contains(nk) && claimed.add(nk)) {
+                            if (into != null) {
+                                into.add(nk);
+                            }
+                            next.enqueue(nk);
+                        }
+                    }
+                }
+            }
+        }
+        return next;
+    }
+
+    /** Within the trunk being cut: its own wide foot or stump ring is not another tree standing beside it. */
+    private static boolean inTrunk(BlockPos cut, BlockPos p) {
+        int dx = p.getX() - cut.getX();
+        int dz = p.getZ() - cut.getZ();
+        return dx * dx + dz * dz <= TRUNK_RADIUS * TRUNK_RADIUS;
+    }
+
+    /** What a tree can stand on: solid, and not more tree. */
+    private static boolean isGround(BlockState state, BlockGetter level, BlockPos pos) {
+        return !state.isAir() && !isWood(state) && !isMoss(state) && !isLeaf(state) && !isSupport(state)
+                && !state.getCollisionShape(level, pos).isEmpty();
+    }
+
+    static @Nullable Result scan(BlockGetter level, BlockPos cut) {
+        if (!isWood(level.getBlockState(cut))) {
+            return null;
+        }
+        LongOpenHashSet woodSet = ownWood(level, cut);
+        if (woodSet == null) {
+            return null;
+        }
+        LongArrayFIFOQueue queue = new LongArrayFIFOQueue();
+        BlockPos.MutableBlockPos probe = new BlockPos.MutableBlockPos();
 
         // Foliage: leaf steps from the wood. A support passes the count on to leaves but not to other supports.
         Long2IntOpenHashMap depth = new Long2IntOpenHashMap();
@@ -162,7 +290,9 @@ final class TreeScan {
                     continue;
                 }
                 if (nodes.size() >= MAX_FOLIAGE) {
-                    return null;
+                    // A forest's canopy runs on and on; what is this far out isn't this tree's anyway.
+                    queue.clear();
+                    break;
                 }
                 depth.put(nk, d + 1);
                 kinds.put(nk, k);

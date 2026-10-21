@@ -19,6 +19,12 @@ conquest:fir_forest_floor
 conquest:mossy_fir_forest_floor
 conquest:overgrown_fir_forest_floor
 minecraft:mycelium
+minecraft:dirt
+minecraft:rooted_dirt
+minecraft:dirt_path
+minecraft:farmland
+minecraft:moss_block
+minecraft:pale_moss_block
 conquest:lorien_forest_floor
 conquest:mossy_lorien_forest_floor
 conquest:heather_covered_moss
@@ -72,6 +78,7 @@ minecraft:clay
 conquest:dark_gray_clay
 conquest:clay_rich_mud
 minecraft:mud
+minecraft:muddy_mangrove_roots
 conquest:mud
 conquest:thick_mud
 minecraft:packed_mud
@@ -88,3 +95,6 @@ conquest:loamy_dirt_with_log_border
 minecraft:soul_soil
 minecraft:crimson_nylium
 minecraft:warped_nylium
+minecraft:sculk
+minecraft:sculk_catalyst
+minecraft:sculk_shrieker

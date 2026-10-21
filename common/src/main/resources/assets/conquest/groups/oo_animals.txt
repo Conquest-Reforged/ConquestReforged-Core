@@ -21,6 +21,8 @@ conquest:rope_coiled_bee_hive
 conquest:hornets_nest
 minecraft:honey_block
 minecraft:honeycomb_block
+minecraft:honeycomb
+minecraft:slime_block
 
 minecraft:sponge
 minecraft:wet_sponge
@@ -61,9 +63,14 @@ minecraft:salmon_bucket
 minecraft:pufferfish_bucket
 minecraft:cod_bucket
 minecraft:tropical_fish_bucket
+minecraft:axolotl_bucket
+minecraft:tadpole_bucket
 
 conquest:sea_pickle
 minecraft:turtle_egg
+minecraft:sniffer_egg
+minecraft:frogspawn
+minecraft:dried_ghast
 
 minecraft:warped_planks
 minecraft:crimson_planks

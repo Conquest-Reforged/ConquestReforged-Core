@@ -11,6 +11,7 @@ minecraft:cooked_rabbit
 minecraft:rabbit_stew
 minecraft:mushroom_stew
 minecraft:suspicious_stew
+minecraft:beetroot
 minecraft:beetroot_soup
 minecraft:cod
 minecraft:cooked_cod
@@ -22,6 +23,8 @@ minecraft:dried_kelp
 minecraft:wheat
 minecraft:milk_bucket
 minecraft:egg
+minecraft:brown_egg
+minecraft:blue_egg
 minecraft:sugar
 minecraft:cookie
 minecraft:pumpkin_pie
@@ -29,8 +32,11 @@ minecraft:bread
 minecraft:apple
 minecraft:golden_apple
 minecraft:enchanted_golden_apple
+minecraft:golden_dandelion
+minecraft:potato
 minecraft:baked_potato
 minecraft:poisonous_potato
+minecraft:carrot
 minecraft:golden_carrot
 minecraft:melon_slice
 minecraft:chorus_fruit

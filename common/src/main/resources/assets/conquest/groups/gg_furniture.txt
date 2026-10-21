@@ -1,4 +1,5 @@
 minecraft:jukebox
+minecraft:note_block
 
 conquest:fancy_table
 conquest:oak_wood_table

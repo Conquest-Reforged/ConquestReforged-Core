@@ -11,6 +11,7 @@ import com.conquestrefabricated.core.block.data.BlockDataRegistry;
 import com.conquestrefabricated.core.block.data.ColorType;
 import com.conquestrefabricated.core.client.color.BlockColors;
 import com.conquestrefabricated.core.group.neoforge.FamilyGroup;
+import com.conquestrefabricated.core.item.group.TabVariants;
 import com.conquestrefabricated.core.item.group.sort.ItemList;
 import com.conquestrefabricated.core.item.group.sort.Sorter;
 import com.conquestrefabricated.core.util.Provider;
@@ -20,14 +21,11 @@ import com.conquestrefabricated.mixin.CreativeModeTabsAccessor;
 import net.minecraft.client.color.item.GrassColorSource;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.FoliageColor;
 import net.minecraft.world.level.GrassColor;
 import net.neoforged.api.distmarker.Dist;
@@ -110,15 +108,7 @@ public class InitClient {
                             continue;
                         }
 
-                        if (item.getItem() instanceof TippedArrowItem) {
-                            BuiltInRegistries.POTION.listElements().forEach(potionEntry -> {
-                                Potion potion = potionEntry.value();
-                                if (!potion.getEffects().isEmpty()) {
-                                    ItemStack arrow = new ItemStack(item.getItem());
-                                    arrow.set(DataComponents.POTION_CONTENTS, new PotionContents(potionEntry));
-                                    event.accept(arrow);
-                                }
-                            });
+                        if (TabVariants.expand(item.getItem(), event.getParameters().holders(), event::accept)) {
                             continue;
                         }
 

@@ -46,13 +46,15 @@ public class ModGroups {
     public static final CreativeModeTab WATER_AND_AIR = createFamilyGroup(27, "o_water_and_air", block("conquest:steam"));
     public static final CreativeModeTab ANIMALS = createFamilyGroup(28, "oo_animals", block("conquest:owl"));
 
-    //Page 4 (6 tabs)
+    //Page 4 (7 tabs)
     public static final CreativeModeTab ARMOR = createFamilyGroup(29, "p_armor", item("minecraft:chainmail_chestplate"));
     public static final CreativeModeTab WEAPONS_AND_TOOLS = createFamilyGroup(30, "pp_weapons_and_tools", item("minecraft:iron_axe"));
     public static final CreativeModeTab FOOD_AND_CONSUMABLES = createFamilyGroup(31, "q_food_and_consumables", item("minecraft:bread"));
     public static final CreativeModeTab BREWING = createFamilyGroup(32, "qq_brewing", block("minecraft:brewing_stand"));
     public static final CreativeModeTab MISCELLANEOUS = createFamilyGroup(33, "r_miscellaneous", item("minecraft:music_disc_strad"));
-    public static final CreativeModeTab UTILITY = createFamilyGroup(34, "rr_utility", block("minecraft:barrier"));
+    // "ra_" so it sorts between Miscellaneous and Utility; tabs are ordered by id
+    public static final CreativeModeTab SPAWN_EGGS = createFamilyGroup(34, "ra_spawn_eggs", item("minecraft:villager_spawn_egg"));
+    public static final CreativeModeTab UTILITY = createFamilyGroup(35, "rr_utility", block("minecraft:barrier"));
 
     public static void initGroups() {
         ItemGroupManager.getInstance().register(WINDOWS_AND_GLASS);
@@ -80,6 +82,7 @@ public class ModGroups {
         ItemGroupManager.getInstance().register(WEAPONS_AND_TOOLS);
         ItemGroupManager.getInstance().register(FOOD_AND_CONSUMABLES);
         ItemGroupManager.getInstance().register(MISCELLANEOUS);
+        ItemGroupManager.getInstance().register(SPAWN_EGGS);
         ItemGroupManager.getInstance().register(UTILITY);
 
         //FamilyGroup.stream().forEach(familyGroup -> {

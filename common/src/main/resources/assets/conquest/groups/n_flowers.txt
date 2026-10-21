@@ -43,6 +43,12 @@ conquest:pasque_flower
 conquest:meadow_saffron
 
 minecraft:wither_rose
+minecraft:torchflower
+minecraft:pitcher_plant
+minecraft:cactus_flower
+minecraft:closed_eyeblossom
+minecraft:open_eyeblossom
+minecraft:spore_blossom
 
 conquest:niphredil
 conquest:simbelmyne

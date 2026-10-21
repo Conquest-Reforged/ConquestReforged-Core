@@ -1,4 +1,5 @@
 minecraft:gravel
+minecraft:suspicious_gravel
 conquest:small_stones
 conquest:mossy_small_stones
 conquest:overgrown_small_stones
@@ -23,6 +24,7 @@ conquest:yellow_sulfur
 
 conquest:grass_and_sand_layer
 minecraft:sand
+minecraft:suspicious_sand
 conquest:mossy_sand
 conquest:overgrown_sand
 conquest:wet_sand

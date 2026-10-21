@@ -7,6 +7,18 @@ conquest:cupboards
 conquest:glass_paned_cabinets
 conquest:wooden_cupboards_and_glass_cabinets
 conquest:fancy_shelf
+minecraft:oak_shelf
+minecraft:spruce_shelf
+minecraft:birch_shelf
+minecraft:jungle_shelf
+minecraft:acacia_shelf
+minecraft:dark_oak_shelf
+minecraft:mangrove_shelf
+minecraft:cherry_shelf
+minecraft:pale_oak_shelf
+minecraft:bamboo_shelf
+minecraft:crimson_shelf
+minecraft:warped_shelf
 conquest:fancy_cabinet
 conquest:miscellaneous_shelves
 conquest:spice_rack
@@ -14,6 +26,7 @@ conquest:cabinet
 
 conquest:fancy_arched_bookshelf
 conquest:bookshelf
+minecraft:chiseled_bookshelf
 conquest:fancy_bookshelf
 conquest:empty_fancy_bookshelf
 conquest:diamond_frame_scroll_rack
@@ -45,6 +58,27 @@ minecraft:trapped_chest
 minecraft:ender_chest
 
 minecraft:barrel
+minecraft:waxed_copper_chest
+minecraft:waxed_exposed_copper_chest
+minecraft:waxed_weathered_copper_chest
+minecraft:waxed_oxidized_copper_chest
+minecraft:bundle
+minecraft:white_bundle
+minecraft:light_gray_bundle
+minecraft:gray_bundle
+minecraft:black_bundle
+minecraft:brown_bundle
+minecraft:red_bundle
+minecraft:orange_bundle
+minecraft:yellow_bundle
+minecraft:lime_bundle
+minecraft:green_bundle
+minecraft:cyan_bundle
+minecraft:light_blue_bundle
+minecraft:blue_bundle
+minecraft:purple_bundle
+minecraft:magenta_bundle
+minecraft:pink_bundle
 conquest:full_barrel_of_gold_ore
 conquest:empty_barrel_with_grille
 minecraft:blue_shulker_box

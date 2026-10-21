@@ -27,7 +27,8 @@
     "EntityRenderersMixin",
     "AbstractClientPlayerEntityMixin",
     "ClientPlayerInteractionManagerMixin",
-    "LevelRendererDestroyProgressMixin"
+    "LevelRendererDestroyProgressMixin",
+    "BlockDisplayRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

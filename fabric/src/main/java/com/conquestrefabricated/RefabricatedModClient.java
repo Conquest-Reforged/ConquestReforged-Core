@@ -31,6 +31,7 @@ import com.conquestrefabricated.core.client.input.fabric.BindInit;
 import com.conquestrefabricated.core.client.input.fabric.Bindings;
 import com.conquestrefabricated.core.group.fabric.FamilyGroup;
 import com.conquestrefabricated.core.init.InitClient;
+import com.conquestrefabricated.core.item.group.TabVariants;
 import com.conquestrefabricated.core.item.group.manager.ItemGroupManager;
 import com.conquestrefabricated.core.Namespaces;
 import com.conquestrefabricated.core.item.group.sort.GroupFiles;
@@ -56,7 +57,6 @@ import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -65,8 +65,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -246,15 +244,7 @@ public class RefabricatedModClient implements ClientModInitializer {
                             continue;
                         }
 
-                        if (item.getItem() instanceof TippedArrowItem) {
-                            BuiltInRegistries.POTION.listElements().forEach(potionEntry -> {
-                                Potion potion = potionEntry.value();
-                                if (!potion.getEffects().isEmpty()) {
-                                    ItemStack arrow = new ItemStack(item.getItem());
-                                    arrow.set(DataComponents.POTION_CONTENTS, new PotionContents(potionEntry));
-                                    entries.accept(arrow);
-                                }
-                            });
+                        if (TabVariants.expand(item.getItem(), entries.getContext().holders(), entries::accept)) {
                             continue;
                         }
 

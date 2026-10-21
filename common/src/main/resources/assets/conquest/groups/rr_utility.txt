@@ -19,4 +19,14 @@ conquest:invisible_block_stairs
 conquest:invisible_block_pane
 conquest:leaf_support
 minecraft:debug_stick
+minecraft:light
+minecraft:structure_void
+minecraft:command_block
+minecraft:chain_command_block
+minecraft:repeating_command_block
+minecraft:command_block_minecart
+minecraft:structure_block
+minecraft:jigsaw
+minecraft:test_block
+minecraft:test_instance_block
 conquest:mallet_item

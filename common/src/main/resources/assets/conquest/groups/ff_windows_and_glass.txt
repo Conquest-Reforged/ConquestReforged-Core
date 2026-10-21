@@ -34,6 +34,8 @@ conquest:wooden_arch_window
 conquest:wooden_gothic_window
 
 minecraft:glass
+minecraft:tinted_glass
+minecraft:glass_pane
 conquest:circular_glass_2
 conquest:straight_glass_1
 conquest:straight_glass_2

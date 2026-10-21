@@ -8,6 +8,13 @@ minecraft:nether_wart
 minecraft:spider_eye
 minecraft:fermented_spider_eye
 minecraft:magma_cream
+minecraft:rabbit_foot
+minecraft:phantom_membrane
+minecraft:dragon_breath
 minecraft:glistering_melon_slice
 minecraft:glass_bottle
 minecraft:potion
+minecraft:splash_potion
+minecraft:lingering_potion
+minecraft:ominous_bottle
+minecraft:experience_bottle

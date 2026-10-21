@@ -58,6 +58,8 @@ conquest:rowan_wood_beam
 conquest:rowan_wood_planks
 minecraft:stripped_jungle_log
 minecraft:jungle_planks
+minecraft:stripped_pale_oak_log
+minecraft:pale_oak_planks
 conquest:mossy_palm_wood_planks
 conquest:barnacle_covered_palm_wood_planks
 conquest:mallorn_wood_beam

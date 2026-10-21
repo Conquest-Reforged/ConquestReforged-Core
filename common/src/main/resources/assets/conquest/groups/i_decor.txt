@@ -44,6 +44,11 @@ conquest:gwent_board
 conquest:dice_game
 
 minecraft:flower_pot
+minecraft:cobweb
+minecraft:waxed_copper_golem_statue
+minecraft:waxed_exposed_copper_golem_statue
+minecraft:waxed_weathered_copper_golem_statue
+minecraft:waxed_oxidized_copper_golem_statue
 conquest:inkwell
 conquest:pot_of_water
 conquest:hells_eye

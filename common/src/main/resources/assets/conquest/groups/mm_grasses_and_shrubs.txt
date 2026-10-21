@@ -12,6 +12,8 @@ conquest:bilberry_bush
 conquest:lingonberry_bush
 conquest:alpine_bearberry
 
+minecraft:short_grass
+minecraft:firefly_bush
 minecraft:sweet_berries
 
 conquest:tall_grass
@@ -79,6 +81,7 @@ conquest:big_water_lilies
 conquest:duckweed
 
 minecraft:glow_lichen
+minecraft:sculk_vein
 conquest:elegant_sunburst_lichen
 conquest:maritime_sunburst_lichen
 conquest:wolf_lichen
@@ -106,6 +109,7 @@ conquest:hanging_moss
 conquest:thick_ivy
 conquest:thick_hanging_ivy
 minecraft:vine
+minecraft:pale_hanging_moss
 conquest:lianas
 
 conquest:bracken
@@ -156,6 +160,8 @@ minecraft:stripped_crimson_stem
 minecraft:stripped_warped_stem
 minecraft:weeping_vines
 minecraft:twisting_vines
+minecraft:chorus_plant
+minecraft:chorus_flower
 conquest:crimson_roots
 conquest:warped_roots
 conquest:crimson_fungus

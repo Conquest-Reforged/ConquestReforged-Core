@@ -1,5 +1,6 @@
 package com.conquestrefabricated.content.blocks.block.topography;
 
+import net.minecraft.world.phys.Vec3;
 import com.conquestrefabricated.content.blocks.BlockSettingsAccessor;
 import com.conquestrefabricated.content.blocks.CustomOffsetType;
 import com.conquestrefabricated.content.blocks.block.Layer;
@@ -41,7 +42,8 @@ public class Rocks extends WaterloggedShape {
     public static final BooleanProperty EDGE = BooleanProperty.create("edge");
     public static final IntegerProperty LAYERS = BlockStateProperties.LAYERS;
     public static final IntegerProperty DENSITY = IntegerProperty.create("density", 1, 4);
-    private static final VoxelShape SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 15.0D, 15.0D);
+    /** Pick box, taller and boxier than the flat plant one; moved by the layer offset onto the surface. */
+    private static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 8.0D, 14.0D);
 
     public Rocks(Properties properties) {
         super(((BlockSettingsAccessor)properties)
@@ -58,6 +60,17 @@ public class Rocks extends WaterloggedShape {
     @Override
     public VoxelShape getShape(BlockState state) {
         return SHAPE;
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        Vec3 offset = state.getOffset(pos);
+        return SHAPE.move(offset.x, offset.y, offset.z);
+    }
+
+    @Override
+    public VoxelShape getInteractionShape(BlockState state, BlockGetter world, BlockPos pos) {
+        return getShape(state, world, pos, CollisionContext.empty());
     }
 
     @Override

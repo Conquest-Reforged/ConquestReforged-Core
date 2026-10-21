@@ -1,4 +1,8 @@
 minecraft:redstone_lamp
+minecraft:waxed_copper_bulb
+minecraft:waxed_exposed_copper_bulb
+minecraft:waxed_weathered_copper_bulb
+minecraft:waxed_oxidized_copper_bulb
 conquest:white_paper_lantern
 conquest:yellow_paper_lantern
 conquest:small_red_paper_lantern
@@ -25,6 +29,8 @@ conquest:large_iron_candelabra
 conquest:iron_candelabrum_1
 minecraft:white_candle
 minecraft:gray_candle
+minecraft:light_gray_candle
+minecraft:brown_candle
 minecraft:light_blue_candle
 conquest:golden_candelabrum_1
 minecraft:yellow_candle
@@ -47,6 +53,10 @@ conquest:ship_lantern
 conquest:victorian_lantern
 conquest:small_lantern
 minecraft:lantern
+minecraft:waxed_copper_lantern
+minecraft:waxed_exposed_copper_lantern
+minecraft:waxed_weathered_copper_lantern
+minecraft:waxed_oxidized_copper_lantern
 minecraft:purple_candle
 conquest:big_lantern
 conquest:hanging_oil_lamp
@@ -69,3 +79,10 @@ minecraft:lime_candle
 minecraft:soul_campfire
 minecraft:soul_lantern
 minecraft:soul_torch
+minecraft:copper_torch
+minecraft:end_rod
+minecraft:glowstone
+minecraft:sea_lantern
+minecraft:ochre_froglight
+minecraft:verdant_froglight
+minecraft:pearlescent_froglight

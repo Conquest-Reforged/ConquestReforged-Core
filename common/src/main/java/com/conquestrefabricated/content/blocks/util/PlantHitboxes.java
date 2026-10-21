@@ -2,6 +2,7 @@ package com.conquestrefabricated.content.blocks.util;
 
 import com.conquestrefabricated.content.blocks.block.plants.AbstractCropsBlock;
 import com.conquestrefabricated.content.blocks.block.plants.Bush;
+import com.conquestrefabricated.content.blocks.block.topography.Rocks;
 import com.conquestrefabricated.content.blocks.block.vanilla.BeetrootsVanilla;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -27,7 +28,7 @@ public final class PlantHitboxes {
 
     /** Whether this block uses the flat box (and so needs {@link PlantPickHelper} to be reachable). */
     public static boolean isFlatPlant(Block block) {
-        return block instanceof Bush || block instanceof AbstractCropsBlock || block instanceof BeetrootsVanilla;
+        return block instanceof Bush || block instanceof AbstractCropsBlock || block instanceof BeetrootsVanilla || block instanceof Rocks;
     }
 
     /** Players who can't build (adventure) pass through plants; everyone else sees the box. */
